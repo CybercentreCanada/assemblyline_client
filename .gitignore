@@ -2,6 +2,8 @@
 *.py[cod]
 .pydevproject
 .idea
+dist
+*.egg-info
 
 ehthumbs.db
 Thumbs.db

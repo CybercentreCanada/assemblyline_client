@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """Assemblyline Client Library PiP Installer"""
 
 from setuptools import setup
