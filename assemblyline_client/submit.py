@@ -497,6 +497,10 @@ def _main(arguments):
         p = client.user.submission_params("__CURRENT__")
         if "Dynamic Analysis" not in p['selected']:
             p['selected'].append("Dynamic Analysis")
+
+        if 'params' in kw:
+            p.update(kw['params'])
+
         kw['params'] = p
     if async and not no_output:
         kw['notification_queue'] = uuid.uuid4().get_hex()
