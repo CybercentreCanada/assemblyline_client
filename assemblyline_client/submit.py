@@ -6,6 +6,7 @@ import datetime
 import json
 import sys
 import uuid
+import json
 
 from copy import deepcopy
 from errno import EPIPE
@@ -87,6 +88,9 @@ DESCRIPTION
             Server to connect to
             
             DEFAULT: transport://host:port in ~/.al/submit.cfg
+        
+        -j, --parameter="{ ... }"
+            A JSON dictionary of submission parameters.
 
 """
 
@@ -340,6 +344,7 @@ def _main(arguments):
     transport = "https"
     host = "localhost"
     port = 443
+    kw = {}
 
     config = ConfigParser()
     config.read([expanduser("~/.al/submit.cfg")])
@@ -363,9 +368,9 @@ def _main(arguments):
 
     # parse the command line args
     try:
-        opts, args = getopt(arguments, "hvqantdu:p:o:s:k:", ["help", "version", "quiet", "async", "no-output", "text",
-                                                             "run-dynamic", "user=", "password=", "output-file=",
-                                                             "server=", "key="])
+        opts, args = getopt(arguments, "hvqantdu:p:o:s:k:j:", ["help", "version", "quiet", "async", "no-output", "text",
+                                                               "run-dynamic", "user=", "password=", "output-file=",
+                                                               "server=", "key=", "parameter="])
     except Exception as exc:  # pylint: disable=W0703
         sys.stderr.write("Args error %s\n\n%s\n" % (exc, __help__))
         return 1
@@ -466,6 +471,11 @@ def _main(arguments):
         sys.stderr.write("!!ERROR!! No server specified, -s option is mandatory.\n\n%s\n" % __help__)
         return -1
 
+    if "j" in params:
+        kw["params"] = json.loads(params['j'])
+    elif "parameters" in params:
+        kw["params"] = json.loads(params['parameters'])
+
     auth_dict = {}
     auth = None
     cert = None
@@ -480,7 +490,6 @@ def _main(arguments):
         'verbose': verbose,
         'json_output': json_output,
     }
-    kw = {}
 
     client = Client(server, auth=auth, cert=cert)
 
@@ -488,6 +497,10 @@ def _main(arguments):
         p = client.user.submission_params("__CURRENT__")
         if "Dynamic Analysis" not in p['selected']:
             p['selected'].append("Dynamic Analysis")
+
+        if 'params' in kw:
+            p.update(kw['params'])
+
         kw['params'] = p
     if async and not no_output:
         kw['notification_queue'] = uuid.uuid4().get_hex()
