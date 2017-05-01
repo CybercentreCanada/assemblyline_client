@@ -89,7 +89,7 @@ DESCRIPTION
             
             DEFAULT: transport://host:port in ~/.al/submit.cfg
         
-        -j, --parameter="{ ... }"
+        -j, --json_params="{ ... }"
             A JSON dictionary of submission parameters.
 
 """
@@ -370,7 +370,7 @@ def _main(arguments):
     try:
         opts, args = getopt(arguments, "hvqantdu:p:o:s:k:j:", ["help", "version", "quiet", "async", "no-output", "text",
                                                                "run-dynamic", "user=", "password=", "output-file=",
-                                                               "server=", "key=", "parameter="])
+                                                               "server=", "key=", "json_params="])
     except Exception as exc:  # pylint: disable=W0703
         sys.stderr.write("Args error %s\n\n%s\n" % (exc, __help__))
         return 1
@@ -473,8 +473,8 @@ def _main(arguments):
 
     if "j" in params:
         kw["params"] = json.loads(params['j'])
-    elif "parameters" in params:
-        kw["params"] = json.loads(params['parameters'])
+    elif "json_params" in params:
+        kw["params"] = json.loads(params['json_params'])
 
     auth_dict = {}
     auth = None
