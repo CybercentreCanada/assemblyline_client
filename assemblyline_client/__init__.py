@@ -1,4 +1,5 @@
 import logging
+import os
 import re
 import requests
 import socketIO_client
@@ -11,7 +12,7 @@ from json import dumps
 from os.path import basename
 
 __all__ = ['Client', 'ClientError']
-__build__ = [1, 9, 2]
+__build__ = [2, 0, 0]
 
 try:
     # noinspection PyUnresolvedReferences,PyUnboundLocalVariable
@@ -295,6 +296,51 @@ fq_list : List of filter queries. (list of strings)
         return self._connection.get(path, *fq_list)
 
 
+class Bundle(object):
+    def __init__(self, connection):
+        self._connection = connection
+
+    def create(self, sid, output=None):
+        """\
+Creates a bundle containing the submission results and the associated files
+
+Required:
+sid    : Submission ID (string)
+
+Optional:
+output  : Path or file handle. (string or file-like object)
+
+If output is not specified the content is returned
+"""
+        path = _path('bundle/create', sid)
+
+        if output:
+            return self._connection.download(path, _stream(output))
+        return self._connection.download(path, _raw)
+
+    def import_bundle(self, bundle):
+        """\
+Import a submission bundle into the system
+
+Required:
+bundle      : bundle to import (string, bytes or file_handle)
+
+Returns {'success': True/False } depending if it was imported or not
+"""
+        if isinstance(bundle, basestring):
+            if len(bundle) <= 1024 and os.path.exists(bundle):
+                with open(bundle, 'rb') as f:
+                    contents = f.read()
+            else:
+                contents = bundle
+        elif "read" in dir(bundle):
+            contents = bundle.read()
+        else:
+            raise TypeError("Invalid bundle")
+
+        return self._connection.post(_path('bundle/import'), data=contents)
+
+
 class Client(object):
     def __init__(  # pylint: disable=R0913
         self, server, auth=None, cert=None, debug=lambda x: None,
@@ -306,6 +352,7 @@ class Client(object):
         )
 
         self.alert = Alert(self._connection)
+        self.bundle = Bundle(self._connection)
         self.file = File(self._connection)
         self.hash_search = HashSearch(self._connection)
         self.ingest = Ingest(self._connection)
@@ -362,7 +409,7 @@ class Connection(object):
 
         self.session = session
 
-        r = self.request(self.session.get, 'api', _convert)
+        r = self.request(self.session.get, 'api/', _convert)
         s = {SUPPORTED_API}
         if not isinstance(r, list) or not set(r).intersection(s):
             raise ClientError("Supported API (%s) not available" % s, 0)
