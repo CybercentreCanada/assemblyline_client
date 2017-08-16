@@ -1,3 +1,4 @@
+import json
 import logging
 import os
 import re
@@ -12,7 +13,7 @@ from json import dumps
 from os.path import basename
 
 __all__ = ['Client', 'ClientError']
-__build__ = [2, 0, 0]
+__build__ = [3, 0, 0]
 
 try:
     # noinspection PyUnresolvedReferences,PyUnboundLocalVariable
@@ -384,6 +385,7 @@ class Connection(object):
         self, server, auth, cert, debug, headers, retries,
         silence_requests_warnings
     ):
+        self.auth = auth
         if silence_requests_warnings:
             try:
                 requests.packages.urllib3.disable_warnings()  # pylint: disable=E1101
@@ -397,11 +399,8 @@ class Connection(object):
         session = requests.Session()
 
         session.headers.update({'content-type': 'application/json'})
-        session.timeout = 30 * 60
         session.verify = False
 
-        if auth:
-            session.auth = auth
         if cert:
             session.cert = cert
         if headers:
@@ -409,10 +408,23 @@ class Connection(object):
 
         self.session = session
 
+        auth_session_detail = self._authenticate()
+        session.timeout = auth_session_detail['session_duration']
+
         r = self.request(self.session.get, 'api/', _convert)
         s = {SUPPORTED_API}
         if not isinstance(r, list) or not set(r).intersection(s):
             raise ClientError("Supported API (%s) not available" % s, 0)
+
+    def _authenticate(self):
+        if self.auth and len(self.auth) == 2:
+            auth = {
+                'user': self.auth[0],
+                'password': self.auth[1]
+            }
+        else:
+            auth = {}
+        return self.request(self.session.get, "api/v3/auth/login/", _convert, data=json.dumps(auth))
 
     def delete(self, path, **kw):
         return self.request(self.session.delete, path, _convert, **kw)
@@ -436,10 +448,12 @@ class Connection(object):
             response = func('/'.join((self.server, path)), **kw)
             if response.ok:
                 return process(response)
+            elif response.status_code == 401:
+                self._authenticate()
             elif response.status_code not in (502, 503, 504):
                 raise ClientError(response.content, response.status_code)
-            else:
-                retries += 1
+
+            retries += 1
 
 
 # noinspection PyUnusedLocal
