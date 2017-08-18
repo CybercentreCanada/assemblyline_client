@@ -574,7 +574,7 @@ def send_async(client, path, verbose=False, **kw):
     try:
         if verbose:
             sys.stderr.write("\nSending file %s for analysis...\n" % path)
-        client.ingest(path, type='AL_SUBMIT', **kw)
+        client.ingest(path, ingest_type='AL_SUBMIT', **kw)
         return True
     except ClientError:
         return False
