@@ -15,7 +15,7 @@ from json import dumps
 from os.path import basename
 
 __all__ = ['Client', 'ClientError']
-__build__ = [3, 0, 1]
+__build__ = [3, 0, 2]
 
 try:
     # noinspection PyUnresolvedReferences,PyUnboundLocalVariable
@@ -419,7 +419,6 @@ class Connection(object):
         if not isinstance(r, list) or not set(r).intersection(s):
             raise ClientError("Supported API (%s) not available" % s, 0)
 
-
     def _load_public_encryption_key(self):
         public_key = self.request(self.session.get, "api/v3/auth/init/", _convert)
         key = RSA.importKey(public_key)
@@ -428,8 +427,8 @@ class Connection(object):
     def _authenticate(self):
         if self.apikey and len(self.apikey) == 2:
             auth = {
-                'apikey': self.apikey[0],
-                'password': b64encode(self._load_public_encryption_key().encrypt(self.apikey[1]))
+                'user': self.apikey[0],
+                'apikey': b64encode(self._load_public_encryption_key().encrypt(self.apikey[1]))
             }
         elif self.auth and len(self.auth) == 2:
             auth = {
@@ -464,9 +463,9 @@ class Connection(object):
                 return process(response)
             elif response.status_code == 401:
                 resp_data = response.json()
-                if resp_data["api_error_message"] == "Wrong OTP token":
-                    raise ClientError(response.content, response.status_code)
-                self._authenticate()
+                if resp_data["api_error_message"] == "Authentication required":
+                    self._authenticate()
+                raise ClientError(response.content, response.status_code)
             elif response.status_code not in (502, 503, 504):
                 raise ClientError(response.content, response.status_code)
 
