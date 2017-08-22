@@ -14,6 +14,7 @@ To install the client you'll need to make sure the you have the folowing install
     socketio-client==0.5.6
     requests
     requests[security]
+    pycrypto
 
 ## Using the client
 
@@ -21,6 +22,14 @@ You can instantiate the client using the following snippet of code:
 
     from assemblyline_client import Client
     al_client = Client("https://localhost:443", auth=('user', 'password'))
+    
+    # or with an apikey
+    
+    al_client = Client("https://localhost:443", apikey=('user', 'key'))
+    
+    # or with a cert 
+    
+    al_client = Client("https://localhost:443", cert='/path/to/cert/file.pem')
 
 The assemblyline client is fully documented in the docstrings so if you use an interactive client like ipython you can use the help feature.
 

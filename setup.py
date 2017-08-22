@@ -30,7 +30,7 @@ setup(
             'al-submit=assemblyline_client.submit:main',
         ],
     },
-    install_requires=['requests', 'socketio-client==0.5.6', 'requests[security]'],
+    install_requires=['requests', 'socketio-client==0.5.6', 'requests[security]', 'pycrypto'],
     keywords='assemblyline',
     packages=['assemblyline_client'],
 )

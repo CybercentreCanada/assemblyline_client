@@ -9,6 +9,8 @@ import time
 import threading
 
 from base64 import b64encode
+from Crypto.PublicKey import RSA
+from Crypto.Cipher import PKCS1_v1_5
 from json import dumps
 from os.path import basename
 
@@ -345,11 +347,11 @@ Returns {'success': True/False } depending if it was imported or not
 class Client(object):
     def __init__(  # pylint: disable=R0913
         self, server, auth=None, cert=None, debug=lambda x: None,
-        headers=None, retries=RETRY_FOREVER, silence_requests_warnings=True
+        headers=None, retries=RETRY_FOREVER, silence_requests_warnings=True, apikey=None
     ):
         self._connection = Connection(
             server, auth, cert, debug, headers, retries,
-            silence_requests_warnings
+            silence_requests_warnings, apikey
         )
 
         self.alert = Alert(self._connection)
@@ -383,9 +385,10 @@ class Connection(object):
     # noinspection PyUnresolvedReferences
     def __init__(  # pylint: disable=R0913
         self, server, auth, cert, debug, headers, retries,
-        silence_requests_warnings
+        silence_requests_warnings, apikey
     ):
         self.auth = auth
+        self.apikey = apikey
         if silence_requests_warnings:
             try:
                 requests.packages.urllib3.disable_warnings()  # pylint: disable=E1101
@@ -416,11 +419,22 @@ class Connection(object):
         if not isinstance(r, list) or not set(r).intersection(s):
             raise ClientError("Supported API (%s) not available" % s, 0)
 
+
+    def _load_public_encryption_key(self):
+        public_key = self.request(self.session.get, "api/v3/auth/init/", _convert)
+        key = RSA.importKey(public_key)
+        return PKCS1_v1_5.new(key)
+
     def _authenticate(self):
-        if self.auth and len(self.auth) == 2:
+        if self.apikey and len(self.apikey) == 2:
+            auth = {
+                'apikey': self.apikey[0],
+                'password': b64encode(self._load_public_encryption_key().encrypt(self.apikey[1]))
+            }
+        elif self.auth and len(self.auth) == 2:
             auth = {
                 'user': self.auth[0],
-                'password': self.auth[1]
+                'password': b64encode(self._load_public_encryption_key().encrypt(self.auth[1]))
             }
         else:
             auth = {}
@@ -449,6 +463,9 @@ class Connection(object):
             if response.ok:
                 return process(response)
             elif response.status_code == 401:
+                resp_data = response.json()
+                if resp_data["api_error_message"] == "Wrong OTP token":
+                    raise ClientError(response.content, response.status_code)
                 self._authenticate()
             elif response.status_code not in (502, 503, 504):
                 raise ClientError(response.content, response.status_code)
