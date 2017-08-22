@@ -15,7 +15,7 @@ from json import dumps
 from os.path import basename
 
 __all__ = ['Client', 'ClientError']
-__build__ = [3, 0, 0]
+__build__ = [3, 0, 1]
 
 try:
     # noinspection PyUnresolvedReferences,PyUnboundLocalVariable
