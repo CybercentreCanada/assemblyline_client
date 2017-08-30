@@ -13,7 +13,7 @@ from json import dumps
 from os.path import basename
 
 __all__ = ['Client', 'ClientError']
-__build__ = [3, 0, 4]
+__build__ = [3, 0, 5]
 
 try:
     # noinspection PyUnresolvedReferences,PyUnboundLocalVariable
@@ -434,7 +434,7 @@ class Connection(object):
         if self.apikey and len(self.apikey) == 2:
             public_key = self._load_public_encryption_key()
             if public_key:
-                key = b64encode(self._load_public_encryption_key().encrypt(self.apikey[1]))
+                key = b64encode(public_key.encrypt(self.apikey[1]))
             else:
                 key = self.apikey[1]
             auth = {
@@ -444,7 +444,7 @@ class Connection(object):
         elif self.auth and len(self.auth) == 2:
             public_key = self._load_public_encryption_key()
             if public_key:
-                pw = b64encode(self._load_public_encryption_key().encrypt(self.auth[1]))
+                pw = b64encode(public_key.encrypt(self.auth[1]))
             else:
                 pw = self.apikey[1]
             auth = {
