@@ -3,7 +3,6 @@
 from assemblyline_client import Client, ClientError
 
 import datetime
-import json
 import sys
 import uuid
 import json
@@ -19,6 +18,7 @@ from threading import Thread, Lock
 from time import sleep
 
 if sys.version_info[0] == 3:
+    # noinspection PyUnresolvedReferences
     from configparser import ConfigParser
 else:
     from ConfigParser import ConfigParser
@@ -74,10 +74,15 @@ DESCRIPTION
             
             DEFAULT: password in ~/.al/submit.cfg
 
-        -k, --key="/path/to/pki.pem"
-            PKI key to user for connection to server
+        -k, --apikey="MY_RANDOM_API_KEY"
+            apikey to use for the user to login
+            
+            DEFAULT: apikey in ~/.al/submit.cfg
 
-            DEFAULT: None
+        -c, --cert="/path/to/pki.pem"
+            Client cert used to connect to server
+
+            DEFAULT: cert in ~/.al/submit.cfg
             
         -o, --output-file="/home/user/output.txt"
             File to write the results to
@@ -320,6 +325,8 @@ def send(client, path, output, options=None, **kw):
     except ClientError as e:
         if e.status_code == 401:
             sys.stderr.write("!!ERROR!! Authentication to the server failed.\n")
+        elif e.status_code == 403:
+            sys.stderr.write("!!ERROR!! Not enough privileges to execute this API.\n")
         else:
             raise
         return False
@@ -340,7 +347,8 @@ def _main(arguments):
 
     user = None
     pw = None
-    pki = None
+    cert = None
+    apikey = None
     transport = "https"
     host = "localhost"
     port = 443
@@ -354,8 +362,10 @@ def _main(arguments):
                 user = config.get('auth', 'user')
             if 'password' in config.options('auth'):
                 pw = config.get('auth', 'password')
-            if 'pki' in config.options('auth'):
-                pki = config.get('auth', 'pki')
+            if 'cert' in config.options('auth'):
+                cert = config.get('auth', 'cert')
+            if 'apikey' in config.options('auth'):
+                apikey = config.get('auth', 'apikey')
         elif section == "server":
             if 'transport' in config.options('server'):
                 transport = config.get('server', 'transport')
@@ -368,9 +378,10 @@ def _main(arguments):
 
     # parse the command line args
     try:
-        opts, args = getopt(arguments, "hvqantdu:p:o:s:k:j:", ["help", "version", "quiet", "async", "no-output", "text",
-                                                               "run-dynamic", "user=", "password=", "output-file=",
-                                                               "server=", "key=", "json_params="])
+        opts, args = getopt(arguments, "hvqantdu:p:o:s:c:k:j:", ["help", "version", "quiet", "async", "no-output",
+                                                                 "text", "run-dynamic", "user=", "password=",
+                                                                 "output-file=", "server=", "cert=",
+                                                                 "apikey=", "json_params="])
     except Exception as exc:  # pylint: disable=W0703
         sys.stderr.write("Args error %s\n\n%s\n" % (exc, __help__))
         return 1
@@ -423,23 +434,30 @@ def _main(arguments):
         user = params["user"]
 
     if "k" in params:
-        pki = params["k"]
+        cert = params["k"]
     elif "key" in params:
-        pki = params["key"]
+        cert = params["key"]
 
     # password
     if "p" in params:
         pw = params["p"]
     elif "password" in params:
         pw = params["password"]
-    elif not pw:
-        if user:
-            if verbose:
-                sys.stderr.write("You specified a username without a password.  What is your password?\n")
-            pw = getpass()
-        elif not pki:
-            sys.stderr.write("This server requires authentication...\n")
-            sys.exit(1)
+
+    # apikey
+    if "k" in params:
+        apikey = params["k"]
+    elif "apikey" in params:
+        apikey = params["apikey"]
+
+    if not cert and not user:
+        sys.stderr.write("This server requires authentication...\n")
+        sys.exit(1)
+
+    if user and not pw and not apikey:
+        if verbose:
+            sys.stderr.write("You specified a username without a password.  What is your password?\n")
+        pw = getpass()
 
     # Output file
     if "o" in params:
@@ -476,22 +494,25 @@ def _main(arguments):
     elif "json_params" in params:
         kw["params"] = json.loads(params['json_params'])
 
-    auth_dict = {}
     auth = None
-    cert = None
-    if user and pw:
+    api_auth = None
+    if user and apikey:
+        api_auth = (user, apikey)
+    elif user and pw:
         auth = (user, pw)
-        auth_dict['user'] = user
-        auth_dict['pw'] = pw
-    if pki:
-        auth_dict['pki'] = pki
-        cert = pki
     options = {
         'verbose': verbose,
         'json_output': json_output,
     }
 
-    client = Client(server, auth=auth, cert=cert)
+    try:
+        client = Client(server, apikey=api_auth, auth=auth, cert=cert)
+    except ClientError as e:
+        if e.status_code == 401:
+            sys.stderr.write("!!ERROR!! Authentication to the server failed.\n")
+        else:
+            raise
+        return 1
 
     if dynamic:
         p = client.user.submission_params("__CURRENT__")
