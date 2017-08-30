@@ -9,13 +9,11 @@ import time
 import threading
 
 from base64 import b64encode
-from Crypto.PublicKey import RSA
-from Crypto.Cipher import PKCS1_v1_5
 from json import dumps
 from os.path import basename
 
 __all__ = ['Client', 'ClientError']
-__build__ = [3, 0, 3]
+__build__ = [3, 0, 4]
 
 try:
     # noinspection PyUnresolvedReferences,PyUnboundLocalVariable
@@ -381,6 +379,7 @@ class ClientError(Exception):
         self.status_code = status_code
 
 
+# noinspection PyPackageRequirements
 class Connection(object):
     # noinspection PyUnresolvedReferences
     def __init__(  # pylint: disable=R0913
@@ -424,6 +423,9 @@ class Connection(object):
 
         if not public_key:
             return None
+
+        from Crypto.PublicKey import RSA
+        from Crypto.Cipher import PKCS1_v1_5
 
         key = RSA.importKey(public_key)
         return PKCS1_v1_5.new(key)
