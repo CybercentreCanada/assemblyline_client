@@ -15,7 +15,7 @@ from json import dumps
 from os.path import basename
 
 __all__ = ['Client', 'ClientError']
-__build__ = [3, 0, 2]
+__build__ = [3, 0, 3]
 
 try:
     # noinspection PyUnresolvedReferences,PyUnboundLocalVariable
@@ -421,19 +421,33 @@ class Connection(object):
 
     def _load_public_encryption_key(self):
         public_key = self.request(self.session.get, "api/v3/auth/init/", _convert)
+
+        if not public_key:
+            return None
+
         key = RSA.importKey(public_key)
         return PKCS1_v1_5.new(key)
 
     def _authenticate(self):
         if self.apikey and len(self.apikey) == 2:
+            public_key = self._load_public_encryption_key()
+            if public_key:
+                key = b64encode(self._load_public_encryption_key().encrypt(self.apikey[1]))
+            else:
+                key = self.apikey[1]
             auth = {
                 'user': self.apikey[0],
-                'apikey': b64encode(self._load_public_encryption_key().encrypt(self.apikey[1]))
+                'apikey': key
             }
         elif self.auth and len(self.auth) == 2:
+            public_key = self._load_public_encryption_key()
+            if public_key:
+                pw = b64encode(self._load_public_encryption_key().encrypt(self.auth[1]))
+            else:
+                pw = self.apikey[1]
             auth = {
                 'user': self.auth[0],
-                'password': b64encode(self._load_public_encryption_key().encrypt(self.auth[1]))
+                'password': pw
             }
         else:
             auth = {}
