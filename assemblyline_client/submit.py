@@ -435,10 +435,10 @@ def _main(arguments):
     elif "user" in params:
         user = params["user"]
 
-    if "k" in params:
-        cert = params["k"]
-    elif "key" in params:
-        cert = params["key"]
+    if "c" in params:
+        cert = params["c"]
+    elif "cert" in params:
+        cert = params["cert"]
 
     # password
     if "p" in params:
