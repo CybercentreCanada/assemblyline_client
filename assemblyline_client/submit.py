@@ -4,6 +4,7 @@ from assemblyline_client import Client, ClientError, __build__
 
 import datetime
 import sys
+import select
 import uuid
 import json
 
@@ -506,7 +507,10 @@ def _main(arguments):
         'json_output': json_output,
     }
 
-    read_from_pipe = (sys.platform.startswith("linux") or sys.platform.startswith("freebsd")) and not sys.stdin.isatty()
+    read_from_pipe = False
+    if sys.platform.startswith("linux") or sys.platform.startswith("freebsd"):
+        if select.select([sys.stdin, ], [], [], 0.0)[0]:
+            read_from_pipe = True
 
     if len(args) == 0 and not read_from_pipe:
         sys.stdout.write("%s\n" % __help__)
