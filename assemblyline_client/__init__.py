@@ -1,3 +1,4 @@
+import json
 import logging
 import os
 import re
@@ -12,7 +13,7 @@ from json import dumps
 from os.path import basename
 
 __all__ = ['Client', 'ClientError']
-__build__ = [2, 0, 0]
+__build__ = [3, 0, 6]
 
 try:
     # noinspection PyUnresolvedReferences,PyUnboundLocalVariable
@@ -344,11 +345,11 @@ Returns {'success': True/False } depending if it was imported or not
 class Client(object):
     def __init__(  # pylint: disable=R0913
         self, server, auth=None, cert=None, debug=lambda x: None,
-        headers=None, retries=RETRY_FOREVER, silence_requests_warnings=True
+        headers=None, retries=RETRY_FOREVER, silence_requests_warnings=True, apikey=None
     ):
         self._connection = Connection(
             server, auth, cert, debug, headers, retries,
-            silence_requests_warnings
+            silence_requests_warnings, apikey
         )
 
         self.alert = Alert(self._connection)
@@ -378,18 +379,25 @@ class ClientError(Exception):
         self.status_code = status_code
 
 
+# noinspection PyPackageRequirements
 class Connection(object):
     # noinspection PyUnresolvedReferences
     def __init__(  # pylint: disable=R0913
         self, server, auth, cert, debug, headers, retries,
-        silence_requests_warnings
+        silence_requests_warnings, apikey
     ):
+        self.auth = auth
+        self.apikey = apikey
         if silence_requests_warnings:
             try:
                 requests.packages.urllib3.disable_warnings()  # pylint: disable=E1101
             except AttributeError:
                 # Difference versions of requests may not have 'packages'.
-                pass
+                try:
+                    requests.urllib3.disable_warnings()  # pylint: disable=E1101
+                except AttributeError:
+                    pass
+
         self.debug = debug
         self.max_retries = retries
         self.server = server
@@ -397,11 +405,8 @@ class Connection(object):
         session = requests.Session()
 
         session.headers.update({'content-type': 'application/json'})
-        session.timeout = 30 * 60
         session.verify = False
 
-        if auth:
-            session.auth = auth
         if cert:
             session.cert = cert
         if headers:
@@ -409,10 +414,50 @@ class Connection(object):
 
         self.session = session
 
+        auth_session_detail = self._authenticate()
+        session.timeout = auth_session_detail['session_duration']
+
         r = self.request(self.session.get, 'api/', _convert)
         s = {SUPPORTED_API}
         if not isinstance(r, list) or not set(r).intersection(s):
             raise ClientError("Supported API (%s) not available" % s, 0)
+
+    def _load_public_encryption_key(self):
+        public_key = self.request(self.session.get, "api/v3/auth/init/", _convert)
+
+        if not public_key:
+            return None
+
+        from Crypto.PublicKey import RSA
+        from Crypto.Cipher import PKCS1_v1_5
+
+        key = RSA.importKey(public_key)
+        return PKCS1_v1_5.new(key)
+
+    def _authenticate(self):
+        if self.apikey and len(self.apikey) == 2:
+            public_key = self._load_public_encryption_key()
+            if public_key:
+                key = b64encode(public_key.encrypt(self.apikey[1]))
+            else:
+                key = self.apikey[1]
+            auth = {
+                'user': self.apikey[0],
+                'apikey': key
+            }
+        elif self.auth and len(self.auth) == 2:
+            public_key = self._load_public_encryption_key()
+            if public_key:
+                pw = b64encode(public_key.encrypt(self.auth[1]))
+            else:
+                pw = self.apikey[1]
+            auth = {
+                'user': self.auth[0],
+                'password': pw
+            }
+        else:
+            auth = {}
+        return self.request(self.session.get, "api/v3/auth/login/", _convert, data=json.dumps(auth))
 
     def delete(self, path, **kw):
         return self.request(self.session.delete, path, _convert, **kw)
@@ -436,10 +481,15 @@ class Connection(object):
             response = func('/'.join((self.server, path)), **kw)
             if response.ok:
                 return process(response)
+            elif response.status_code == 401:
+                resp_data = response.json()
+                if resp_data["api_error_message"] == "Authentication required":
+                    self._authenticate()
+                raise ClientError(response.content, response.status_code)
             elif response.status_code not in (502, 503, 504):
                 raise ClientError(response.content, response.status_code)
-            else:
-                retries += 1
+
+            retries += 1
 
 
 # noinspection PyUnusedLocal
