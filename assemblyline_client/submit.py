@@ -535,7 +535,7 @@ def _main(arguments):
 
         kw['params'] = p
     if async and not no_output:
-        kw['notification_queue'] = uuid.uuid4().get_hex()
+        kw['nq'] = uuid.uuid4().get_hex()
 
     # sanity check path
     if len(args) == 0 and read_from_pipe:
@@ -619,7 +619,7 @@ def start_result_thread(client, queued_files, output, options, **kw):
 
 
 def result_thread(client, queued_files, output, options, **kw):
-    nq = kw['notification_queue']
+    nq = kw['nq']
     verbose = options.get('verbose', False)
 
     while len(queued_files) != 0:
