@@ -326,7 +326,8 @@ def send(client, path, output, options=None, **kw):
         if e.status_code == 401:
             sys.stderr.write("!!ERROR!! Authentication to the server failed.\n")
         elif e.status_code == 403:
-            sys.stderr.write("!!ERROR!! Not enough privileges to execute this API.\n")
+            data = json.loads(e.message)
+            sys.stderr.write("!!ERROR!! %s\n" % data['api_error_message'])
         else:
             raise
         return False
