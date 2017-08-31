@@ -393,7 +393,11 @@ class Connection(object):
                 requests.packages.urllib3.disable_warnings()  # pylint: disable=E1101
             except AttributeError:
                 # Difference versions of requests may not have 'packages'.
-                pass
+                try:
+                    requests.urllib3.disable_warnings()  # pylint: disable=E1101
+                except AttributeError:
+                    pass
+
         self.debug = debug
         self.max_retries = retries
         self.server = server
