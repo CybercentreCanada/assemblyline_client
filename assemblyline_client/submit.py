@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from assemblyline_client import Client, ClientError
+from assemblyline_client import Client, ClientError, __build__
 
 import datetime
 import sys
@@ -25,7 +25,7 @@ else:
 
 ASYNC_LOCK = Lock()
 
-__version__ = "al_submit v2.1.0"
+__version__ = "al_submit v%s.%s.%s" % __build__
 
 __help__ = """NAME
     al_submit
