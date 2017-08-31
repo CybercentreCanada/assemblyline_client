@@ -25,7 +25,7 @@ else:
 
 ASYNC_LOCK = Lock()
 
-__version__ = "al_submit v%s.%s.%s" % __build__
+__version__ = "al_submit v%s.%s.%s" % (__build__[0], __build__[1], __build__[2])
 
 __help__ = """NAME
     al_submit
