@@ -506,6 +506,12 @@ def _main(arguments):
         'json_output': json_output,
     }
 
+    read_from_pipe = (sys.platform.startswith("linux") or sys.platform.startswith("freebsd")) and not sys.stdin.isatty()
+
+    if len(args) == 0 and not read_from_pipe:
+        sys.stdout.write("%s\n" % __help__)
+        return 0
+
     try:
         client = Client(server, apikey=api_auth, auth=auth, cert=cert)
     except ClientError as e:
@@ -528,24 +534,20 @@ def _main(arguments):
         kw['notification_queue'] = uuid.uuid4().get_hex()
 
     # sanity check path
-    if len(args) == 0:
-        if (sys.platform.startswith("linux") or sys.platform.startswith("freebsd")) and not sys.stdin.isatty():
-            while True:
-                line = sys.stdin.readline()
-                if not line:
-                    break
+    if len(args) == 0 and read_from_pipe:
+        while True:
+            line = sys.stdin.readline()
+            if not line:
+                break
 
-                line = line.strip()
-                if line == '-':
-                    line = '/dev/stdin'
+            line = line.strip()
+            if line == '-':
+                line = '/dev/stdin'
 
-                if async:
-                    send_async(client, line, verbose=verbose, **kw)
-                else:
-                    send(client, line, output, options, **kw)
-        else:
-            sys.stdout.write("%s\n" % __help__)
-            return 0
+            if async:
+                send_async(client, line, verbose=verbose, **kw)
+            else:
+                send(client, line, output, options, **kw)
     else:
         ret_val = 0
         file_list = []
