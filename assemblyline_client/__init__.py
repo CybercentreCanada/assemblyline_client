@@ -13,7 +13,7 @@ from json import dumps
 from os.path import basename
 
 __all__ = ['Client', 'ClientError']
-__build__ = [3, 0, 8]
+__build__ = [3, 1, 0]
 
 try:
     # noinspection PyUnresolvedReferences,PyUnboundLocalVariable
@@ -60,9 +60,9 @@ def _join_params(q, l):
 
 # noinspection PyProtectedMember
 def _kw(*ex):
-    l = sys._getframe().f_back.f_locals  # pylint: disable=W0212
+    local_frames = sys._getframe().f_back.f_locals  # pylint: disable=W0212
     return {
-        k: _bool_to_param_string(v) for k, v in l.items() if k not in ex
+        k: _bool_to_param_string(v) for k, v in local_frames.items() if k not in ex
     }
 
 
@@ -414,7 +414,16 @@ class Connection(object):
 
         self.session = session
 
-        auth_session_detail = self._authenticate()
+        try:
+            auth_session_detail = self._authenticate()
+        except ClientError as ce:
+            if ce.status_code == 404:
+                # The 'api/v3/auth/login/' api does not exist, reverting to old authentication method.
+                auth_session_detail = {'session_duration': 60}
+                session.auth = self.auth
+            else:
+                raise
+
         session.timeout = auth_session_detail['session_duration']
 
         r = self.request(self.session.get, 'api/', _convert)
@@ -482,10 +491,14 @@ class Connection(object):
             if response.ok:
                 return process(response)
             elif response.status_code == 401:
-                resp_data = response.json()
-                if resp_data["api_error_message"] == "Authentication required":
-                    self._authenticate()
-                raise ClientError(response.content, response.status_code)
+                try:
+                    resp_data = response.json()
+                    if resp_data["api_error_message"] == "Authentication required":
+                        self._authenticate()
+                    else:
+                        raise ClientError(response.content, response.status_code)
+                except Exception:
+                    raise ClientError(response.content, response.status_code)
             elif response.status_code not in (502, 503, 504):
                 raise ClientError(response.content, response.status_code)
 
@@ -868,7 +881,7 @@ class SocketIO(object):
                 # noinspection PyBroadException
                 try:
                     self._sio.disconnect()
-                except:
+                except Exception:
                     pass
 
             def set_sio(self, sio):
@@ -897,13 +910,13 @@ class SocketIO(object):
     def _stop_callback(self, data):
         try:
             self._sio.disconnect()
-        except:
+        except Exception:
             pass
 
     def _error_callback(self, data):
         try:
             self._sio.disconnect()
-        except:
+        except Exception:
             pass
 
         raise ClientError(data['err_msg'], data['status_code'])
