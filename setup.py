@@ -11,6 +11,7 @@ setup(
     description='Assemblyline client library',
     long_description="The Assemblyline client library facilitates issuing requests to the Assemblyline framework.",
     license='MIT',
+    url='https://bitbucket.org/cse-assemblyline/assemblyline_client',
     author='CSE-CST Assemblyline development team',
     author_email='assemblyline-cse-cst@googlegroups.com',
 
