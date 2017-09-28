@@ -8,9 +8,11 @@ import assemblyline_client
 setup(
     name='assemblyline_client',
     version='.'.join(map(str, assemblyline_client.__build__)),
-    description='Assemblyline Client Library',
-    long_description="The Assemblyline Client Library facilitates issuing requests to assemblyline.",
+    description='Assemblyline client library',
+    long_description="The Assemblyline client library facilitates issuing requests to the Assemblyline framework.",
     license='MIT',
+    author='CSE-CST Assemblyline development team',
+    author_email='assemblyline-cse-cst@googlegroups.com',
 
     # See https://pypi.python.org/pypi?%3Aaction=list_classifiers
     classifiers=[
@@ -30,7 +32,14 @@ setup(
             'al-submit=assemblyline_client.submit:main',
         ],
     },
-    install_requires=['requests', 'socketio-client==0.5.6', 'requests[security]', 'pycrypto'],
-    keywords='assemblyline',
-    packages=['assemblyline_client'],
+    install_requires=[
+        'pycrypto',
+        'requests',
+        'requests[security]',
+        'socketio-client==0.5.6'
+    ],
+    keywords='development assemblyline client gc canada cse-cst cse cst',
+    packages=[
+        'assemblyline_client'
+    ],
 )
