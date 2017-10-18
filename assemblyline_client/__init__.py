@@ -13,7 +13,7 @@ from json import dumps
 from os.path import basename
 
 __all__ = ['Client', 'ClientError']
-__build__ = [3, 1, 0]
+__build__ = [3, 2, 0]
 
 try:
     # noinspection PyUnresolvedReferences,PyUnboundLocalVariable
@@ -488,6 +488,8 @@ class Connection(object):
             if retries:
                 time.sleep(min(2, 2 ** (retries - 7)))
             response = func('/'.join((self.server, path)), **kw)
+            if 'XSRF-TOKEN' in response.cookies:
+                self.session.headers.update({'X-XSRF-TOKEN': response.cookies['XSRF-TOKEN']})
             if response.ok:
                 return process(response)
             elif response.status_code == 401:
