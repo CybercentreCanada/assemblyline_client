@@ -90,3 +90,98 @@ You can listen on the different message queues and execute a callback on each me
     al_client.socketio.listen_on_dashboard_messages(callback)
 
 **NOTE**: Depending on the volume of data, you might process a ton of messages!
+
+----------------------------------------------------------------------------------------------
+
+# Bibliothèque cliente d’Assemblyline
+
+La bibliothèque cliente d’Assemblyline facilite la soumission de demandes à Assemblyline.
+
+## Exigences préalables
+
+Avant de procéder à l’installation du client, vous devez vous assurer d’installer ce qui suit :
+
+    # APT/YUM
+    libffi-dev
+    libssl-dev
+
+    # pypi
+    socketio-client==0.5.6
+    requests
+    requests[security]
+    pycrypto
+
+## Utilisation du client
+
+Vous pouvez instancier le client au moyen de l’extrait de code suivant :
+
+    from assemblyline_client import Client
+    al_client = Client("https://localhost:443", auth=('user', 'password'))
+
+    # ou d’une clé API :
+
+    al_client = Client("https://localhost:443", apikey=('user', 'key'))
+
+    # ou d’un certificat :
+
+    al_client = Client("https://localhost:443", cert='/path/to/cert/file.pem')
+
+Le client d’Assemblyline est pleinement documenté dans les docstrings. Si vous utilisez un client interactif comme ipython, vous serez en mesure d’utiliser la fonction d’aide.
+
+    al_client.search.alert?
+    Signature: al_client.search.alert(query, *args, **kwargs)
+    Docstring:
+    Search alerts with a SOLR query.
+
+    Required:
+    query   : SOLR query. (string)
+
+    SOLR parameters can be passed as key/value tuples or keyword parameters.
+
+    Returns all results.
+    File:      /usr/local/lib/python2.7/dist-packages/assemblyline_client/__init__.py
+    Type:      instancemethod
+
+### Exemples
+
+#### Soumission d’un fichier
+
+Pour soumettre un fichier au système, il suffit d’envoyer le chemin d’accès du fichier.
+
+    al_client.submit('/chemin/acces/de/mon/fichier.txt')
+
+#### Obtention d’une clé
+
+Pour obtenir une clé pour un compartiment donné, il suffit d’envoyer son ID.
+
+    submission_details = al_client.submission("8c24b49d-d907-4cd3-8d74-abb24df72402")
+
+#### Utilisation de la recherche
+
+Pour utiliser le moteur de recherche du client, il suffit de transmettre une demande SOLR.
+
+    search_res = al_client.search.submission("submission.submitter:user")
+
+**REMARQUE** : Vous obtiendrez le même résultat que si vous utilisiez SOLR.
+
+#### Utilisation de l’itérateur de recherche
+
+Plutôt que d’utiliser une recherche directe et d’obtenir une page de résultats, vous pouvez utiliser l’itérateur de recherche pour passer à travers tous les résultats.
+
+    for submission in al_client.search.stream.submission("submission.submitter:user"):
+        # Seuls les champs indexés sont renvoyés. Pour obtenir les résultats dans leur intégralité, vous devez y accéder manuellement,
+        full_submission = al_client.submission(submission['submission.sid'])
+
+        # puis faire quelque chose avec la soumission complète (imprimer, par exemple)
+        print full_submission
+
+#### L’écoute du message plutôt que la recherche de données
+
+Vous pouvez écouter les différentes files d’attente de messages et effectuer un rappel pour chaque message.
+
+    def callback(callback_data):
+        print callback_data
+
+    al_client.socketio.listen_on_dashboard_messages(callback)
+
+**REMARQUE** : Selon le volume de données, vous pourriez traiter une grande quantité de messages!
