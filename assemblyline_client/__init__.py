@@ -13,7 +13,7 @@ from json import dumps
 from os.path import basename
 
 __all__ = ['Client', 'ClientError']
-__build__ = [3, 2, 0]
+__build__ = [3, 2, 1]
 
 try:
     # noinspection PyUnresolvedReferences,PyUnboundLocalVariable
@@ -387,7 +387,13 @@ class Connection(object):
         silence_requests_warnings, apikey
     ):
         self.auth = auth
+        if self.auth:
+            self.auth = tuple([x.encode('UTF-8') for x in self.auth])
+
         self.apikey = apikey
+        if self.apikey:
+            self.apikey = tuple([x.encode('UTF-8') for x in self.apikey])
+
         if silence_requests_warnings:
             try:
                 requests.packages.urllib3.disable_warnings()  # pylint: disable=E1101
