@@ -34,7 +34,7 @@ setup(
         ],
     },
     install_requires=[
-        'pycrypto',
+        'pycryptodome',
         'requests',
         'requests[security]',
         'socketio-client==0.5.6'

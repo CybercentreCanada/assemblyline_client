@@ -13,7 +13,7 @@ from json import dumps
 from os.path import basename
 
 __all__ = ['Client', 'ClientError']
-__build__ = [3, 2, 1]
+__build__ = [3, 2, 2]
 
 try:
     # noinspection PyUnresolvedReferences,PyUnboundLocalVariable
@@ -387,12 +387,7 @@ class Connection(object):
         silence_requests_warnings, apikey
     ):
         self.auth = auth
-        if self.auth:
-            self.auth = tuple([x.encode('UTF-8') for x in self.auth])
-
         self.apikey = apikey
-        if self.apikey:
-            self.apikey = tuple([x.encode('UTF-8') for x in self.apikey])
 
         if silence_requests_warnings:
             try:
@@ -453,7 +448,9 @@ class Connection(object):
         if self.apikey and len(self.apikey) == 2:
             public_key = self._load_public_encryption_key()
             if public_key:
-                key = b64encode(public_key.encrypt(self.apikey[1]))
+                key = b64encode(public_key.encrypt(self.apikey[1].encode("UTF-8")))
+                if isinstance(key, bytes) and not isinstance(key, str):
+                    key = key.decode("UTF-8")
             else:
                 key = self.apikey[1]
             auth = {
@@ -463,7 +460,9 @@ class Connection(object):
         elif self.auth and len(self.auth) == 2:
             public_key = self._load_public_encryption_key()
             if public_key:
-                pw = b64encode(public_key.encrypt(self.auth[1]))
+                pw = b64encode(public_key.encrypt(self.auth[1].encode("UTF-8")))
+                if isinstance(pw, bytes) and not isinstance(pw, str):
+                    pw = pw.decode("UTF-8")
             else:
                 pw = self.auth[1]
             auth = {
