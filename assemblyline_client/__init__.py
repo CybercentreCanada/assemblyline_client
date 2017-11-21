@@ -625,19 +625,23 @@ class Ingest(object):
         self._connection = connection
 
     def __call__(
-        self, path, alert=False, contents=None, metadata=None,
-        nq=None, nt=None, params=None, srv_spec=None,
-        ingest_type='AL_CLIENT'  # pylint: disable=W0622
+        self, path=None, alert=False, contents=None, metadata=None,
+        nq=None, nt=None, params=None, srv_spec=None, fname=None,
+        url=None, sha256=None, ingest_type='AL_CLIENT'  # pylint: disable=W0622
     ):
         """\
 Submit a file to the ingestion queue.
 
-Required:
+Required (one of)
+contents: Content of the file to scan
 path    : Path/name of file. (string)
+sha256  : Sha256 of the file to scan
+url     : Url to scan
 
-Optional:
+Optional
 alert   : Create an alert if score above alert threshold. (boolean)
 contents: File contents. (string)
+fname   : Name of the file to scan
 metadata: Metadata to include with submission. (dict)
 nq      : Notification queue name. (string)
 nt      : Notification threshold. (integer-ish)
@@ -646,15 +650,35 @@ srv_spec: Service-specific parameters. (dict)
 
 If contents are provided, the path is used as metadata only.
 """
-        if contents is None:
-            with open(path, 'rb') as f:
-                contents = f.read()
-        request = {
-            'binary': b64encode(contents).decode('ascii'),
-            'name': basename(path),
-            'metadata': {'filename': path},
+        if contents is None and path:
+            if os.path.exists(path):
+                with open(path, 'rb') as f:
+                    contents = f.read()
+            else:
+                raise ClientError('File does not exist "%s"' % path, 400)
+
+        if contents:
+            request = {
+                'binary': b64encode(contents).decode('ascii'),
+                'name': fname or basename(path),
+            }
+        elif url:
+            request = {
+                'url': url,
+                'name': fname or basename(url).split("?")[0],
+            }
+        elif sha256:
+            request = {
+                'sha256': sha256,
+                'name': fname or sha256,
+            }
+        else:
+            raise ClientError('You need to provide at least content, a path, a url or a sha256', 400)
+
+        request.update({
+            'metadata': {'filename': request['name']},
             'type': ingest_type,
-        }
+        })
 
         if alert:
             request['generate_alert'] = alert
@@ -1253,26 +1277,46 @@ class Submit(object):
     def __init__(self, connection):
         self._connection = connection
 
-    def __call__(self, path, contents=None, params=None):
+    def __call__(self, path=None, contents=None, url=None, sha256=None, fname=None, params=None):
         """\
 Submit a file to be dispatched.
 
-Required:
+Required (one of)
+contents: Content of the file to scan
 path    : Path/name of file. (string)
+sha256  : Sha256 of the file to scan
+url     : Url to scan
 
-Optional:
-contents: File contents. (string)
+Optional
+fname   : Name of the file to scan
 params  : Additional submission parameters. (dict)
 
 If contents are provided, the path is used as metadata only.
 """
-        if contents is None:
-            with open(path, 'rb') as f:
-                contents = f.read()
-        request = {
-            'binary': b64encode(contents).decode('ascii'),
-            'name': basename(path),
-        }
+        if contents is None and path:
+            if os.path.exists(path):
+                with open(path, 'rb') as f:
+                    contents = f.read()
+            else:
+                raise ClientError('File does not exist "%s"' % path, 400)
+
+        if contents:
+            request = {
+                'binary': b64encode(contents).decode('ascii'),
+                'name': fname or basename(path),
+            }
+        elif url:
+            request = {
+                'url': url,
+                'name': fname or basename(url).split("?")[0],
+            }
+        elif sha256:
+            request = {
+                'sha256': sha256,
+                'name': fname or sha256,
+            }
+        else:
+            raise ClientError('You need to provide at least content, a path, a url or a sha256', 400)
 
         if params:
             request['params'] = params
