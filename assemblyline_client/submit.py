@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+# noinspection PyProtectedMember
 from assemblyline_client import Client, ClientError, __build__
 
 import datetime
@@ -64,6 +65,9 @@ DESCRIPTION
         -n, --no-output
             Only works in conjunction with -a. Ingests the file
             and does not wait for the output.
+            
+        -i, --insecure
+            Skip server cert validation
         
         -u, --user="user"
             username to be used to connect to AL
@@ -95,8 +99,10 @@ DESCRIPTION
             
             DEFAULT: transport://host:port in ~/.al/submit.cfg
         
-        -j, --json_params="{ ... }"
+        -j, --json-params="{ ... }"
             A JSON dictionary of submission parameters.
+        
+        --server-pem="/path/to/server/certificate.pem"
 
 """
 
@@ -380,10 +386,11 @@ def _main(arguments):
 
     # parse the command line args
     try:
-        opts, args = getopt(arguments, "hvqantdu:p:o:s:c:k:j:", ["help", "version", "quiet", "async", "no-output",
-                                                                 "text", "run-dynamic", "user=", "password=",
-                                                                 "output-file=", "server=", "cert=",
-                                                                 "apikey=", "json_params="])
+        opts, args = getopt(arguments, "hvqanitdu:p:o:s:c:k:j:", ["help", "version", "quiet", "async", "no-output",
+                                                                  "insecure", "text", "run-dynamic",
+                                                                  "user=", "password=",
+                                                                  "output-file=", "server=", "cert=",
+                                                                  "apikey=", "json-params=", "server-pem="])
     except Exception as exc:  # pylint: disable=W0703
         sys.stderr.write("Args error %s\n\n%s\n" % (exc, __help__))
         return 1
@@ -416,6 +423,15 @@ def _main(arguments):
         no_output = True
     else:
         no_output = False
+
+    # Do not verify server
+    if 'i' in params or 'insecure' in params:
+        verify = False
+    else:
+        if 'server-pem' in params:
+            verify = params["server-pem"]
+        else:
+            verify = True
 
     # Display as human readable text
     if 't' in params or 'text' in params:
@@ -473,12 +489,12 @@ def _main(arguments):
         f = None
         try:
             f = open(output, "ab")
-        except:  # pylint: disable=W0702
+        except Exception:  # pylint: disable=W0702
             sys.stderr.write("!!ERROR!! Output file cannot be created (%s)\n" % output)
         finally:
             try:
                 f.close()
-            except:  # pylint: disable=W0702
+            except Exception:  # pylint: disable=W0702
                 pass
 
     # Server
@@ -493,8 +509,8 @@ def _main(arguments):
 
     if "j" in params:
         kw["params"] = json.loads(params['j'])
-    elif "json_params" in params:
-        kw["params"] = json.loads(params['json_params'])
+    elif "json-params" in params:
+        kw["params"] = json.loads(params['json-params'])
 
     auth = None
     api_auth = None
@@ -517,7 +533,7 @@ def _main(arguments):
         return 0
 
     try:
-        client = Client(server, apikey=api_auth, auth=auth, cert=cert)
+        client = Client(server, apikey=api_auth, auth=auth, cert=cert, verify=verify)
     except ClientError as e:
         if e.status_code == 401:
             sys.stderr.write("!!ERROR!! Authentication to the server failed.\n")

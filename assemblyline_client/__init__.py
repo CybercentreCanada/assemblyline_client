@@ -13,7 +13,7 @@ from json import dumps
 from os.path import basename
 
 __all__ = ['Client', 'ClientError']
-__build__ = [3, 3, 0]
+__build__ = [3, 4, 0]
 
 try:
     # noinspection PyUnresolvedReferences,PyUnboundLocalVariable
@@ -345,11 +345,11 @@ Returns {'success': True/False } depending if it was imported or not
 class Client(object):
     def __init__(  # pylint: disable=R0913
         self, server, auth=None, cert=None, debug=lambda x: None,
-        headers=None, retries=RETRY_FOREVER, silence_requests_warnings=True, apikey=None
+        headers=None, retries=RETRY_FOREVER, silence_requests_warnings=True, apikey=None, verify=True
     ):
         self._connection = Connection(
             server, auth, cert, debug, headers, retries,
-            silence_requests_warnings, apikey
+            silence_requests_warnings, apikey, verify
         )
 
         self.alert = Alert(self._connection)
@@ -384,7 +384,7 @@ class Connection(object):
     # noinspection PyUnresolvedReferences
     def __init__(  # pylint: disable=R0913
         self, server, auth, cert, debug, headers, retries,
-        silence_requests_warnings, apikey
+        silence_requests_warnings, apikey, verify
     ):
         self.auth = auth
         self.apikey = apikey
@@ -402,11 +402,12 @@ class Connection(object):
         self.debug = debug
         self.max_retries = retries
         self.server = server
+        self.verify = verify
 
         session = requests.Session()
 
         session.headers.update({'content-type': 'application/json'})
-        session.verify = False
+        session.verify = verify
 
         if cert:
             session.cert = cert
@@ -936,6 +937,7 @@ class SocketIO(object):
         self._log.setLevel(logging.WARNING)
         self._stop_on_warning = TerminateLogHandler()
         self._log.addHandler(self._stop_on_warning)
+        self._verify = connection.verify
 
     # noinspection PyUnusedLocal
     def _stop_callback(self, data):
@@ -961,7 +963,7 @@ Required:
 
 This function wait indefinitely and calls the appropriate callback for each messages returned
 """
-        self._sio = socketIO_client.SocketIO(self._server, port=self._port, headers=self._header, verify=False)
+        self._sio = socketIO_client.SocketIO(self._server, port=self._port, headers=self._header, verify=self._verify)
         self._stop_on_warning.set_sio(self._sio)
 
         self._sio.on("AlertCreated", alert_callback)
@@ -984,7 +986,7 @@ This function wait indefinitely and calls the appropriate callback for each mess
         if dispatcher_msg_callback is None and ingest_msg_callback is None and service_msg_callback is None:
             raise ClientError("At least one of the callbacks needs to be defined...", 400)
 
-        self._sio = socketIO_client.SocketIO(self._server, port=self._port, headers=self._header, verify=False)
+        self._sio = socketIO_client.SocketIO(self._server, port=self._port, headers=self._header, verify=self._verify)
         self._stop_on_warning.set_sio(self._sio)
 
         if dispatcher_msg_callback:
@@ -1011,7 +1013,7 @@ This function wait indefinitely and calls the appropriate callback for each mess
         if result_callback is None and error_callback is None:
             raise ClientError("At least one of the callbacks needs to be defined...", 400)
 
-        self._sio = socketIO_client.SocketIO(self._server, port=self._port, headers=self._header, verify=False)
+        self._sio = socketIO_client.SocketIO(self._server, port=self._port, headers=self._header, verify=self._verify)
         self._stop_on_warning.set_sio(self._sio)
 
         if result_callback:
@@ -1034,7 +1036,7 @@ Required:
 
 This function wait indefinitely and calls the appropriate callback for each messages returned
 """
-        self._sio = socketIO_client.SocketIO(self._server, port=self._port, headers=self._header, verify=False)
+        self._sio = socketIO_client.SocketIO(self._server, port=self._port, headers=self._header, verify=self._verify)
         self._stop_on_warning.set_sio(self._sio)
 
         self._sio.on("SubmissionIngested", submission_callback)
