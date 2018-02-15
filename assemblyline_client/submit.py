@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+# noinspection PyProtectedMember
 from assemblyline_client import Client, ClientError, __build__
 
 import datetime
@@ -64,26 +65,31 @@ DESCRIPTION
         -n, --no-output
             Only works in conjunction with -a. Ingests the file
             and does not wait for the output.
+            
+        -i, --insecure
+            Skip server cert validation
+            
+            DEFAULT: insecure in auth section of ~/.al/submit.cfg
         
         -u, --user="user"
             username to be used to connect to AL
             
-            DEFAULT: user in ~/.al/submit.cfg
+            DEFAULT: user in auth section of ~/.al/submit.cfg
         
         -p, --password="MYPASSWORD"
             password of the user
             
-            DEFAULT: password in ~/.al/submit.cfg
+            DEFAULT: password in auth section of ~/.al/submit.cfg
 
         -k, --apikey="MY_RANDOM_API_KEY"
             apikey to use for the user to login
             
-            DEFAULT: apikey in ~/.al/submit.cfg
+            DEFAULT: apikey in auth section of ~/.al/submit.cfg
 
         -c, --cert="/path/to/pki.pem"
             Client cert used to connect to server
 
-            DEFAULT: cert in ~/.al/submit.cfg
+            DEFAULT: cert in auth section of ~/.al/submit.cfg
             
         -o, --output-file="/home/user/output.txt"
             File to write the results to
@@ -93,10 +99,14 @@ DESCRIPTION
         -s, --server="http://my.al.server"
             Server to connect to
             
-            DEFAULT: transport://host:port in ~/.al/submit.cfg
+            DEFAULT: transport://host:port in server section of ~/.al/submit.cfg
         
-        -j, --json_params="{ ... }"
+        -j, --json-params="{ ... }"
             A JSON dictionary of submission parameters.
+        
+        --server-crt="/path/to/server.crt"
+        
+            DEFAULT: cert in server section of ~/.al/submit.cfg
 
 """
 
@@ -355,6 +365,7 @@ def _main(arguments):
     host = "localhost"
     port = 443
     kw = {}
+    verify = True
 
     config = ConfigParser()
     config.read([expanduser("~/.al/submit.cfg")])
@@ -368,6 +379,9 @@ def _main(arguments):
                 cert = config.get('auth', 'cert')
             if 'apikey' in config.options('auth'):
                 apikey = config.get('auth', 'apikey')
+            if 'insecure' in config.options('auth'):
+                verify = not (config.get('auth', 'insecure').lower() == 'true' or
+                              config.get('auth', 'insecure').lower() == 'yes')
         elif section == "server":
             if 'transport' in config.options('server'):
                 transport = config.get('server', 'transport')
@@ -375,15 +389,18 @@ def _main(arguments):
                 host = config.get('server', 'host')
             if 'port' in config.options('server'):
                 port = config.get('server', 'port')
+            if 'cert' in config.options('server'):
+                verify = config.get('server', 'cert')
 
     server = "%s://%s:%s" % (transport, host, port)
 
     # parse the command line args
     try:
-        opts, args = getopt(arguments, "hvqantdu:p:o:s:c:k:j:", ["help", "version", "quiet", "async", "no-output",
-                                                                 "text", "run-dynamic", "user=", "password=",
-                                                                 "output-file=", "server=", "cert=",
-                                                                 "apikey=", "json_params="])
+        opts, args = getopt(arguments, "hvqanitdu:p:o:s:c:k:j:", ["help", "version", "quiet", "async", "no-output",
+                                                                  "insecure", "text", "run-dynamic",
+                                                                  "user=", "password=",
+                                                                  "output-file=", "server=", "cert=",
+                                                                  "apikey=", "json-params=", "server-crt="])
     except Exception as exc:  # pylint: disable=W0703
         sys.stderr.write("Args error %s\n\n%s\n" % (exc, __help__))
         return 1
@@ -416,6 +433,13 @@ def _main(arguments):
         no_output = True
     else:
         no_output = False
+
+    # Do not verify server
+    if 'i' in params or 'insecure' in params:
+        verify = False
+    else:
+        if 'server-crt' in params:
+            verify = params["server-crt"]
 
     # Display as human readable text
     if 't' in params or 'text' in params:
@@ -473,12 +497,12 @@ def _main(arguments):
         f = None
         try:
             f = open(output, "ab")
-        except:  # pylint: disable=W0702
+        except Exception:  # pylint: disable=W0702
             sys.stderr.write("!!ERROR!! Output file cannot be created (%s)\n" % output)
         finally:
             try:
                 f.close()
-            except:  # pylint: disable=W0702
+            except Exception:  # pylint: disable=W0702
                 pass
 
     # Server
@@ -493,8 +517,8 @@ def _main(arguments):
 
     if "j" in params:
         kw["params"] = json.loads(params['j'])
-    elif "json_params" in params:
-        kw["params"] = json.loads(params['json_params'])
+    elif "json-params" in params:
+        kw["params"] = json.loads(params['json-params'])
 
     auth = None
     api_auth = None
@@ -517,10 +541,12 @@ def _main(arguments):
         return 0
 
     try:
-        client = Client(server, apikey=api_auth, auth=auth, cert=cert)
+        client = Client(server, apikey=api_auth, auth=auth, cert=cert, verify=verify)
     except ClientError as e:
         if e.status_code == 401:
             sys.stderr.write("!!ERROR!! Authentication to the server failed.\n")
+        elif e.status_code == 495:
+            sys.stderr.write("!!ERROR!! Invalid SSL connection to the server:\n\t%s\n" % e.message)
         else:
             raise
         return 1
