@@ -31,6 +31,11 @@ You can instantiate the client using the following snippet of code:
     
     al_client = Client("https://localhost:443", cert='/path/to/cert/file.pem')
 
+    # and if your assemblyline server is using a self-signed cert
+
+    al_client = Client("https://localhost:443", auth=('user', 'password'), verify=False)
+    al_client = Client("https://localhost:443", auth=('user', 'password'), verify='/path/to/server.crt')
+
 The assemblyline client is fully documented in the docstrings so if you use an interactive client like ipython you can use the help feature.
 
     al_client.search.alert?
@@ -125,6 +130,11 @@ Vous pouvez instancier le client au moyen de l’extrait de code suivant :
     # ou d’un certificat :
 
     al_client = Client("https://localhost:443", cert='/path/to/cert/file.pem')
+
+    # et si votre server assemblyline a un certificat auto-signé
+
+    al_client = Client("https://localhost:443", auth=('user', 'password'), verify=False)
+    al_client = Client("https://localhost:443", auth=('user', 'password'), verify='/path/to/server.crt')
 
 Le client d’Assemblyline est pleinement documenté dans les docstrings. Si vous utilisez un client interactif comme ipython, vous serez en mesure d’utiliser la fonction d’aide.
 
