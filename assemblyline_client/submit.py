@@ -68,26 +68,28 @@ DESCRIPTION
             
         -i, --insecure
             Skip server cert validation
+            
+            DEFAULT: insecure in auth section of ~/.al/submit.cfg
         
         -u, --user="user"
             username to be used to connect to AL
             
-            DEFAULT: user in ~/.al/submit.cfg
+            DEFAULT: user in auth section of ~/.al/submit.cfg
         
         -p, --password="MYPASSWORD"
             password of the user
             
-            DEFAULT: password in ~/.al/submit.cfg
+            DEFAULT: password in auth section of ~/.al/submit.cfg
 
         -k, --apikey="MY_RANDOM_API_KEY"
             apikey to use for the user to login
             
-            DEFAULT: apikey in ~/.al/submit.cfg
+            DEFAULT: apikey in auth section of ~/.al/submit.cfg
 
         -c, --cert="/path/to/pki.pem"
             Client cert used to connect to server
 
-            DEFAULT: cert in ~/.al/submit.cfg
+            DEFAULT: cert in auth section of ~/.al/submit.cfg
             
         -o, --output-file="/home/user/output.txt"
             File to write the results to
@@ -97,12 +99,14 @@ DESCRIPTION
         -s, --server="http://my.al.server"
             Server to connect to
             
-            DEFAULT: transport://host:port in ~/.al/submit.cfg
+            DEFAULT: transport://host:port in server section of ~/.al/submit.cfg
         
         -j, --json-params="{ ... }"
             A JSON dictionary of submission parameters.
         
-        --server-pem="/path/to/server/certificate.pem"
+        --server-crt="/path/to/server.crt"
+        
+            DEFAULT: cert in server section of ~/.al/submit.cfg
 
 """
 
@@ -361,6 +365,7 @@ def _main(arguments):
     host = "localhost"
     port = 443
     kw = {}
+    verify = True
 
     config = ConfigParser()
     config.read([expanduser("~/.al/submit.cfg")])
@@ -374,6 +379,9 @@ def _main(arguments):
                 cert = config.get('auth', 'cert')
             if 'apikey' in config.options('auth'):
                 apikey = config.get('auth', 'apikey')
+            if 'insecure' in config.options('auth'):
+                verify = not (config.get('auth', 'insecure').lower() == 'true' or
+                              config.get('auth', 'insecure').lower() == 'yes')
         elif section == "server":
             if 'transport' in config.options('server'):
                 transport = config.get('server', 'transport')
@@ -381,6 +389,8 @@ def _main(arguments):
                 host = config.get('server', 'host')
             if 'port' in config.options('server'):
                 port = config.get('server', 'port')
+            if 'cert' in config.options('server'):
+                verify = config.get('server', 'cert')
 
     server = "%s://%s:%s" % (transport, host, port)
 
@@ -390,7 +400,7 @@ def _main(arguments):
                                                                   "insecure", "text", "run-dynamic",
                                                                   "user=", "password=",
                                                                   "output-file=", "server=", "cert=",
-                                                                  "apikey=", "json-params=", "server-pem="])
+                                                                  "apikey=", "json-params=", "server-crt="])
     except Exception as exc:  # pylint: disable=W0703
         sys.stderr.write("Args error %s\n\n%s\n" % (exc, __help__))
         return 1
@@ -428,10 +438,8 @@ def _main(arguments):
     if 'i' in params or 'insecure' in params:
         verify = False
     else:
-        if 'server-pem' in params:
-            verify = params["server-pem"]
-        else:
-            verify = True
+        if 'server-crt' in params:
+            verify = params["server-crt"]
 
     # Display as human readable text
     if 't' in params or 'text' in params:
@@ -537,6 +545,8 @@ def _main(arguments):
     except ClientError as e:
         if e.status_code == 401:
             sys.stderr.write("!!ERROR!! Authentication to the server failed.\n")
+        elif e.status_code == 495:
+            sys.stderr.write("!!ERROR!! Invalid SSL connection to the server:\n\t%s\n" % e.message)
         else:
             raise
         return 1

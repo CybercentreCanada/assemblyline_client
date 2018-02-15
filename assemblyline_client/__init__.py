@@ -390,14 +390,8 @@ class Connection(object):
         self.apikey = apikey
 
         if silence_requests_warnings:
-            try:
-                requests.packages.urllib3.disable_warnings()  # pylint: disable=E1101
-            except AttributeError:
-                # Difference versions of requests may not have 'packages'.
-                try:
-                    requests.urllib3.disable_warnings()  # pylint: disable=E1101
-                except AttributeError:
-                    pass
+            import warnings
+            warnings.simplefilter('ignore')
 
         self.debug = debug
         self.max_retries = retries
@@ -425,6 +419,9 @@ class Connection(object):
                 session.auth = self.auth
             else:
                 raise
+        except requests.exceptions.SSLError as ssle:
+            raise ClientError("Client could not connect to the server "
+                              "due to the following SSLError: %s" % ssle.message, 495)
 
         session.timeout = auth_session_detail['session_duration']
 
