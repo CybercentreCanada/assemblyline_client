@@ -14,7 +14,7 @@ To install the client you'll need to make sure the you have the folowing install
     socketio-client==0.5.6
     requests
     requests[security]
-    pycrypto
+    pycryptodome
 
 ## Using the client
 
@@ -114,7 +114,7 @@ Avant de procéder à l’installation du client, vous devez vous assurer d’in
     socketio-client==0.5.6
     requests
     requests[security]
-    pycrypto
+    pycryptodome
 
 ## Utilisation du client
 
