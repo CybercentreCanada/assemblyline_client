@@ -13,7 +13,7 @@ from json import dumps
 from os.path import basename
 
 __all__ = ['Client', 'ClientError']
-__build__ = [3, 4, 0]
+__build__ = [3, 5, 0]
 
 try:
     # noinspection PyUnresolvedReferences,PyUnboundLocalVariable
@@ -45,7 +45,7 @@ def _convert(response):
 
 
 def _join_param(k, v):
-    return '='.join((k, quote(str(v)))) 
+    return '='.join((k, quote(str(v))))
 
 
 def _join_kw(kw):
@@ -743,7 +743,7 @@ class Search(object):
 
         args = [('df', 'text')] + list(args) + list(kwargs.items())
         params = _join_params(query, args)
-        path = '?q='.join((_path('search/advanced', bucket), params)) 
+        path = '?q='.join((_path('search/advanced', bucket), params))
         return self._connection.get(path)
 
     def alert(self, query, *args, **kwargs):
@@ -1326,6 +1326,17 @@ If contents are provided, the path is used as metadata only.
         """For internal use."""
         return self._connection.post(_magic_path(self), data=dumps(srls))
 
+    def dynamic(self, sid):
+        """\
+Resubmit a file for dynamic analysis
+
+Required:
+sid     : Submission ID. (string)
+
+Throws a Client exception if the submission does not exist.
+"""
+        return self._connection.get(_magic_path(self, sid))
+
     def identify(self, data_block):
         """For internal use."""
         return self._connection.post(_magic_path(self), data=dumps(data_block))
@@ -1333,6 +1344,17 @@ If contents are provided, the path is used as metadata only.
     def presubmit(self, data_block):
         """For internal use."""
         return self._connection.post(_magic_path(self), data=dumps(data_block))
+
+    def resubmit(self, sid):
+        """\
+Resubmit a file for analysis with the exact same parameters.
+
+Required:
+sid     : Submission ID. (string)
+
+Throws a Client exception if the submission does not exist.
+"""
+        return self._connection.get(_magic_path(self, sid))
 
     def start(self, data_block):
         """For internal use."""
