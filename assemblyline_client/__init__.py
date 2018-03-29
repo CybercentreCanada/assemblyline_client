@@ -13,7 +13,7 @@ from json import dumps
 from os.path import basename
 
 __all__ = ['Client', 'ClientError']
-__build__ = [3, 5, 0]
+__build__ = [3, 6, 0]
 
 try:
     # noinspection PyUnresolvedReferences,PyUnboundLocalVariable
@@ -356,6 +356,7 @@ class Client(object):
         self.bundle = Bundle(self._connection)
         self.file = File(self._connection)
         self.hash_search = HashSearch(self._connection)
+        self.heuristics = Heuristics(self._connection)
         self.ingest = Ingest(self._connection)
         self.live = Live(self._connection)
         self.search = Search(self._connection)
@@ -616,6 +617,32 @@ Note: Not all hash types are supported by all data sources.
     def list_data_sources(self):
         """Return the hash search data sources available."""
         return self._connection.get(_path('hash_search/list_data_sources'))
+
+
+class Heuristics(object):
+    def __init__(self, connection):
+        self._connection = connection
+
+    def __call__(self, heuristic_id):
+        """\
+Get a specific heuristic's details from the system.
+
+Required:
+heuristic_id: (string) ID of the heuristic.
+"""
+        return self._connection.get(_path('heuristics', heuristic_id))
+
+    def list(self, offset=None, length=None, query=None):
+        """\
+List all heuristics in the system.
+
+Optional:
+offset  : Offset to start returning results
+length  : Number of results to return
+query   : Query to use to filter the results
+"""
+        return self._connection.get(_path('heuristics/list',
+                                    offset=offset, length=length, query=query))
 
 
 class Ingest(object):
