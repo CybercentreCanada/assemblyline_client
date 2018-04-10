@@ -103,6 +103,9 @@ DESCRIPTION
         
         -j, --json-params="{ ... }"
             A JSON dictionary of submission parameters.
+            
+        --srv_spec="{ ... }"
+            A JSON dictionary of service specific parameters.
         
         --server-crt="/path/to/server.crt"
         
@@ -400,7 +403,7 @@ def _main(arguments):
                                                                   "insecure", "text", "run-dynamic",
                                                                   "user=", "password=",
                                                                   "output-file=", "server=", "cert=",
-                                                                  "apikey=", "json-params=", "server-crt="])
+                                                                  "apikey=", "json-params=", "server-crt=", "srv_spec="])
     except Exception as exc:  # pylint: disable=W0703
         sys.stderr.write("Args error %s\n\n%s\n" % (exc, __help__))
         return 1
@@ -519,6 +522,9 @@ def _main(arguments):
         kw["params"] = json.loads(params['j'])
     elif "json-params" in params:
         kw["params"] = json.loads(params['json-params'])
+
+    if "srv_spec" in params:
+        kw["srv_spec"] = json.loads(params['srv_spec'])
 
     auth = None
     api_auth = None
