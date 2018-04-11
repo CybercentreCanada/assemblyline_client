@@ -13,7 +13,7 @@ from json import dumps
 from os.path import basename
 
 __all__ = ['Client', 'ClientError']
-__build__ = [3, 6, 0]
+__build__ = [3, 6, 1]
 
 try:
     # noinspection PyUnresolvedReferences,PyUnboundLocalVariable
@@ -1303,7 +1303,7 @@ class Submit(object):
     def __init__(self, connection):
         self._connection = connection
 
-    def __call__(self, path=None, contents=None, url=None, sha256=None, fname=None, params=None):
+    def __call__(self, path=None, contents=None, url=None, sha256=None, fname=None, params=None, srv_spec=None):
         """\
 Submit a file to be dispatched.
 
@@ -1316,6 +1316,7 @@ url     : Url to scan
 Optional
 fname   : Name of the file to scan
 params  : Additional submission parameters. (dict)
+srv_spec: Service specific submission parameters. (dict)
 
 If contents are provided, the path is used as metadata only.
 """
@@ -1346,6 +1347,9 @@ If contents are provided, the path is used as metadata only.
 
         if params:
             request['params'] = params
+
+        if srv_spec:
+            request['srv_spec'] = srv_spec
 
         return self._connection.post(_path('submit'), data=dumps(request))
 
