@@ -10,7 +10,6 @@ import threading
 
 from base64 import b64encode
 from json import dumps
-from os.path import basename
 
 __all__ = ['Client', 'ClientError']
 __build__ = [3, 7, 0]
@@ -686,12 +685,12 @@ If contents are provided, the path is used as metadata only.
         if contents:
             request = {
                 'binary': b64encode(contents).decode('ascii'),
-                'name': fname or basename(path),
+                'name': fname or os.path.basename(path),
             }
         elif url:
             request = {
                 'url': url,
-                'name': fname or basename(url).split("?")[0],
+                'name': fname or os.path.basename(url).split("?")[0],
             }
         elif sha256:
             request = {
@@ -1331,12 +1330,12 @@ If contents are provided, the path is used as metadata only.
         if contents:
             request = {
                 'binary': b64encode(contents).decode('ascii'),
-                'name': fname or basename(path),
+                'name': fname or os.path.basename(path),
             }
         elif url:
             request = {
                 'url': url,
-                'name': fname or basename(url).split("?")[0],
+                'name': fname or os.path.basename(url).split("?")[0],
             }
         elif sha256:
             request = {
