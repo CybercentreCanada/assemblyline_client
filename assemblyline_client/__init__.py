@@ -13,7 +13,7 @@ from json import dumps
 from os.path import basename
 
 __all__ = ['Client', 'ClientError']
-__build__ = [3, 6, 1]
+__build__ = [3, 7, 0]
 
 try:
     # noinspection PyUnresolvedReferences,PyUnboundLocalVariable
@@ -365,6 +365,7 @@ class Client(object):
         self.socketio = SocketIO(self._connection)
         self.submission = Submission(self._connection)
         self.submit = Submit(self._connection)
+        self.tc_signature = TCSignature(self._connection)
         self.user = User(self._connection)
 
         paths = []
@@ -1390,6 +1391,32 @@ Throws a Client exception if the submission does not exist.
     def start(self, data_block):
         """For internal use."""
         return self._connection.post(_magic_path(self), data=dumps(data_block))
+
+
+class TCSignature(object):
+    def __init__(self, connection):
+        self._connection = connection
+
+    def __call__(self, signature_id):
+        """\
+Get a specific tagcheck signature details from the system.
+
+Required:
+signature_id: (string) ID of the tagcheck signature.
+"""
+        return self._connection.get(_path('tc_signatures', signature_id))
+
+    def list(self, offset=None, length=None, query=None):
+        """\
+List all tagcheck signatures in the system.
+
+Optional:
+offset  : Offset to start returning results
+length  : Number of results to return
+query   : Query to use to filter the results
+"""
+        return self._connection.get(_path('tc_signatures/list',
+                                    offset=offset, length=length, query=query))
 
 
 class User(object):
