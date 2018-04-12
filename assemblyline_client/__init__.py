@@ -10,10 +10,9 @@ import threading
 
 from base64 import b64encode
 from json import dumps
-from os.path import basename
 
 __all__ = ['Client', 'ClientError']
-__build__ = [3, 6, 1]
+__build__ = [3, 7, 0]
 
 try:
     # noinspection PyUnresolvedReferences,PyUnboundLocalVariable
@@ -365,6 +364,7 @@ class Client(object):
         self.socketio = SocketIO(self._connection)
         self.submission = Submission(self._connection)
         self.submit = Submit(self._connection)
+        self.tc_signature = TCSignature(self._connection)
         self.user = User(self._connection)
 
         paths = []
@@ -632,7 +632,7 @@ heuristic_id: (string) ID of the heuristic.
 """
         return self._connection.get(_path('heuristics', heuristic_id))
 
-    def list(self, offset=None, length=None, query=None):
+    def list(self, query='*', offset=None, length=None):
         """\
 List all heuristics in the system.
 
@@ -685,12 +685,12 @@ If contents are provided, the path is used as metadata only.
         if contents:
             request = {
                 'binary': b64encode(contents).decode('ascii'),
-                'name': fname or basename(path),
+                'name': fname or os.path.basename(path),
             }
         elif url:
             request = {
                 'url': url,
-                'name': fname or basename(url).split("?")[0],
+                'name': fname or os.path.basename(url).split("?")[0],
             }
         elif sha256:
             request = {
@@ -1330,12 +1330,12 @@ If contents are provided, the path is used as metadata only.
         if contents:
             request = {
                 'binary': b64encode(contents).decode('ascii'),
-                'name': fname or basename(path),
+                'name': fname or os.path.basename(path),
             }
         elif url:
             request = {
                 'url': url,
-                'name': fname or basename(url).split("?")[0],
+                'name': fname or os.path.basename(url).split("?")[0],
             }
         elif sha256:
             request = {
@@ -1390,6 +1390,32 @@ Throws a Client exception if the submission does not exist.
     def start(self, data_block):
         """For internal use."""
         return self._connection.post(_magic_path(self), data=dumps(data_block))
+
+
+class TCSignature(object):
+    def __init__(self, connection):
+        self._connection = connection
+
+    def __call__(self, signature_id):
+        """\
+Get a specific tagcheck signature details from the system.
+
+Required:
+signature_id: (string) ID of the tagcheck signature.
+"""
+        return self._connection.get(_path('tc_signatures', signature_id))
+
+    def list(self, query="*", offset=None, length=None):
+        """\
+List all tagcheck signatures in the system.
+
+Optional:
+offset  : Offset to start returning results
+length  : Number of results to return
+query   : Query to use to filter the results
+"""
+        return self._connection.get(_path('tc_signatures/list',
+                                    offset=offset, length=length, query=query))
 
 
 class User(object):
