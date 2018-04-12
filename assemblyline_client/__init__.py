@@ -633,7 +633,7 @@ heuristic_id: (string) ID of the heuristic.
 """
         return self._connection.get(_path('heuristics', heuristic_id))
 
-    def list(self, offset=None, length=None, query=None):
+    def list(self, query='*', offset=None, length=None):
         """\
 List all heuristics in the system.
 
@@ -1406,7 +1406,7 @@ signature_id: (string) ID of the tagcheck signature.
 """
         return self._connection.get(_path('tc_signatures', signature_id))
 
-    def list(self, offset=None, length=None, query=None):
+    def list(self, query="*", offset=None, length=None):
         """\
 List all tagcheck signatures in the system.
 
