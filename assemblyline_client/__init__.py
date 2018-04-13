@@ -12,7 +12,7 @@ from base64 import b64encode
 from json import dumps
 
 __all__ = ['Client', 'ClientError']
-__build__ = [3, 7, 0]
+__build__ = [3, 7, 1]
 
 try:
     # noinspection PyUnresolvedReferences,PyUnboundLocalVariable
@@ -1403,7 +1403,7 @@ Get a specific tagcheck signature details from the system.
 Required:
 signature_id: (string) ID of the tagcheck signature.
 """
-        return self._connection.get(_path('tc_signatures', signature_id))
+        return self._connection.get(_path('tc_signature', signature_id))
 
     def list(self, query="*", offset=None, length=None):
         """\
@@ -1414,7 +1414,7 @@ offset  : Offset to start returning results
 length  : Number of results to return
 query   : Query to use to filter the results
 """
-        return self._connection.get(_path('tc_signatures/list',
+        return self._connection.get(_path('tc_signature/list',
                                     offset=offset, length=length, query=query))
 
 
