@@ -85,6 +85,13 @@ Instead of using a strait search and getting a page of result, you can use the s
         # Then do stuff with full submission (print for example)
         print full_submission
 
+#### Using search parameters
+
+You can pass search parameters for any given query. The following examples a SOLR facet search to get the top users submitting to a server.
+
+    kwargs = {'facet':'on', 'facet.field':'submission.submitter', 'facet.sort':'count', 'facet.limit':50, 'rows':0}  # rows=0 so that only facet results return
+    c.search.submission('times.submitted:[NOW-7DAYS TO NOW]', **kwargs)
+
 #### Listen for message instead of querying for data
 
 You can listen on the different message queues and execute a callback on each message.
@@ -184,6 +191,13 @@ Plutôt que d’utiliser une recherche directe et d’obtenir une page de résul
 
         # puis faire quelque chose avec la soumission complète (imprimer, par exemple)
         print full_submission
+
+#### Utilisation des paramètres de recherche
+
+Vous pouvez transmettre des paramètres de recherche pour une requête donnée. Les exemples suivants démontrent  une recherche de facettes SOLR pour obtenir les utilisateurs les plus fréquants soumettant à un server.
+
+    kwargs = {'facet':'on', 'facet.field':'submission.submitter', 'facet.sort':'count', 'facet.limit':50, 'rows':0}  # rows=0 pour que seuls les résultats de la facette soient retourné
+    c.search.submission('times.submitted:[NOW-7DAYS TO NOW]', **kwargs)
 
 #### L’écoute du message plutôt que la recherche de données
 
