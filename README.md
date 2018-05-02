@@ -196,7 +196,7 @@ Plutôt que d’utiliser une recherche directe et d’obtenir une page de résul
 
 Vous pouvez transmettre des paramètres de recherche pour une requête donnée. Les exemples suivants démontrent  une recherche de facettes SOLR pour obtenir les utilisateurs les plus fréquants soumettant à un server.
 
-    kwargs = {'facet':'on', 'facet.field':'submission.submitter', 'facet.sort':'count', 'facet.limit':50, 'rows':0}  # rows = 0 pour que seuls les résultats de la facette soient retourné
+    kwargs = {'facet':'on', 'facet.field':'submission.submitter', 'facet.sort':'count', 'facet.limit':50, 'rows':0}  # rows=0 pour que seuls les résultats de la facette soient retourné
     c.search.submission('times.submitted:[NOW-7DAYS TO NOW]', **kwargs)
 
 #### L’écoute du message plutôt que la recherche de données
