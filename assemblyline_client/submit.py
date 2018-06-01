@@ -8,10 +8,10 @@ import sys
 import select
 import uuid
 import json
+import io
 
 from copy import deepcopy
 from errno import EPIPE
-from getopt import getopt
 from getpass import getpass
 from os.path import exists, isdir, basename, join, expanduser
 from os import walk
@@ -29,89 +29,6 @@ ASYNC_LOCK = Lock()
 
 __version__ = "al_submit v%s.%s.%s" % (__build__[0], __build__[1], __build__[2])
 
-__help__ = """NAME
-    al_submit
-
-SYNOPSIS
-    al_submit [OPTIONS] [file/dir1, file/dir2, ... file/dirN]
-    
-    NOTE: If file not provided, will read the file from stdin and output
-          results to stdout.
-
-DESCRIPTION
-    Submit a file to AL using the web API and write the results to a
-    file or to stdout    
-    
-    Arguments:
-
-        -h, --help
-            Display this help.
-            
-        -v, --version
-            Show al_submit version and quit.
-
-        -t, --text
-            Dumps results as text instead of json.
-
-        -d, --run-dynamic
-            Adds Dynamic Analysis to the list of service to run
-
-        -q, --quiet
-            Runs in quiet mode
-
-        -a, --async
-            Run in asynchronized mode (uses ingest API).
-
-        -n, --no-output
-            Only works in conjunction with -a. Ingests the file
-            and does not wait for the output.
-            
-        -i, --insecure
-            Skip server cert validation
-            
-            DEFAULT: insecure in auth section of ~/.al/submit.cfg
-        
-        -u, --user="user"
-            username to be used to connect to AL
-            
-            DEFAULT: user in auth section of ~/.al/submit.cfg
-        
-        -p, --password="MYPASSWORD"
-            password of the user
-            
-            DEFAULT: password in auth section of ~/.al/submit.cfg
-
-        -k, --apikey="MY_RANDOM_API_KEY"
-            apikey to use for the user to login
-            
-            DEFAULT: apikey in auth section of ~/.al/submit.cfg
-
-        -c, --cert="/path/to/pki.pem"
-            Client cert used to connect to server
-
-            DEFAULT: cert in auth section of ~/.al/submit.cfg
-            
-        -o, --output-file="/home/user/output.txt"
-            File to write the results to
-            
-            DEFAULT: stdout
-            
-        -s, --server="http://my.al.server"
-            Server to connect to
-            
-            DEFAULT: transport://host:port in server section of ~/.al/submit.cfg
-        
-        -j, --json-params="{ ... }"
-            A JSON dictionary of submission parameters.
-            
-        --srv_spec="{ ... }"
-            A JSON dictionary of service specific parameters.
-        
-        --server-crt="/path/to/server.crt"
-        
-            DEFAULT: cert in server section of ~/.al/submit.cfg
-
-"""
 
 SRV_DOWN_HASH = "eb54dc2e040a925f84e55e91ff27601ad"
 MAX_RETRY_HASH = "ec502020e499f01f230e06a58ad9b5dcc"
@@ -353,6 +270,10 @@ def main():
     sys.exit(_main(sys.argv[1:]))
 
 
+description_string = """Submit a file to AL using the web API and write the results to a file or to stdout.
+NOTE: If file not provided, will read the file from stdin and output results to stdout."""
+
+
 # noinspection PyBroadException
 def _main(arguments):
     signal(SIGINT, SIG_DFL)
@@ -383,8 +304,7 @@ def _main(arguments):
             if 'apikey' in config.options('auth'):
                 apikey = config.get('auth', 'apikey')
             if 'insecure' in config.options('auth'):
-                verify = not (config.get('auth', 'insecure').lower() == 'true' or
-                              config.get('auth', 'insecure').lower() == 'yes')
+                verify = config.get('auth', 'insecure').lower() not in ['true', 'yes']
         elif section == "server":
             if 'transport' in config.options('server'):
                 transport = config.get('server', 'transport')
@@ -398,86 +318,56 @@ def _main(arguments):
     server = "%s://%s:%s" % (transport, host, port)
 
     # parse the command line args
-    try:
-        opts, args = getopt(arguments, "hvqanitdu:p:o:s:c:k:j:", ["help", "version", "quiet", "async", "no-output",
-                                                                  "insecure", "text", "run-dynamic",
-                                                                  "user=", "password=",
-                                                                  "output-file=", "server=", "cert=",
-                                                                  "apikey=", "json-params=", "server-crt=", "srv_spec="])
-    except Exception as exc:  # pylint: disable=W0703
-        sys.stderr.write("Args error %s\n\n%s\n" % (exc, __help__))
-        return 1
+    from argparse import ArgumentParser
+    parser = ArgumentParser(description=description_string)
+    parser.add_argument('files', metavar='file/dir', nargs='+')
+    parser.add_argument('-v', '--version', action='version', version=__version__)
+    parser.add_argument('-q', '--quiet', action='store_true', help='Runs in quiet mode')
+    parser.add_argument('-a', '--async', dest='async_command', action='store_true',
+                        help='Run in asynchronized mode (uses ingest API).')
+    parser.add_argument('-n', '--no-output', action='store_true',
+                        help='Only works in conjunction with -a. Ingests the file and does not wait for the output.')
+    parser.add_argument('-i', '--insecure', action='store_true', default=not verify,
+                        help='Skip server cert validation. DEFAULT: insecure in auth section of ~/.al/submit.cfg')
+    parser.add_argument('-t', '--text', action='store_true', help='Dumps results as text instead of json.')
+    parser.add_argument('-d', '--run-dynamic', action='store_true',
+                        help='Adds Dynamic Analysis to the list of service to run.')
+    parser.add_argument('-u', '--user', default=user, metavar='"user"',
+                        help='username to be used to connect to AL. DEFAULT: user in auth section of ~/.al/submit.cfg')
+    parser.add_argument('-p', '--password', default=pw, metavar='"MYPASSWORD"',
+                        help='password of the user. DEFAULT: password in auth section of ~/.al/submit.cfg')
+    parser.add_argument('-o', '--output-file', metavar='"/home/user/output.txt"',
+                        help='File to write the results to. DEFAULT: stdout')
+    parser.add_argument('-s', '--server', default=server, metavar='"http://my.al.server"',
+                        help='Server to connect to. DEFAULT: transport://host:port in '
+                             'server section of ~/.al/submit.cfg')
+    parser.add_argument('-c', '--cert', default=cert, metavar='"/path/to/pki.pem"',
+                        help='Client cert used to connect to server. DEFAULT: cert in auth section of ~/.al/submit.cfg')
+    parser.add_argument('-k', '--apikey', default=apikey, metavar='"MY_RANDOM_API_KEY"',
+                        help='apikey to use for the user to login. DEFAULT: apikey in auth section of ~/.al/submit.cfg')
+    parser.add_argument('-j', '--json-params', metavar='"{ ... }"', help='A JSON dictionary of submission parameters.')
+    parser.add_argument('--srv-spec', metavar='"{ ... }"', help='A JSON dictionary of service specific parameters.')
+    parser.add_argument('--server-crt', metavar='"/path/to/server.crt"',
+                        help='DEFAULT: cert in server section of ~/.al/submit.cfg')
 
-    params = dict([(k.strip('-'), a) for k, a in opts])
-    # print help if needed
-    if 'h' in params or 'help' in params:
-        sys.stdout.write("%s\n" % __help__)
-        return 0
+    params = parser.parse_args(arguments)
 
-    # print help if needed
-    if 'v' in params or 'version' in params:
-        sys.stdout.write("%s\n" % __version__)
-        return 0
+    args = params.files
+    verbose = not params.quiet
+    async_command = params.async_command
+    no_output = params.no_output
+    json_output = not params.text
+    dynamic = params.run_dynamic
+    user = params.user
+    cert = params.cert
+    pw = params.password
+    apikey = params.apikey
 
-    # Display as human readable text
-    if 'q' in params or 'quiet' in params:
-        verbose = False
-    else:
-        verbose = True
-
-    # Use ingest API (async mode)
-    if 'a' in params or 'async' in params:
-        async = True
-    else:
-        async = False
-
-    # Does not wait for output
-    if 'n' in params or 'no-output' in params:
-        no_output = True
-    else:
-        no_output = False
-
-    # Do not verify server
-    if 'i' in params or 'insecure' in params:
+    if params.insecure:
         verify = False
     else:
-        if 'server-crt' in params:
-            verify = params["server-crt"]
-
-    # Display as human readable text
-    if 't' in params or 'text' in params:
-        json_output = False
-    else:
-        json_output = True
-
-    # Dynamic analysis
-    if 'd' in params or 'run-dynamic' in params:
-        dynamic = True
-    else:
-        dynamic = False
-
-    # user
-    if "u" in params:
-        user = params["u"]
-    elif "user" in params:
-        user = params["user"]
-
-    if "c" in params:
-        cert = params["c"]
-    elif "cert" in params:
-        cert = params["cert"]
-
-    # password
-    if "p" in params:
-        pw = params["p"]
-    elif "password" in params:
-        pw = params["password"]
-
-    # apikey
-    if "k" in params:
-        apikey = params["k"]
-    elif "apikey" in params:
-        apikey = params["apikey"]
+        if params.server_crt:
+            verify = params.server_crt
 
     if not cert and not user:
         sys.stderr.write("This server requires authentication...\n")
@@ -488,13 +378,7 @@ def _main(arguments):
             sys.stderr.write("You specified a username without a password.  What is your password?\n")
         pw = getpass()
 
-    # Output file
-    if "o" in params:
-        output = params["o"]
-    elif "output-file" in params:
-        output = params["output-file"]
-    else:
-        output = None
+    output = params.output_file
 
     if output:
         f = None
@@ -508,23 +392,17 @@ def _main(arguments):
             except Exception:  # pylint: disable=W0702
                 pass
 
-    # Server
-    if "s" in params:
-        server = params["s"]
-    elif "server" in params:
-        server = params["server"]
+    server = params.server
 
     if not server:
-        sys.stderr.write("!!ERROR!! No server specified, -s option is mandatory.\n\n%s\n" % __help__)
+        sys.stderr.write("!!ERROR!! No server specified, -s option is mandatory.\n\n" % parser.format_help())
         return -1
 
-    if "j" in params:
-        kw["params"] = json.loads(params['j'])
-    elif "json-params" in params:
-        kw["params"] = json.loads(params['json-params'])
+    if params.json_params:
+        kw["params"] = json.loads(params.json_params)
 
-    if "srv_spec" in params:
-        kw["srv_spec"] = json.loads(params['srv_spec'])
+    if params.srv_spec:
+        kw["srv_spec"] = json.loads(params.srv_spec)
 
     auth = None
     api_auth = None
@@ -532,6 +410,7 @@ def _main(arguments):
         api_auth = (user, apikey)
     elif user and pw:
         auth = (user, pw)
+
     options = {
         'verbose': verbose,
         'json_output': json_output,
@@ -539,11 +418,16 @@ def _main(arguments):
 
     read_from_pipe = False
     if sys.platform.startswith("linux") or sys.platform.startswith("freebsd"):
-        if select.select([sys.stdin, ], [], [], 0.0)[0]:
-            read_from_pipe = True
+        try:
+            if select.select([sys.stdin, ], [], [], 0.0)[0]:
+                read_from_pipe = True
+        except io.UnsupportedOperation:
+            # stdin has probably been replaced with a non-file python object
+            # this is fine.
+            pass
 
     if len(args) == 0 and not read_from_pipe:
-        sys.stdout.write("%s\n" % __help__)
+        sys.stdout.write("%s\n" % parser.format_help())
         return 0
 
     try:
@@ -566,7 +450,7 @@ def _main(arguments):
             p.update(kw['params'])
 
         kw['params'] = p
-    if async and not no_output:
+    if async_command and not no_output:
         kw['nq'] = uuid.uuid4().get_hex()
 
     # sanity check path
@@ -580,7 +464,7 @@ def _main(arguments):
             if line == '-':
                 line = '/dev/stdin'
 
-            if async:
+            if async_command:
                 send_async(client, line, verbose=verbose, **kw)
             else:
                 send(client, line, output, options, **kw)
@@ -603,13 +487,13 @@ def _main(arguments):
 
         queued_files = deepcopy(file_list)
         output_thread = None
-        if async and not no_output:
+        if async_command and not no_output:
             output_thread = start_result_thread(
                 client, queued_files, output, options, **kw
             )
 
         for input_file in file_list:
-            if async:
+            if async_command:
                 if not send_async(client, input_file, verbose=verbose, **kw):
                     with ASYNC_LOCK:
                         queued_files.remove(input_file)

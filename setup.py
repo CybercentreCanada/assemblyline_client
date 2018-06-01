@@ -39,6 +39,11 @@ setup(
         'requests[security]',
         'socketio-client==0.5.6'
     ],
+    tests_requires=[
+        'mock',
+        'pytest',
+        'pytest_mock'
+    ],
     keywords='development assemblyline client gc canada cse-cst cse cst',
     packages=[
         'assemblyline_client'
