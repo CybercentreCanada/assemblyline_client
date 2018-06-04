@@ -50,7 +50,7 @@ class AssemblylineHandler(BaseHTTPRequestHandler):
             content_len = int(self.headers.getheader('content-length', 0))
         except AttributeError:
             content_len = int(self.headers.get('content-length', 0))
-        return json.loads(self.rfile.read(content_len))
+        return json.loads(self.rfile.read(content_len).decode('utf-8'))
 
     def do_POST(self):
         self.send_response(200)

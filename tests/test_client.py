@@ -13,7 +13,7 @@ def test_bad_cert():
             assemblyline_client.Client(server.address)
             assert False
         except assemblyline_client.ClientError as ce:
-            assert 'CERTIFICATE_VERIFY_FAILED' in str(ce)
+            assert 'CERTIFICATE_VERIFY_FAILED' in str(ce) or 'certificate verify failed' in str(ce)
 
 
 def test_noauth():
