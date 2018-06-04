@@ -11,6 +11,7 @@ dist
 .coverage
 .pytest_cache
 htmlcov/
+.tox
 
 ehthumbs.db
 Thumbs.db

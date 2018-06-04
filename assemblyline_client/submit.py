@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 # noinspection PyProtectedMember
-from assemblyline_client import Client, ClientError, __build__
+from assemblyline_client import Client, ClientError, version
 
 import datetime
 import sys
@@ -27,7 +27,7 @@ else:
 
 ASYNC_LOCK = Lock()
 
-__version__ = "al_submit v%s.%s.%s" % (__build__[0], __build__[1], __build__[2])
+__version__ = "al_submit v%s.%s.%s" % (version.build[0], version.build[1], version.build[2])
 
 
 SRV_DOWN_HASH = "eb54dc2e040a925f84e55e91ff27601ad"

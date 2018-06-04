@@ -12,7 +12,6 @@ from base64 import b64encode
 from json import dumps
 
 __all__ = ['Client', 'ClientError']
-__build__ = [3, 7, 2]
 
 try:
     # noinspection PyUnresolvedReferences,PyUnboundLocalVariable

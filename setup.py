@@ -2,12 +2,16 @@
 """Assemblyline Client Library PiP Installer"""
 
 from setuptools import setup
+import os.path
 
-import assemblyline_client
+# This lets us avoid importing the client before it in installed
+build = []
+here = os.path.abspath(os.path.dirname(__file__))
+exec(open(os.path.join(here, 'assemblyline_client/version.py')).read())
 
 setup(
     name='assemblyline_client',
-    version='.'.join(map(str, assemblyline_client.__build__)),
+    version='.'.join(map(str, build)),
     description='Assemblyline client library',
     long_description="The Assemblyline client library facilitates issuing requests to the Assemblyline framework.",
     license='MIT',
@@ -39,11 +43,13 @@ setup(
         'requests[security]',
         'socketio-client==0.5.6'
     ],
-    tests_requires=[
-        'mock',
-        'pytest',
-        'pytest_mock'
-    ],
+    extras_require={
+        'test': [
+            'mock',
+            'pytest',
+            'pytest_mock'
+        ]
+    },
     keywords='development assemblyline client gc canada cse-cst cse cst',
     packages=[
         'assemblyline_client'
