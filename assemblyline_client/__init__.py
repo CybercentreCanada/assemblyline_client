@@ -12,7 +12,6 @@ from base64 import b64encode
 from json import dumps
 
 __all__ = ['Client', 'ClientError']
-__build__ = [3, 7, 1]
 
 try:
     # noinspection PyUnresolvedReferences,PyUnboundLocalVariable
@@ -422,7 +421,7 @@ class Connection(object):
                 raise
         except requests.exceptions.SSLError as ssle:
             raise ClientError("Client could not connect to the server "
-                              "due to the following SSLError: %s" % ssle.message, 495)
+                              "due to the following SSLError: %s" % ssle, 495)
 
         session.timeout = auth_session_detail['session_duration']
 
