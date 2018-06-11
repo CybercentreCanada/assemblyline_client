@@ -668,7 +668,7 @@ contents: File contents. (string)
 fname   : Name of the file to scan
 metadata: Metadata to include with submission. (dict)
 nq      : Notification queue name. (string)
-nt      : Notification threshold. (integer-ish)
+nt      : Notification threshold. (int)
 params  : Additional submission parameters. (dict)
 srv_spec: Service-specific parameters. (dict)
 
@@ -705,13 +705,13 @@ If contents are provided, the path is used as metadata only.
         })
 
         if alert:
-            request['generate_alert'] = alert
+            request['generate_alert'] = bool(alert)
         if metadata:
             request['metadata'].update(metadata)
         if nq:
             request['notification_queue'] = nq
         if nt:
-            request['notification_threshold'] = str(nt)
+            request['notification_threshold'] = int(nt)
         if params:
             request['params'] = params
         if srv_spec:
