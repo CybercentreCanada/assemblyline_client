@@ -1,12 +1,17 @@
 # Add any directories, files, or patterns you don't want to be tracked by version control
 *.py[cod]
 *.egg-info
+__pycache__/
 
 .pydevproject
 .idea
 
 build
 dist
+.coverage
+.pytest_cache
+htmlcov/
+.tox
 venv
 
 ehthumbs.db

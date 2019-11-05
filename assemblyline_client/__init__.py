@@ -12,7 +12,6 @@ from base64 import b64encode
 from json import dumps
 
 __all__ = ['Client', 'ClientError']
-__build__ = [3, 7, 0]
 
 try:
     # noinspection PyUnresolvedReferences,PyUnboundLocalVariable
@@ -422,7 +421,7 @@ class Connection(object):
                 raise
         except requests.exceptions.SSLError as ssle:
             raise ClientError("Client could not connect to the server "
-                              "due to the following SSLError: %s" % ssle.message, 495)
+                              "due to the following SSLError: %s" % ssle, 495)
 
         session.timeout = auth_session_detail['session_duration']
 
@@ -669,7 +668,7 @@ contents: File contents. (string)
 fname   : Name of the file to scan
 metadata: Metadata to include with submission. (dict)
 nq      : Notification queue name. (string)
-nt      : Notification threshold. (integer-ish)
+nt      : Notification threshold. (int)
 params  : Additional submission parameters. (dict)
 srv_spec: Service-specific parameters. (dict)
 
@@ -706,13 +705,13 @@ If contents are provided, the path is used as metadata only.
         })
 
         if alert:
-            request['generate_alert'] = alert
+            request['generate_alert'] = bool(alert)
         if metadata:
             request['metadata'].update(metadata)
         if nq:
             request['notification_queue'] = nq
         if nt:
-            request['notification_threshold'] = str(nt)
+            request['notification_threshold'] = int(nt)
         if params:
             request['params'] = params
         if srv_spec:
@@ -1403,7 +1402,7 @@ Get a specific tagcheck signature details from the system.
 Required:
 signature_id: (string) ID of the tagcheck signature.
 """
-        return self._connection.get(_path('tc_signatures', signature_id))
+        return self._connection.get(_path('tc_signature', signature_id))
 
     def list(self, query="*", offset=None, length=None):
         """\
@@ -1414,7 +1413,7 @@ offset  : Offset to start returning results
 length  : Number of results to return
 query   : Query to use to filter the results
 """
-        return self._connection.get(_path('tc_signatures/list',
+        return self._connection.get(_path('tc_signature/list',
                                     offset=offset, length=length, query=query))
 
 
