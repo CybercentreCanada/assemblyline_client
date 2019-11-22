@@ -11,6 +11,7 @@ dist
 .coverage
 .pytest_cache
 htmlcov/
+venv/
 .tox
 venv
 

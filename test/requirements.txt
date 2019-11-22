@@ -1,0 +1,7 @@
+pytest
+pytest-cov
+cart
+assemblyline
+passlib
+mock
+pytest_mock

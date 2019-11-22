@@ -14,7 +14,7 @@ def test_submit(mocker):
         # Create the fake file
         mocker.patch('os.path.exists', return_value=True)
         mocker.patch('assemblyline_client.submit.exists', return_value=True)
-        mocker.patch('assemblyline_client.open', mock.mock_open(read_data=b'abc123'), create=True)
+        mocker.patch('assemblyline_client.v3_client.open', mock.mock_open(read_data=b'abc123'), create=True)
 
         # Call the submit script
         _main(['-i', '-s', server.address, '-u', 'user', '-p', 'password', 'readme.txt'])

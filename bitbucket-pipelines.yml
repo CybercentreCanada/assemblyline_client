@@ -1,38 +1,54 @@
+options:
+  max-time: 10
+
 pipelines:
   default:
     - parallel:
         - step:
-            name: Build & Test 2.7.6
-            image: gbrowdy/python-2.7.6
-            script: &build_test
-              - python setup.py sdist
-              - pip install -f dist assemblyline_client .[test]
-              - pytest
-        - step:
             name: Build & Test 2.7
             image: python:2.7
-            script: *build_test
-        - step:
-            name: Build & Test 3.4
-            image: python:3.4
-            script: *build_test
-        - step:
-            name: Build & Test 3.5
-            image: python:3.5
-            script: *build_test
+            caches: &caches
+              - pip
+              - docker
+            script: &build_test
+              - apt update
+              - apt install -y build-essential libffi-dev libfuzzy-dev python3-dev
+              - mkdir -p /etc/assemblyline/
+              - cp test/bitbucket/config.yml /etc/assemblyline/
+              - docker network ls
+              - docker run --network="bridge" --memory 256m -p "9000:9000" -e 'MINIO_ACCESS_KEY=al_storage_key' -e "MINIO_SECRET_KEY=Ch@ngeTh!sPa33w0rd" sgaroncse/minio &
+              - docker run --network="bridge" --memory 256m -p "6379:6379" -p "6380:6379" redis &
+              - pip install -e . -r test/requirements.txt
+              - pytest -rsx -vv
+            services: &services
+              - alui
+              - alsocketio
+              - elasticsearch
+              - docker
+              - nginx
         - step:
             name: Build & Test 3.6
             image: python:3.6
+            caches: *caches
             script: *build_test
+            services: *services
         - step:
-            name: Build & Test 3.7-rc
-            image: python:3.7-rc
+            name: Build & Test 3.7
+            image: python:3.7
+            caches: *caches
             script: *build_test
+            services: *services
+        - step:
+            name: Build & Test 3.8
+            image: python:3.8
+            caches: *caches
+            script: *build_test
+            services: *services
   tags:
     v*:
       - step:
           name: Build Package
-          image: python:3.6
+          image: python:3.7
           script:
             - pip install wheel
             - python setup.py bdist_wheel --universal
@@ -41,48 +57,87 @@ pipelines:
             - dist/*
       - parallel:
         - step:
-            name: Test 2.7.6
-            image: gbrowdy/python-2.7.6
+            name: Test 2.7
+            image: python:2.7
             script: &deploy_test
+              - rm -rf assemblyline setup.py  # Make sure we are running on the package from the prior build
+              - apt update
+              - apt install -y build-essential libffi-dev libfuzzy-dev python3-dev
+              - pip install -f dist assemblyline-client
+              - mkdir -p /etc/assemblyline/
+              - mkdir -p /var/cache/assemblyline/
+              - cp test/bitbucket/config.yml /etc/assemblyline
+              - docker run --network="bridge" --memory 256m -p "9000:9000" -e 'MINIO_ACCESS_KEY=al_storage_key' -e "MINIO_SECRET_KEY=Ch@ngeTh!sPa33w0rd" sgaroncse/minio &
+              - docker run --network="bridge" --memory 256m -p "6379:6379" -p "6380:6379" redis &
+              - pip install -r test/requirements.txt
+              - pytest -rsx -vv
               - rm -rf assemblyline_client setup.py
               - pip install -f dist assemblyline_client[test]
               - pytest
-        - step:
-            name: Test 2.7
-            image: python:2.7
-            script: *deploy_test
-        - step:
-            name: Test 3.4
-            image: python:3.4
-            script: *deploy_test
-        - step:
-            name: Test 3.5
-            image: python:3.5
-            script: *deploy_test
+            caches: *caches
+            services: *services
         - step:
             name: Test 3.6
             image: python:3.6
             script: *deploy_test
+            caches: *caches
+            services: *services
         - step:
-            name: Test 3.7-rc
-            image: python:3.7-rc
+            name: Test 3.7
+            image: python:3.7
             script: *deploy_test
+            caches: *caches
+            services: *services
+        - step:
+            name: Test 3.8
+            image: python:3.8
+            script: *deploy_test
+            caches: *caches
+            services: *services
       - step:
           name: Deploy to Test PyPI
-          image: python:3.6
+          image: python:3.7
           deployment: test
           script:
             - pip install twine
-            - python setup.py sdist
             - ls dist
             - twine upload --skip-existing --repository-url $TEST_REPOSITORY_URL dist/*
       - step:
           name: Deploy to PyPI
-          image: python:3.6
+          image: python:3.7
           trigger: manual
           deployment: production
           script:
             - pip install twine
-            - python setup.py sdist
             - ls dist
-            - twine upload dist/*
+            - twine upload --skip-existing dist/*
+definitions:
+  services:
+    alui:
+      image: cccs/assemblyline-ui:latest
+      memory: 256
+      environment:
+        WORKERS: 1
+        THREADS: 1
+
+    alsocketio:
+      image: cccs/assemblyline-socketio:latest
+      memory: 256
+
+    docker:
+      memory: 512
+
+    elasticsearch:
+      image: sgaroncse/elasticsearch:7.4.0
+      memory: 1024
+      environment:
+        ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+        DISCOVERY_TYPE: "single-node"
+
+    nginx:
+      image: sgaroncse/nginx-ssl:1.17.5
+      environment:
+        UI_HOST: localhost
+        SOCKET_HOST: localhost
+        KIBANA_HOST: localhost
+      memory: 256

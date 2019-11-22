@@ -10,7 +10,7 @@ def test_bad_cert():
     """Make sure that the client detects that the test cert is self signed."""
     with mocks.Server() as server:
         try:
-            assemblyline_client.Client(server.address)
+            assemblyline_client.get_client(server.address)
             assert False
         except assemblyline_client.ClientError as ce:
             assert 'CERTIFICATE_VERIFY_FAILED' in str(ce) or 'certificate verify failed' in str(ce)
@@ -19,7 +19,7 @@ def test_bad_cert():
 def test_noauth():
     """The test server should let us login with no authentication."""
     with mocks.Server() as server:
-        assemblyline_client.Client(server.address, verify=False)
+        assemblyline_client.get_client(server.address, verify=False)
         assert len(server.logins) == 1
 
 
@@ -27,7 +27,7 @@ def test_noauth_submit(mocker):
     """Submit a file and ensure that the same file is unpacked."""
     with mocks.Server() as server:
 
-        client = assemblyline_client.Client(server.address, verify=False)
+        client = assemblyline_client.get_client(server.address, verify=False)
         submits = server.submits
 
         # Submit a file with contents
@@ -39,7 +39,7 @@ def test_noauth_submit(mocker):
 
         # Submit a file from a file
         mocker.patch('os.path.exists', return_value=True)
-        mocker.patch('assemblyline_client.open', mock.mock_open(read_data=b'abc123'), create=True)
+        mocker.patch('assemblyline_client.v3_client.open', mock.mock_open(read_data=b'abc123'), create=True)
         client.submit(path='readme.txt')
         assert len(submits) == 1
         assert b64decode(submits[0]['binary']) == b'abc123'
@@ -50,7 +50,7 @@ def test_noauth_submit(mocker):
 def test_encrypt_password_auth():
     """Send an encryped password and decrypt it."""
     with mocks.Server() as server:
-        assemblyline_client.Client(server.address, verify=False, auth=('username', 'password'))
+        assemblyline_client.get_client(server.address, verify=False, auth=('username', 'password'))
         assert len(server.logins) == 1
         assert server.logins[0]['user'] == 'username'
         assert server.logins[0]['password'] != 'password'
@@ -60,7 +60,7 @@ def test_encrypt_password_auth():
 def test_encrypt_apikey_auth():
     """Send an encryped apikey and decrypt it."""
     with mocks.Server() as server:
-        assemblyline_client.Client(server.address, verify=False, apikey=('username', 'ANAPIKEY'))
+        assemblyline_client.get_client(server.address, verify=False, apikey=('username', 'ANAPIKEY'))
         assert len(server.logins) == 1
         assert server.logins[0]['user'] == 'username'
         assert server.logins[0]['apikey'] != 'ANAPIKEY'

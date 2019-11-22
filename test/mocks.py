@@ -118,6 +118,7 @@ class Server:
         self.handler = AssemblylineHandler
         self.thread = None
         self.server = None
+        self.address = None
 
         srcdir = os.path.abspath(os.path.dirname(__file__))
         self.cert_path = os.path.join(srcdir, 'test.cert')
