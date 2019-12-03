@@ -10,11 +10,17 @@ for variable_name in ['BITBUCKET_TAG']:
     package_version = os.environ.get(variable_name, package_version)
     package_version = package_version.lstrip('v')
 
+# read the contents of the README file
+this_directory = os.path.abspath(os.path.dirname(__file__))
+with open(os.path.join(this_directory, 'README.md')) as f:
+    long_description = f.read()
+
 setup(
     name='assemblyline-client',
     version=package_version,
     description='Assemblyline v4 client library',
-    long_description="The Assemblyline v4 client library facilitates issuing requests to the Assemblyline framework.",
+    long_description=long_description,
+    long_description_content_type='text/markdown',
     license='MIT',
     url='https://bitbucket.org/cse-assemblyline/assemblyline_client',
     author='CSE-CST Assemblyline development team',
