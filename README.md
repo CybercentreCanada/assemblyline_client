@@ -11,42 +11,45 @@ To install the client you'll need to make sure the you have the folowing install
     libssl-dev
 
     # pypi
-    socketio-client==0.5.6
+    pycryptodome
     requests
     requests[security]
-    pycryptodome
+    python-baseconv
+    python-socketio[client]
+    socketio-client==0.5.7.4
 
 ## Using the client
 
 You can instantiate the client using the following snippet of code:
 
-    from assemblyline_client import Client
-    al_client = Client("https://localhost:443", auth=('user', 'password'))
+    # The new v4 client will test connection to detect if the server is v3 or v4. You should now use the get_client method.
+    from assemblyline_client import get_client
+    al_client = get_client("https://localhost:443", auth=('user', 'password'))
     
     # or with an apikey
     
-    al_client = Client("https://localhost:443", apikey=('user', 'key'))
+    al_client = get_client("https://localhost:443", apikey=('user', 'key'))
     
     # or with a cert 
     
-    al_client = Client("https://localhost:443", cert='/path/to/cert/file.pem')
+    al_client = get_client("https://localhost:443", cert='/path/to/cert/file.pem')
 
     # and if your assemblyline server is using a self-signed cert
 
-    al_client = Client("https://localhost:443", auth=('user', 'password'), verify=False)
-    al_client = Client("https://localhost:443", auth=('user', 'password'), verify='/path/to/server.crt')
+    al_client = get_client("https://localhost:443", auth=('user', 'password'), verify=False)
+    al_client = get_client("https://localhost:443", auth=('user', 'password'), verify='/path/to/server.crt')
 
 The assemblyline client is fully documented in the docstrings so if you use an interactive client like ipython you can use the help feature.
 
     al_client.search.alert?
     Signature: al_client.search.alert(query, *args, **kwargs)
     Docstring:
-    Search alerts with a SOLR query.
+    Search alerts with a lucene query.
 
     Required:
-    query   : SOLR query. (string)
+    query   : Lucene query. (string)
 
-    SOLR parameters can be passed as key/value tuples or keyword parameters.
+    Search parameters can be passed as key/value tuples or keyword parameters.
 
     Returns all results.
     File:      /usr/local/lib/python2.7/dist-packages/assemblyline_client/__init__.py
@@ -68,11 +71,9 @@ To get a key of a given bucket, you simply need to pass it it's ID
 
 #### Using search
 
-You can use the search engine in the client by simply passing a SOLR query
+You can use the search engine in the client by simply passing a lucene query
 
     search_res = al_client.search.submission("submission.submitter:user")
-
-**NOTE**: By using search like this, you'll get the exact same output that you would using strait SOLR
 
 #### Using search iterator
 
@@ -87,10 +88,16 @@ Instead of using a strait search and getting a page of result, you can use the s
 
 #### Using search parameters
 
+##### Version 3
 You can pass search parameters for any given query. The following examples a SOLR facet search to get the top users submitting to a server.
 
     kwargs = {'facet':'on', 'facet.field':'submission.submitter', 'facet.sort':'count', 'facet.limit':50, 'rows':0}  # rows=0 so that only facet results return
     c.search.submission('times.submitted:[NOW-7DAYS TO NOW]', **kwargs)
+
+##### Version 4
+Version 4 server will support facet query out of the box, no need to learn the SOLR facetting syntax.
+    
+    c.search.facet.submission('submission.submitter', query='times.submitted:[NOW-7DAYS TO NOW]')
 
 #### Listen for message instead of querying for data
 
@@ -118,42 +125,45 @@ Avant de procéder à l’installation du client, vous devez vous assurer d’in
     libssl-dev
 
     # pypi
-    socketio-client==0.5.6
+    pycryptodome
     requests
     requests[security]
-    pycryptodome
+    python-baseconv
+    python-socketio[client]
+    socketio-client==0.5.7.4
 
 ## Utilisation du client
 
 Vous pouvez instancier le client au moyen de l’extrait de code suivant :
 
-    from assemblyline_client import Client
-    al_client = Client("https://localhost:443", auth=('user', 'password'))
+    # Le nouveau client v4 détecte si le serveur est a la version 3 ou 4. Vous devez maintenant utilisé la fonction get_client.
+    from assemblyline_client import get_client
+    al_client = get_client("https://localhost:443", auth=('user', 'password'))
 
     # ou d’une clé API :
 
-    al_client = Client("https://localhost:443", apikey=('user', 'key'))
+    al_client = get_client("https://localhost:443", apikey=('user', 'key'))
 
     # ou d’un certificat :
 
-    al_client = Client("https://localhost:443", cert='/path/to/cert/file.pem')
+    al_client = get_client("https://localhost:443", cert='/path/to/cert/file.pem')
 
     # et si votre server assemblyline a un certificat auto-signé
 
-    al_client = Client("https://localhost:443", auth=('user', 'password'), verify=False)
-    al_client = Client("https://localhost:443", auth=('user', 'password'), verify='/path/to/server.crt')
+    al_client = get_client("https://localhost:443", auth=('user', 'password'), verify=False)
+    al_client = get_client("https://localhost:443", auth=('user', 'password'), verify='/path/to/server.crt')
 
 Le client d’Assemblyline est pleinement documenté dans les docstrings. Si vous utilisez un client interactif comme ipython, vous serez en mesure d’utiliser la fonction d’aide.
 
     al_client.search.alert?
     Signature: al_client.search.alert(query, *args, **kwargs)
     Docstring:
-    Search alerts with a SOLR query.
+    Search alerts with a Lucene query.
 
     Required:
-    query   : SOLR query. (string)
+    query   : Lucene query. (string)
 
-    SOLR parameters can be passed as key/value tuples or keyword parameters.
+    Search parameters can be passed as key/value tuples or keyword parameters.
 
     Returns all results.
     File:      /usr/local/lib/python2.7/dist-packages/assemblyline_client/__init__.py
@@ -175,11 +185,9 @@ Pour obtenir une clé pour un compartiment donné, il suffit d’envoyer son ID.
 
 #### Utilisation de la recherche
 
-Pour utiliser le moteur de recherche du client, il suffit de transmettre une demande SOLR.
+Pour utiliser le moteur de recherche du client, il suffit de transmettre une demande Lucene.
 
     search_res = al_client.search.submission("submission.submitter:user")
-
-**REMARQUE** : Vous obtiendrez le même résultat que si vous utilisiez SOLR.
 
 #### Utilisation de l’itérateur de recherche
 
@@ -194,11 +202,17 @@ Plutôt que d’utiliser une recherche directe et d’obtenir une page de résul
 
 #### Utilisation des paramètres de recherche
 
-Vous pouvez transmettre des paramètres de recherche pour une requête donnée. Les exemples suivants démontrent  une recherche de facettes SOLR pour obtenir les utilisateurs les plus fréquants soumettant à un server.
+##### Version 3
+Vous pouvez transmettre des paramètres de recherche pour une requête donnée. Les exemples suivants démontrent une recherche de facettes SOLR pour obtenir les utilisateurs les plus fréquants soumettant à un server.
 
     kwargs = {'facet':'on', 'facet.field':'submission.submitter', 'facet.sort':'count', 'facet.limit':50, 'rows':0}  # rows=0 pour que seuls les résultats de la facette soient retourné
     c.search.submission('times.submitted:[NOW-7DAYS TO NOW]', **kwargs)
 
+##### Version 4
+Le serveur version 4 supporte directement les recherches de facettes, vous navez donc pas besoin den apprendre la syntaxe.
+    
+    c.search.facet.submission('submission.submitter', query='times.submitted:[NOW-7DAYS TO NOW]')
+    
 #### L’écoute du message plutôt que la recherche de données
 
 Vous pouvez écouter les différentes files d’attente de messages et effectuer un rappel pour chaque message.
