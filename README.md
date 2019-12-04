@@ -89,13 +89,13 @@ Instead of using a strait search and getting a page of result, you can use the s
 #### Using search parameters
 
 ##### Version 3
-You can pass search parameters for any given query. The following examples a SOLR facet search to get the top users submitting to a server.
+You can pass search parameters for any given query. The following examples a Lucene facet search to get the top users submitting to a server.
 
     kwargs = {'facet':'on', 'facet.field':'submission.submitter', 'facet.sort':'count', 'facet.limit':50, 'rows':0}  # rows=0 so that only facet results return
     c.search.submission('times.submitted:[NOW-7DAYS TO NOW]', **kwargs)
 
 ##### Version 4
-Version 4 server will support facet query out of the box, no need to learn the SOLR facetting syntax.
+Version 4 server will support facet query out of the box, no need to learn the Lucene facetting syntax.
     
     c.search.facet.submission('submission.submitter', query='times.submitted:[NOW-7DAYS TO NOW]')
 
@@ -203,7 +203,7 @@ Plutôt que d’utiliser une recherche directe et d’obtenir une page de résul
 #### Utilisation des paramètres de recherche
 
 ##### Version 3
-Vous pouvez transmettre des paramètres de recherche pour une requête donnée. Les exemples suivants démontrent une recherche de facettes SOLR pour obtenir les utilisateurs les plus fréquants soumettant à un server.
+Vous pouvez transmettre des paramètres de recherche pour une requête donnée. Les exemples suivants démontrent une recherche de facettes Lucene pour obtenir les utilisateurs les plus fréquants soumettant à un server.
 
     kwargs = {'facet':'on', 'facet.field':'submission.submitter', 'facet.sort':'count', 'facet.limit':50, 'rows':0}  # rows=0 pour que seuls les résultats de la facette soient retourné
     c.search.submission('times.submitted:[NOW-7DAYS TO NOW]', **kwargs)
