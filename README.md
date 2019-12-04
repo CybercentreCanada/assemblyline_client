@@ -67,7 +67,7 @@ Submitting a file to the system is just as simple as passing the file path
 
 To get a key of a given bucket, you simply need to pass it it's ID
 
-    submission_details = al_client.submission("8c24b49d-d907-4cd3-8d74-abb24df72402")
+    submission_details = al_client.submission("4nxrpBePQDLH427aA8m3TZ")
 
 #### Using search
 
@@ -84,7 +84,7 @@ Instead of using a strait search and getting a page of result, you can use the s
         full_submission = al_client.submission(submission['submission.sid'])
 
         # Then do stuff with full submission (print for example)
-        print full_submission
+        print(full_submission)
 
 #### Using search parameters
 
@@ -181,7 +181,7 @@ Pour soumettre un fichier au système, il suffit d’envoyer le chemin d’accè
 
 Pour obtenir une clé pour un compartiment donné, il suffit d’envoyer son ID.
 
-    submission_details = al_client.submission("8c24b49d-d907-4cd3-8d74-abb24df72402")
+    submission_details = al_client.submission("4nxrpBePQDLH427aA8m3TZ")
 
 #### Utilisation de la recherche
 
@@ -198,7 +198,7 @@ Plutôt que d’utiliser une recherche directe et d’obtenir une page de résul
         full_submission = al_client.submission(submission['submission.sid'])
 
         # puis faire quelque chose avec la soumission complète (imprimer, par exemple)
-        print full_submission
+        print(full_submission)
 
 #### Utilisation des paramètres de recherche
 
