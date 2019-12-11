@@ -17,7 +17,7 @@ def test_submit(mocker):
         mocker.patch('assemblyline_client.v3_client.open', mock.mock_open(read_data=b'abc123'), create=True)
 
         # Call the submit script
-        _main(['-i', '-s', server.address, '-u', 'user', '-p', 'password', 'readme.txt'])
+        _main(['-q', '-i', '-s', server.address, '-u', 'user', '-p', 'password', 'readme.txt'])
 
         # Did it submit the file
         assert len(submits) == 1

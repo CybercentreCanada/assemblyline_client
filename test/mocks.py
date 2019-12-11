@@ -8,7 +8,6 @@ Very simple and uses the built in HTTPServer.
 - Stores data from logins and submissions
 - Runs in process
 """
-from __future__ import print_function
 
 import threading
 import os.path
@@ -83,7 +82,6 @@ class AssemblylineHandler(BaseHTTPRequestHandler):
         elif '/api/v3/submission/full/' in path:
             return {'api_response': {'missing_result_keys': []}}
 
-        print('get', path)
         return {'api_response': {}}
 
     def post_json(self, body):
@@ -98,8 +96,6 @@ class AssemblylineHandler(BaseHTTPRequestHandler):
                 }
             }
 
-        print('post', path)
-        print(body)
         return {
             'api_response': {}
         }
