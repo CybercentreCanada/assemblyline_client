@@ -56,7 +56,8 @@ def test_signature(datastore, client):
     assert res['total'] == 1
     assert res['items'][0]['value'] == signature_id
 
-    res = client.search.grouped.signature("name", query="id:*", filters=["id:yara_CSE*", "name:*Shade*"])
+    res = client.search.grouped.signature("name", query="id:*",
+                                          filters=["id:yara_sample_rules.yar_CSE*", "name:*Shade*"])
     assert res['total'] == 1
 
 

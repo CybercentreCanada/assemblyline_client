@@ -1,8 +1,14 @@
 import pytest
 
+from copy import deepcopy
+
+from assemblyline_client import ClientError
+
 try:
     from assemblyline.common.isotime import now_as_iso
     from assemblyline.common.uid import get_random_id
+    from assemblyline.odm.random_data import random_model_obj
+    from assemblyline.odm.models.signature import Signature
 
     from utils import random_id_from_collection
 except ImportError:
@@ -13,13 +19,29 @@ except ImportError:
         raise
 
 
+def test_add_update(datastore, client):
+    random_sig = random_model_obj(Signature, as_json=True)
+
+    res = client.signature.add_update(random_sig)
+    assert res['success']
+    datastore.signature.commit()
+
+    # This signature should fail
+    random_sig_fail = deepcopy(random_sig)
+    random_sig_fail['signature_id'] = "FAIL"
+
+    with pytest.raises(ClientError):
+        client.signature.add_update(random_sig_fail)
+        datastore.signature.commit()
+
+    res = client.signature.add_update(random_sig_fail, dedup_name=False)
+    assert res['success']
+
+
 def test_get_signature(datastore, client):
     signature_id = random_id_from_collection(datastore, 'signature')
 
     signature_data = datastore.signature.get(signature_id, as_obj=False)
-
-    res = client.signature(signature_id)
-    assert res == signature_data
 
     res = client.signature(signature_id)
     assert res == signature_data

@@ -18,6 +18,22 @@ Throws a Client exception if the signature does not exist.
         return self._connection.get(api_path('signature', signature_id))
 
     # noinspection PyUnusedLocal
+    def add_update(self, data, dedup_name=True):
+        """\
+Add or update a signature.
+
+Required:
+Data block:
+{
+ "name": "sig_name",           # Signature name
+ "type": "yara",               # One of yara, suricata or tagcheck
+ "data": "rule sample {...}",  # Data of the rule to be added
+ "source": "yara_signatures"   # Source from where the signature has been gathered
+}
+        """
+        return self._connection.post(api_path_by_module(self, **get_funtion_kwargs('data', 'self')), json=data)
+
+    # noinspection PyUnusedLocal
     def download(self, output=None, query=None, safe=True):
         """\
 Download the signatures. Defaults to all if no query is provided.
@@ -43,16 +59,4 @@ since   : ISO 8601 date (%Y-%m-%dT%H:%M:%S). (string)
 """
         return self._connection.get(api_path_by_module(self, last_update=since, type=sig_type))
 
-    def add_update(self, data):
-        """\
-Add or update a signature.
-
-Required:
-Data block: {"name": "sig_name",           # Signature name
-             "type": "yara",               # One of yara, suricata or tagcheck
-             "data": "rule sample {...}",  # Data of the rule to be added
-             "source": "yara_signatures"   # Source from where the signature has been gathered
-    }
-        """
-        return self._connection.post(api_path_by_module(self), json=data)
 
