@@ -71,8 +71,6 @@ pipelines:
               - docker run --network="bridge" --memory 256m -p "6379:6379" -p "6380:6379" redis &
               - pip install -r test/requirements.txt
               - pytest -rsx -vv
-              - pip install -f dist assemblyline_client[test] --pre
-              - pytest
             caches: *caches
             services: *services
         - step:
