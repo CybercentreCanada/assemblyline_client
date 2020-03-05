@@ -34,6 +34,25 @@ Data block:
         return self._connection.post(api_path_by_module(self, **get_funtion_kwargs('data', 'self')), json=data)
 
     # noinspection PyUnusedLocal
+    def add_update_many(self, data, source, s_type, dedup_name=True):
+        """\
+Add or update multiple signatures.
+
+Required:
+Data block:
+[                                # List of signatures to update
+    {
+     "name": "sig_name",           # Signature name
+     "type": "yara",               # One of yara, suricata or tagcheck
+     "data": "rule sample {...}",  # Data of the rule to be added
+     "source": "yara_signatures"   # Source from where the signature has been gathered
+    },
+    ...
+]
+        """
+        return self._connection.post(api_path_by_module(self, **get_funtion_kwargs('data', 'self')), json=data)
+
+    # noinspection PyUnusedLocal
     def download(self, output=None, query=None, safe=True):
         """\
 Download the signatures. Defaults to all if no query is provided.
