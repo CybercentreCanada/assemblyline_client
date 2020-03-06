@@ -34,12 +34,16 @@ Data block:
         return self._connection.post(api_path_by_module(self, **get_funtion_kwargs('data', 'self')), json=data)
 
     # noinspection PyUnusedLocal
-    def add_update_many(self, data, source, s_type, dedup_name=True):
+    def add_update_many(self, source, sig_type, data, dedup_name=True):
         """\
 Add or update multiple signatures.
 
 Required:
-Data block:
+source     : Source of the signature
+sig_type   : Type of signature
+data       : List of signatures
+
+Data block example:
 [                                # List of signatures to update
     {
      "name": "sig_name",           # Signature name

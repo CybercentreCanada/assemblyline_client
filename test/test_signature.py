@@ -1,3 +1,5 @@
+import random
+
 import pytest
 
 from copy import deepcopy
@@ -36,6 +38,41 @@ def test_add_update(datastore, client):
 
     res = client.signature.add_update(random_sig_fail, dedup_name=False)
     assert res['success']
+
+
+# noinspection PyUnusedLocal
+def test_add_update_many(datastore, client):
+    # Insert a dummy signature
+    source = "source"
+    s_type = "type"
+    sig_list = []
+    for x in range(10):
+        data = random_model_obj(Signature).as_primitives(hidden_fields=True)
+        data['status'] = "DEPLOYED"
+        data['source'] = source
+        data['type'] = s_type
+        sig_list.append(data)
+
+    res = client.signature.add_update_many(source, s_type, sig_list)
+    assert res == {'errors': False, 'success': 10, 'skipped': []}
+
+    # Test the signature data
+    datastore.signature.commit()
+    data = Signature(random.choice(sig_list)).as_primitives()
+    key = f"{data['type']}_{data['source']}_{data['signature_id']}"
+    added_sig = datastore.signature.get(key, as_obj=False)
+    assert data == added_sig
+
+    # This signature should fail
+    random_sig_fail = deepcopy(data)
+    random_sig_fail['signature_id'] = "FAIL"
+    res = client.signature.add_update_many(source, s_type, [random_sig_fail])
+    assert res['success'] == 0
+    assert f"{random_sig_fail['type']}_{random_sig_fail['source']}_{random_sig_fail['signature_id']}" in res['skipped']
+
+    # Does not fail if we don't dedup names
+    res = client.signature.add_update_many(source, s_type, [random_sig_fail], dedup_name=False)
+    assert res['success'] == 1
 
 
 def test_get_signature(datastore, client):
