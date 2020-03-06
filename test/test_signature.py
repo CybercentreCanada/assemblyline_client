@@ -59,7 +59,7 @@ def test_add_update_many(datastore, client):
     # Test the signature data
     datastore.signature.commit()
     data = Signature(random.choice(sig_list)).as_primitives()
-    key = f"{data['type']}_{data['source']}_{data['signature_id']}"
+    key = "%s_%s_%s" % (data['type'], data['source'], data['signature_id'])
     added_sig = datastore.signature.get(key, as_obj=False)
     assert data == added_sig
 
@@ -68,7 +68,8 @@ def test_add_update_many(datastore, client):
     random_sig_fail['signature_id'] = "FAIL"
     res = client.signature.add_update_many(source, s_type, [random_sig_fail])
     assert res['success'] == 0
-    assert f"{random_sig_fail['type']}_{random_sig_fail['source']}_{random_sig_fail['signature_id']}" in res['skipped']
+    random_key = "%s_%s_%s" % (random_sig_fail['type'], random_sig_fail['source'], random_sig_fail['signature_id'])
+    assert random_key in res['skipped']
 
     # Does not fail if we don't dedup names
     res = client.signature.add_update_many(source, s_type, [random_sig_fail], dedup_name=False)
