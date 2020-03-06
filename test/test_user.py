@@ -20,8 +20,8 @@ def test_get_user(datastore, client):
     assert res['uname'] == user_data['uname']
     assert 'otp_sk' not in res
     assert '2fa_enabled' in res
-    assert 'u2f_enabled' in res
-    assert sorted(res['u2f_devices']) == sorted(list(user_data['u2f_devices'].keys()))
+    assert 'security_token_enabled' in res
+    assert sorted(res['security_tokens']) == sorted(list(user_data['security_tokens'].keys()))
 
 
 def test_get_submission_params(datastore, client):
