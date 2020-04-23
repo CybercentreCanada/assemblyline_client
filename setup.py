@@ -22,7 +22,7 @@ setup(
     long_description=long_description,
     long_description_content_type='text/markdown',
     license='MIT',
-    url='https://bitbucket.org/cse-assemblyline/assemblyline_client',
+    url='https://github.com/CybercentreCanada/assemblyline-client',
     author='CSE-CST Assemblyline development team',
     author_email='assemblyline@cyber.gc.ca',
 
