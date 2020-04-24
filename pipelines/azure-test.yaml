@@ -1,0 +1,73 @@
+name: tests
+
+trigger: ["*"]
+pr: ["*"]
+
+pool:
+  vmImage: 'ubuntu-18.04'
+
+resources:
+  containers:
+  - container: redis
+    image: redis
+    ports:
+      - 6379:6379
+  - container: elasticsearch
+    image: cccs/elasticsearch:7.6.0
+    env:
+      ES_JAVA_OPTS: "-Xms256m -Xmx512m"
+      DISCOVERY_TYPE: 'single-node'
+    ports:
+      - 9200:9200
+  - container: minio
+    image: cccs/minio
+    env:
+      MINIO_ACCESS_KEY: al_storage_key
+      MINIO_SECRET_KEY: Ch@ngeTh!sPa33w0rd
+    ports:
+      - 9000:9000
+  - container: alui
+    image: cccs/assemblyline-ui:latest
+    env:
+      WORKERS: 1
+      THREADS: 1
+  - container: alsocketio
+    image: cccs/assemblyline-socketio:latest
+
+
+jobs:
+- job: run_test
+  strategy:
+    matrix:
+      python2_7:
+        python.version: '2.7'
+      python3_6:
+        python.version: '3.6'
+      python3_7:
+        python.version: '3.7'
+      Python3_8:
+        python.version: '3.8'
+
+  timeoutInMinutes: 15
+  services:
+    elasticsearch: elasticsearch
+    redis: redis
+    minio: minio
+    alui: alui
+    alsocketio: alsocketio
+
+  steps:
+    - task: UsePythonVersion@0
+      displayName: Set python version
+      inputs:
+        versionSpec: '$(python.version)'
+    - script: |
+        sudo apt update
+        sudo apt install -y build-essential libffi-dev libfuzzy-dev python3-dev
+      displayName: Setup Environment
+    - script: |
+        sudo env "PATH=$PATH" python -m pip install --no-cache-dir -e . -r test/requirements.txt
+      displayName: Install assemblyline_client
+    - script: |
+        pytest -rsx -vv
+      displayName: Test
