@@ -50,6 +50,7 @@ jobs:
       inputs:
         versionSpec: '$(python.version)'
     - script: |
+        set -x  # Echo commands before they are run
         # Run the container pulls in parallel, wait for them all to finish before next step
         sudo docker pull -q cccs/nginx-ssl &
         export NX_PID=$!
@@ -67,8 +68,8 @@ jobs:
         sudo docker run -d --name alui --network host -e "WORKERS=1" -e "THREADS=1" cccs/assemblyline-ui:latest
         sudo docker run -d --name alsocketio --network host cccs/assemblyline-socketio:latest
         # Install depedency packages
-        sudo apt update
-        sudo apt install -y build-essential libffi-dev libfuzzy-dev python3-dev wget
+        sudo apt-get update
+        sudo apt-get install -y build-essential libffi-dev libfuzzy-dev python3-dev wget
         # Install configuration file
         sudo mkdir -p /etc/assemblyline/
         sudo cp pipelines/config.yml /etc/assemblyline/
