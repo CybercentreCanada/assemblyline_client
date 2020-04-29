@@ -1,4 +1,7 @@
+import os
 import pytest
+
+UI_HOST = os.getenv('UI_HOST', "https://localhost:443")
 
 try:
     from assemblyline.common.security import get_random_password
@@ -49,7 +52,7 @@ try:
         ds.user.save('admin', user)
         api_key = "%s:%s" % (key_name, random_pass)
 
-        c = get_client("https://localhost:443", apikey=('admin', api_key), verify=False)
+        c = get_client(UI_HOST, apikey=('admin', api_key), verify=False)
         return c
 except ImportError:
     import sys
