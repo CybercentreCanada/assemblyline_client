@@ -31,7 +31,6 @@ resources:
     env:
       WORKERS: 1
       THREADS: 1
-    options: --network host
   - container: alsocketio
     image: cccs/assemblyline-socketio:latest
     options: --network host
@@ -53,8 +52,6 @@ jobs:
     elasticsearch: elasticsearch
     redis: redis
     minio: minio
-    alui: alui
-    alsocketio: alsocketio
 
   steps:
     - task: UsePythonVersion@0
@@ -65,6 +62,8 @@ jobs:
         sudo apt update
         sudo apt install -y build-essential libffi-dev libfuzzy-dev python3-dev wget
         sudo docker run -d --name nginx --network host --restart on-failure -e "UI_HOST=localhost" -e "SOCKET_HOST=localhost" -e "TEMPLATE=minimal" -e "FQDN=localhost" cccs/nginx-ssl
+        sudo docker run -d --name alui --network host -e "WORKERS=1" -e "THREADS=1" cccs/assemblyline-ui:latest 
+        sudo docker run -d --name alsocketio --network host cccs/assemblyline-socketio:latest
         wget https://localhost --no-check-certificate --timeout=2 --retry-on-http-error=502 --waitretry=10 --retry-connrefused
       displayName: Setup Environment
     - script: |
