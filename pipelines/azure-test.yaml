@@ -31,8 +31,10 @@ resources:
     env:
       WORKERS: 1
       THREADS: 1
+    options: --network host
   - container: alsocketio
     image: cccs/assemblyline-socketio:latest
+    options: --network host
 
 
 jobs:
