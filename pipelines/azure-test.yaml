@@ -26,15 +26,6 @@ resources:
       MINIO_SECRET_KEY: Ch@ngeTh!sPa33w0rd
     ports:
       - 9000:9000
-  - container: alui
-    image: cccs/assemblyline-ui:latest
-    env:
-      WORKERS: 1
-      THREADS: 1
-  - container: alsocketio
-    image: cccs/assemblyline-socketio:latest
-    options: --network host
-
 
 jobs:
 - job: run_test
@@ -47,7 +38,7 @@ jobs:
       Python3_8:
         python.version: '3.8'
 
-  timeoutInMinutes: 15
+  timeoutInMinutes: 10
   services:
     elasticsearch: elasticsearch
     redis: redis
@@ -59,14 +50,30 @@ jobs:
       inputs:
         versionSpec: '$(python.version)'
     - script: |
-        sudo apt update
-        sudo apt install -y build-essential libffi-dev libfuzzy-dev python3-dev wget
+        # Run the container pulls in parallel, wait for them all to finish before next step
+        sudo docker pull -q cccs/nginx-ssl &
+        export NX_PID=$!
+        sudo docker pull -q cccs/assemblyline-ui:latest &
+        export UI_PID=$!
+        sudo docker pull -q cccs/assemblyline-socketio:latest &
+        export SI_PID=$!
+        wait $NX_PID
+        wait $UI_PID
+        wait $SI_PID
+      displayName: Pull Containers
+    - script: |
+        # Start service containers that can't be started by azure properly
         sudo docker run -d --name nginx --network host --restart on-failure -e "UI_HOST=localhost" -e "SOCKET_HOST=localhost" -e "TEMPLATE=minimal" -e "FQDN=localhost" cccs/nginx-ssl
         sudo docker run -d --name alui --network host -e "WORKERS=1" -e "THREADS=1" cccs/assemblyline-ui:latest
         sudo docker run -d --name alsocketio --network host cccs/assemblyline-socketio:latest
-        wget https://localhost --no-check-certificate --timeout=2 --retry-on-http-error=502 --waitretry=10 --retry-connrefused
+        # Install depedency packages
+        sudo apt update
+        sudo apt install -y build-essential libffi-dev libfuzzy-dev python3-dev wget
+        # Install configuration file
         sudo mkdir -p /etc/assemblyline/
-        sudo cp test/config/config.yml /etc/assemblyline/
+        sudo cp pipelines/config.yml /etc/assemblyline/
+        # Wait for the service containers to come online
+        wget https://localhost --no-check-certificate --timeout=2 --retry-on-http-error=502 --waitretry=10 --retry-connrefused
       displayName: Setup Environment
     - script: |
         sudo env "PATH=$PATH" python -m pip install --no-cache-dir -e . -r test/requirements.txt
