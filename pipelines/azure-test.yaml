@@ -66,7 +66,7 @@ jobs:
         sudo docker run -d --name alsocketio --network host cccs/assemblyline-socketio:latest
         wget https://localhost --no-check-certificate --timeout=2 --retry-on-http-error=502 --waitretry=10 --retry-connrefused
         sudo mkdir -p /etc/assemblyline/
-        sudo cp test/config/config.yaml /etc/assemblyline/
+        sudo cp test/config/config.yml /etc/assemblyline/
       displayName: Setup Environment
     - script: |
         sudo env "PATH=$PATH" python -m pip install --no-cache-dir -e . -r test/requirements.txt
