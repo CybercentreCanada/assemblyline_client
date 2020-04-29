@@ -53,16 +53,12 @@ jobs:
         set -x  # Echo commands before they are run
         # Run the container pulls in parallel, wait for them all to finish before next step
         sudo docker pull -q cccs/nginx-ssl &
-        export NX_PID=$!
         sudo docker pull -q cccs/assemblyline-ui:latest &
-        export UI_PID=$!
         sudo docker pull -q cccs/assemblyline-socketio:latest &
-        export SI_PID=$!
-        wait $NX_PID
-        wait $UI_PID
-        wait $SI_PID
+        wait
       displayName: Pull Containers
     - script: |
+        set -x  # Echo commands before they are run
         # Start service containers that can't be started by azure properly
         sudo docker run -d --name nginx --network host --restart on-failure -e "UI_HOST=localhost" -e "SOCKET_HOST=localhost" -e "TEMPLATE=minimal" -e "FQDN=localhost" cccs/nginx-ssl
         sudo docker run -d --name alui --network host -e "WORKERS=1" -e "THREADS=1" cccs/assemblyline-ui:latest
