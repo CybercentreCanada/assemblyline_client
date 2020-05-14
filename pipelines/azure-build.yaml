@@ -1,15 +1,9 @@
-name: tests
+name: build
 
-trigger: ["*"]
-pr: ["*"]
-
-schedules:
-  - cron: "0 6 * * 1" # Every monday morning
-    displayName: Weekly build
-    branches:
-      include:
-        - master
-    always: true
+trigger:
+  tags:
+    include: ["v*"]
+pr: none
 
 pool:
   vmImage: 'ubuntu-18.04'
@@ -35,28 +29,53 @@ resources:
     ports:
       - 9000:9000
 
-jobs:
-- job: run_test
-  strategy:
-    matrix:
-      python3_6:
-        python.version: '3.6'
-      python3_7:
-        python.version: '3.7'
-      Python3_8:
-        python.version: '3.8'
 
-  timeoutInMinutes: 10
-  services:
-    elasticsearch: elasticsearch
-    redis: redis
-    minio: minio
-
-  steps:
+stages:
+- stage: build
+  jobs:
+  - job: build_package
+    displayName: Build Package
+    steps:
+    - task: UsePythonVersion@0
+      displayName: Set python version
+      inputs: {versionSpec: 3.8}
+    - script: |
+        sudo env "PATH=$PATH" python -m pip install --no-cache-dir -U wheel pip
+        python setup.py bdist_wheel
+    - publish: $(System.DefaultWorkingDirectory)/dist/
+      artifact: dist
+    - publish: $(System.DefaultWorkingDirectory)/pipelines/
+      artifact: pipelines
+    - publish: $(System.DefaultWorkingDirectory)/test/
+      artifact: test
+- stage: test
+  jobs:
+  - job: run_test
+    strategy:
+      matrix:
+        python3_6:
+          python.version: '3.6'
+        python3_7:
+          python.version: '3.7'
+        Python3_8:
+          python.version: '3.8'
+    timeoutInMinutes: 10
+    services:
+      elasticsearch: elasticsearch
+      redis: redis
+      minio: minio
+    steps:
+    - checkout: none
     - task: UsePythonVersion@0
       displayName: Set python version
       inputs:
         versionSpec: '$(python.version)'
+    - download: current
+      artifact: dist
+    - download: current
+      artifact: pipelines
+    - download: current
+      artifact: test
     - script: |
         set -x  # Echo commands before they are run
         # Run the container pulls in parallel, wait for them all to finish before next step
@@ -86,3 +105,35 @@ jobs:
     - script: |
         pytest -rsx -vv
       displayName: Test
+- stage: deploy
+  jobs:
+  - job: deploy
+    displayName: Deploy packages and containers
+    variables:
+      - group: deployment-information
+    steps:
+    - task: UsePythonVersion@0
+      displayName: Set python version
+      inputs: {versionSpec: 3.8}
+    - download: current
+      artifact: dist
+    - script: |
+        set -xv  # Echo commands before they are run
+        sudo env "PATH=$PATH" python -m pip install --no-cache-dir twine
+        ls dist
+        twine upload --skip-existing --repository-url $TEST_REPOSITORY_URL dist/*
+      displayName: Deploy to Test PyPI
+      env:
+        TWINE_USERNAME: $(twineUsername)
+        TWINE_PASSWORD: $(twinePassword)
+    - script: |
+        set -xv  # Echo commands before they are run
+        sudo env "PATH=$PATH" python -m pip install --no-cache-dir twine
+        ls dist
+        twine upload --skip-existing dist/*
+      displayName: Deploy to PyPI
+      env:
+        TWINE_USERNAME: $(twineUsername)
+        TWINE_PASSWORD: $(twinePassword)
+
+
