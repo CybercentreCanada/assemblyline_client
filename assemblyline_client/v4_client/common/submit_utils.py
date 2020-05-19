@@ -50,7 +50,8 @@ def al_result_to_text(r, show_errors=True, verbose_error=False):
     for key in sorted(r['times'].keys()):
         if r['times'][key] is not None:
             lines.append("\t\t%-12s %s (UTC)" % (key + ":", r['times'][key].replace("T", " ").replace("Z", "")))
-    lines.append("\t\t%-12s %s (UTC)" % ("expiry:", r["expiry_ts"].replace("T", " ").replace("Z", "")))
+    if r["expiry_ts"]:
+        lines.append("\t\t%-12s %s (UTC)" % ("expiry:", r["expiry_ts"].replace("T", " ").replace("Z", "")))
 
     if len(r['metadata']) > 0:
         lines.append("")
