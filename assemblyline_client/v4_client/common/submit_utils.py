@@ -156,12 +156,7 @@ def show_section(section):
 
     if section['heuristic'] is not None:
         score = section['heuristic']['score']
-        if 'attack_pattern' in section['heuristic']:
-            attack = " - Att&ck: {} [{}]".format(section['heuristic']['attack_pattern'],
-                                                 section['heuristic']['attack_id'])
-        else:
-            attack = ""
-        out.append("\t{}{}[{}] {}{}".format(depth, classification, score, title, attack))
+        out.append("\t{}{}[{}] {}".format(depth, classification, score, title))
 
     else:
         out.append("\t{}{}{}".format(depth, classification, title))
@@ -170,7 +165,10 @@ def show_section(section):
         if section['body_format'] in ["TEXT", "MEMORY_DUMP"]:
             out.extend(["\t\t{}{}".format(depth, x) for x in section['body'].splitlines()])
         elif section['body_format'] == 'GRAPH_DATA':
-            body = json.loads(section['body'])
+            try:
+                body = json.loads(section['body'])
+            except TypeError:
+                body = section['body']
             dom_min, dom_max = body['data']['domain']
             values = body['data']['values']
             step = (dom_max - dom_min) / 5.0
@@ -192,7 +190,10 @@ def show_section(section):
                                                                            dom_max-step*1.0, dom_max*1.0))
             out.append("\t\t{}{}{}{}".format(depth, LD, ''.join(cmap), RD))
         elif section['body_format'] == 'URL':
-            body = json.loads(section['body'])
+            try:
+                body = json.loads(section['body'])
+            except TypeError:
+                body = section['body']
             if not isinstance(body, list):
                 body = [body]
             for url in body:
@@ -215,9 +216,21 @@ def show_section(section):
         else:
             out.append("Unknown section type: {}".format(section['body_format']))
 
-    if section['tags']:
+    heuristic = section.get('heuristic')
+    spacer = True
+    if heuristic:
+        spacer = False
         out.append('')
+        out.append("\t\t\t{}[HEURISTIC] {}".format(depth, heuristic['name']))
+        for signature in heuristic.get('signature', []):
+            out.append("\t\t\t{}[SIGNATURE] {} ({}x)".format(depth, signature['name'], signature['frequency']))
+        for attack in heuristic.get('attack', []):
+            out.append("\t\t\t{}[ATTACK] {} ({})".format(depth, attack['pattern'], attack['attack_id']))
+
+    if section['tags']:
+        if spacer:
+            out.append('')
         for tag in section['tags']:
-            out.append("\t\t\t{}[{}] {}".format(depth, tag['short_type'], tag['value']))
+            out.append("\t\t\t{}[{}] {}".format(depth, tag['short_type'].upper(), tag['value']))
 
     return out
