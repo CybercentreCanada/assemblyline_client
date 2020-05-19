@@ -1,4 +1,6 @@
 import logging
+from copy import deepcopy
+
 import socketio
 
 from assemblyline_client.v4_client.common.utils import ClientError
@@ -67,7 +69,7 @@ This function wait indefinitely and calls the appropriate callback for each mess
         if alert_updated_callback:
             self._sio.on("AlertUpdated", alert_updated_callback, namespace='/alerts')
 
-        self._sio.connect(self._server, namespaces=['/alerts'], headers=self._header)
+        self._sio.connect(self._server, namespaces=['/alerts'], headers=deepcopy(self._header))
         self._sio.emit('alert', {"status": "start", "client": "assemblyline_client"}, namespace='/alerts')
         if timeout is None:
             self._sio.wait()
@@ -112,7 +114,7 @@ This function wait indefinitely and calls the appropriate callback for each mess
         if service_timing_msg_callback:
             self._sio.on("ServiceTimingHeartbeat", service_timing_msg_callback, namespace='/status')
 
-        self._sio.connect(self._server, namespaces=['/status'], headers=self._header)
+        self._sio.connect(self._server, namespaces=['/status'], headers=deepcopy(self._header))
         self._sio.emit('monitor', {"status": "start", "client": "assemblyline_client"}, namespace='/status')
 
         if timeout is None:
@@ -153,7 +155,7 @@ This function wait indefinitely and calls the appropriate callback for each mess
         if started_callback is not None:
             self._sio.on("SubmissionStarted", started_callback, namespace='/submissions')
 
-        self._sio.connect(self._server, namespaces=['/submissions'], headers=self._header)
+        self._sio.connect(self._server, namespaces=['/submissions'], headers=deepcopy(self._header))
         self._sio.emit('monitor', {"status": "start", "client": "assemblyline_client"}, namespace='/submissions')
 
         if timeout is None:
@@ -187,7 +189,7 @@ This function wait indefinitely and calls the appropriate callback for each mess
         self._sio.on("stop", self._stop_callback, namespace='/live_submission')
         self._sio.on("error", self._error_callback, namespace='/live_submission')
 
-        self._sio.connect(self._server, namespaces=['/live_submission'], headers=self._header)
+        self._sio.connect(self._server, namespaces=['/live_submission'], headers=deepcopy(self._header))
 
         self._sio.emit('listen',
                        {"status": "start", "client": "assemblyline_client", "wq_id": wq, 'from_start': True},
