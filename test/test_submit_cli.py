@@ -29,8 +29,18 @@ def test_submit(datastore):
 
 
 def test_result_to_text(datastore, client):
-    submission_id = random_id_from_collection(datastore, 'submission')
-    data = client.submission.full(submission_id)
+    data = None
+    retry = 0
+    while retry < 5:
+        submission_id = random_id_from_collection(datastore, 'submission')
+        data = client.submission.full(submission_id)
+        if data['results']:
+            # Try to prioritize submissions with results
+            break
+        retry += 1
+
+    assert data is not None
+
     text = "\n".join(al_result_to_text(data))
     assert len(text) != 0
     assert ":: Submission Detail ::" in text
