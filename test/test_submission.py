@@ -74,4 +74,6 @@ def test_get_submission_tree(datastore, client):
 
     res = client.submission.tree(submission_id)
     assert len(res) >= 1
-    assert submission_data.files[0].sha256 in res
+    for k in ['classification', 'filtered', 'tree']:
+        assert k in res
+    assert submission_data.files[0].sha256 in res['tree']

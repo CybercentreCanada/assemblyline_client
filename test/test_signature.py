@@ -92,19 +92,21 @@ def test_download_file_handle(datastore, client):
     res = client.signature.download(query=query, output=open(output, 'wb'), safe=False)
     assert res
 
-    has_yara_samples = False
-    has_suricata_samples = False
+    found = False
 
     with open(output, 'rb') as fh:
         for l in fh:
             if signature_id.startswith('yara') and b"yara/sample_rules.yar" in l:
-                has_yara_samples = True
+                found = True
                 break
             elif signature_id.startswith('suricata') and b"suricata/sample_suricata.rules" in l:
-                has_suricata_samples = True
+                found = True
+                break
+            elif signature_id.startswith('type') and b"type/source" in l:
+                found = True
                 break
 
-    if not has_yara_samples and not has_suricata_samples:
+    if not found:
         pytest.fail("This is not the signature file that we were expecting.")
 
 
