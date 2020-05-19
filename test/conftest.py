@@ -97,10 +97,10 @@ except ImportError:
     if sys.version_info < (3, 0):
         @pytest.fixture()
         def client():
-            pytest.skip()
+            pytest.skip("This feature cannot be tested under python 2.x.")
 
         @pytest.fixture()
         def datastore():
-            pytest.skip()
+            pytest.skip("This feature cannot be tested under python 2.x.")
     else:
         raise
