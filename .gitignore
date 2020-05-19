@@ -13,7 +13,7 @@ dist
 htmlcov/
 venv/
 .tox
-venv
+venv*
 
 ehthumbs.db
 Thumbs.db
