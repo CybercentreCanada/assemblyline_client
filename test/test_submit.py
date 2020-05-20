@@ -26,6 +26,8 @@ def test_submit_content(datastore, client):
     assert res['files'][0]['name'] == fname
     assert res == datastore.submission.get(res['sid'], as_obj=False)
 
+    datastore.submission.delete(res['sid'])
+
 
 def test_submit_path(datastore, client):
     content = get_random_phrase(wmin=15, wmax=50).encode()
@@ -40,6 +42,8 @@ def test_submit_path(datastore, client):
     assert res['params']['service_spec'] == params['service_spec']
     assert res == datastore.submission.get(res['sid'], as_obj=False)
 
+    datastore.submission.delete(res['sid'])
+
 
 def test_submit_sha(datastore, client):
     file_id = random_id_from_collection(datastore, 'file')
@@ -49,6 +53,8 @@ def test_submit_sha(datastore, client):
     assert res['files'][0]['sha256'] == file_id
     assert res['metadata'] == metadata
     assert res == datastore.submission.get(res['sid'], as_obj=False)
+
+    datastore.submission.delete(res['sid'])
 
 
 def test_submit_url(datastore, client):
@@ -60,6 +66,8 @@ def test_submit_url(datastore, client):
     for k in params:
         assert res['params'][k] == params[k]
     assert res == datastore.submission.get(res['sid'], as_obj=False)
+
+    datastore.submission.delete(res['sid'])
 
 
 def test_submit_dynamic(datastore, client):
@@ -75,6 +83,8 @@ def test_submit_dynamic(datastore, client):
         if k not in ['submitter', 'services', 'description']:
             assert res['params'][k] == submission_data['params'][k]
 
+    datastore.submission.delete(res['sid'])
+
 
 def test_resubmit(datastore, client):
     submission_id = random_id_from_collection(datastore, 'submission')
@@ -86,3 +96,5 @@ def test_resubmit(datastore, client):
     for k in res['params']:
         if k not in ['submitter', 'description']:
             assert res['params'][k] == submission_data['params'][k]
+
+    datastore.submission.delete(res['sid'])
