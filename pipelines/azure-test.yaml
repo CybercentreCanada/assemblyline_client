@@ -39,6 +39,8 @@ jobs:
 - job: run_test
   strategy:
     matrix:
+      python2_7:
+        python.version: '2.7'
       python3_6:
         python.version: '3.6'
       python3_7:
