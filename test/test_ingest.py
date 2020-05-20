@@ -57,6 +57,6 @@ def test_ingest_sha(datastore, client):
 
 
 def test_ingest_url(datastore, client):
-    url='https://www.cyber.gc.ca/en/theme-gcwu-fegc/assets/wmms.svg'
+    url = 'https://www.cyber.gc.ca/en/theme-gcwu-fegc/assets/wmms.svg'
     res = client.ingest(url=url, params={"deep_scan": True, "ignore_cache": True, "priority": 100})
     assert res.get('ingest_id', None) is not None
