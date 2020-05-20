@@ -86,7 +86,7 @@ def test_get_signature(datastore, client):
 
 
 def test_download_file_handle(datastore, client):
-    signature_id = random_id_from_collection(datastore, 'signature')
+    signature_id = random_id_from_collection(datastore, 'signature', q="type:yara")
     query = "id:{}".format(signature_id)
     output = "/tmp/sigs_{}_obj".format(get_random_id())
     res = client.signature.download(query=query, output=open(output, 'wb'), safe=False)
@@ -95,16 +95,8 @@ def test_download_file_handle(datastore, client):
     found = False
 
     with open(output, 'rb') as fh:
-        for l in fh:
-            if signature_id.startswith('yara') and b"yara/sample_rules.yar" in l:
-                found = True
-                break
-            elif signature_id.startswith('suricata') and b"suricata/sample_suricata.rules" in l:
-                found = True
-                break
-            elif signature_id.startswith('type') and b"type/source" in l:
-                found = True
-                break
+        if b"yara/sample_rules.yar" in fh.read():
+            found = True
 
     if not found:
         pytest.fail("This is not the signature file that we were expecting.")
