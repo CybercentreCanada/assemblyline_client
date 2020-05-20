@@ -29,7 +29,7 @@ def test_submit(datastore):
 
 
 def test_result_to_text(datastore, client):
-    submission_id = random_id_from_collection(datastore, 'submission')
+    submission_id = random_id_from_collection(datastore, 'submission', q="file_count:[2 TO *]")
     data = client.submission.full(submission_id)
     text = "\n".join(al_result_to_text(data))
     assert len(text) != 0

@@ -40,7 +40,7 @@ def test_get_file_detail_for_submission(datastore, client):
 
 
 def test_get_full_submission(datastore, client):
-    submission_id = random_id_from_collection(datastore, 'submission')
+    submission_id = random_id_from_collection(datastore, 'submission', q="file_count:[2 TO *]")
     submissison_data = datastore.submission.get(submission_id, as_obj=False)
 
     res = client.submission.full(submission_id)
@@ -69,7 +69,7 @@ def test_get_submission_summary(datastore, client):
 
 
 def test_get_submission_tree(datastore, client):
-    submission_id = random_id_from_collection(datastore, 'submission')
+    submission_id = random_id_from_collection(datastore, 'submission', q="file_count:[2 TO *]")
     submission_data = datastore.submission.get(submission_id)
 
     res = client.submission.tree(submission_id)
