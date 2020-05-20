@@ -9,8 +9,8 @@ class Ingest(object):
     def __init__(self, connection):
         self._connection = connection
 
-    def __call__(self, content=None, path=None, sha256=None, url=None, alert=False, fname=None,
-                 metadata=None, nq=None, nt=None, params=None, ingest_type='AL_CLIENT'):
+    def __call__(self, path=None, content=None, url=None, sha256=None, fname=None, params=None, metadata=None,
+                 alert=False, nq=None, nt=None, ingest_type='AL_CLIENT'):
         """\
 Submit a file to the ingestion queue.
 
@@ -21,13 +21,13 @@ sha256  : Sha256 of the file to scan (string)
 url     : Url to scan (string)
 
 Optional
-alert   : Create an alert if score above alert threshold. (boolean)
-fname   : Name of the file to scan (string)
-metadata: Metadata to include with submission. (dict)
-nq      : Notification queue name. (string)
-nt      : Notification threshold. (int)
-params  : Additional submission parameters. (dict)
-srv_spec: Service-specific parameters. (dict)
+alert      : Create an alert if score above alert threshold. (boolean)
+fname      : Name of the file to scan (string)
+metadata   : Metadata to include with submission. (dict)
+nq         : Notification queue name. (string)
+nt         : Notification threshold. (int)
+params     : Additional submission parameters. (dict)
+ingest_type: Ingestion type, one word to describe how the data is ingested. Default: AL_CLIENT (string)
 
 If content is provided, the path is used as metadata only.
 """

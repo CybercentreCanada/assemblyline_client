@@ -21,8 +21,8 @@ url     : Url to scan
 
 Optional
 fname   : Name of the file to scan
+metadata   : Metadata to include with submission. (dict)
 params  : Additional submission parameters. (dict)
-srv_spec: Service specific submission parameters. (dict)
 
 If content is provided, the path is used as metadata only.
 """
