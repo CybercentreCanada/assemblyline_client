@@ -30,6 +30,15 @@ Data block:
  "data": "rule sample {...}",  # Data of the rule to be added
  "source": "yara_signatures"   # Source from where the signature has been gathered
 }
+
+Optional:
+dedup_name : Should we check if the signature already exist before inserting it (default: True)
+
+Returns:
+{
+ "success": True,
+ "signature_id": <ID of the saved signature>
+}
         """
         return self._connection.post(api_path_by_module(self, **get_funtion_kwargs('data', 'self')), json=data)
 
@@ -53,18 +62,27 @@ Data block example:
     },
     ...
 ]
+
+Optional:
+dedup_name : Should we check if the signatures already exist before inserting it (default: True)
+
+Returns:
+{
+ "success": 23,       # Number of successful inserts
+ "errors": [],        # List of signature that failed
+ "skipped": [],       # List of skipped signatures, they already exist
+}
         """
         return self._connection.post(api_path_by_module(self, **get_funtion_kwargs('data', 'self')), json=data)
 
     # noinspection PyUnusedLocal
-    def download(self, output=None, query=None, safe=True):
+    def download(self, output=None, query=None):
         """\
 Download the signatures. Defaults to all if no query is provided.
 
 Optional:
 output  : Path or file handle. (string or file-like object)
 query   : lucene query (string)
-safe    : Ensure signatures can be compiled. (boolean)
 
 If output is not specified the content is returned.
 """
@@ -72,6 +90,13 @@ If output is not specified the content is returned.
         if output:
             return self._connection.download(path, stream_output(output))
         return self._connection.download(path, raw_output)
+
+    def stats(self):
+        """\
+Gather statistics about all the signatures in the system.
+
+"""
+        return self._connection.get(api_path('signature/stats'))
 
     def update_available(self, since='', sig_type='*'):
         """\
