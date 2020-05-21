@@ -28,7 +28,7 @@ Throws a Client exception if the file does not exist.
         return self._connection.get(api_path_by_module(self, sha256))
 
     # noinspection PyUnusedLocal
-    def download(self, sha256, encoding=None, output=None):
+    def download(self, sha256, encoding=None, sid=None, output=None):
         """\
 Download the file with the given sha256.
 
@@ -36,8 +36,10 @@ Required:
 sha256     : File key (string)
 
 Optional:
-format  : Encoding (string)
-output  : Path or file handle (string or file-like object)
+encoding : Which file encoding do you want for the file (string)
+output   : Path or file handle (string or file-like object)
+sid      : ID of the submission the download is for
+           If carted the file will inherit the submission metadata (string)
 
 If output is not specified the content is returned.
 
@@ -59,7 +61,6 @@ sha256     : File key (string)
 Throws a Client exception if the file does not exist.
 """
         return self._connection.get(api_path_by_module(self, sha256))
-
 
     def info(self, sha256):
         """\
