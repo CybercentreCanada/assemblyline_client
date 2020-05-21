@@ -86,9 +86,20 @@ If content is provided, the path is used as metadata only.
 
         return self._connection.post(api_path('ingest'), data=data, files=files, headers=headers)
 
+    def get_message(self, nq):
+        """\
+Return a single message from the given notification queue.
+
+Required:
+nq      : Notification queue name. (string)
+
+Throws a Client exception if the watch queue does not exist.
+"""
+        return self._connection.get(api_path_by_module(self, nq))
+
     def get_message_list(self, nq):
         """\
-Return messages from the given notification queue.
+Return all messages from the given notification queue.
 
 Required:
 nq      : Notification queue name. (string)
