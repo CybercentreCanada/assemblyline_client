@@ -19,7 +19,7 @@ except (ImportError, SyntaxError):
         raise
 
 
-def test_get_message_list(datastore, client):
+def test_get_message(datastore, client):
     notification_queue = get_random_id()
     queue = NamedQueue("nq-%s" % notification_queue,
                        host=config.core.redis.persistent.host,
@@ -28,9 +28,28 @@ def test_get_message_list(datastore, client):
     msg = random_model_obj(Submission).as_primitives()
     queue.push(msg)
 
+    res = client.ingest.get_message(notification_queue)
+    assert isinstance(res, dict)
+    assert 'sid' in res
+    assert 'results' in res
+    assert res == msg
+
+
+def test_get_message_list(datastore, client):
+    notification_queue = get_random_id()
+    queue = NamedQueue("nq-%s" % notification_queue,
+                       host=config.core.redis.persistent.host,
+                       port=config.core.redis.persistent.port)
+    queue.delete()
+    msg_0 = random_model_obj(Submission).as_primitives()
+    queue.push(msg_0)
+    msg_1 = random_model_obj(Submission).as_primitives()
+    queue.push(msg_1)
+
     res = client.ingest.get_message_list(notification_queue)
-    assert len(res) == 1
-    assert res[0] == msg
+    assert len(res) == 2
+    assert res[0] == msg_0
+    assert res[1] == msg_1
 
 
 def test_ingest_content(datastore, client):
