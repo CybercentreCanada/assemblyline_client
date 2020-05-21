@@ -53,7 +53,7 @@ def test_import(datastore, client):
         client.bundle.create(submission_id, tested_bundle)
 
         with pytest.raises(ClientError):
-            client.bundle.import_bundle(tested_bundle)
+            client.bundle.import_bundle(tested_bundle, min_classification="RESTRICTED")
 
         datastore.delete_submission_tree(submission_id)
         datastore.submission.commit()
