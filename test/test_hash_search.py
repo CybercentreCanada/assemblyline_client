@@ -49,6 +49,6 @@ def test_sha256_search_with_specific_db(datastore, client):
 
     alert_id = random_id_from_collection(datastore, 'alert')
     alert_data = datastore.alert.get(alert_id)
-    res = client.hash_search(alert_data.file.sha256, db=['alert'])
+    res = client.hash_search(alert_data.file.sha256, db=['alert'], max_timeout=1)
 
     assert len(res['alert']['items']) != 0
