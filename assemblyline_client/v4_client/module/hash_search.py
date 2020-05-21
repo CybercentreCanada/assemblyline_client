@@ -5,7 +5,7 @@ class HashSearch(object):
     def __init__(self, connection):
         self._connection = connection
 
-    def __call__(self, h, db=None):
+    def __call__(self, h, db=None, max_timeout=None):
         """\
 Perform a hash search for the given md5, sha1 or sha256.
 
@@ -13,7 +13,8 @@ Required:
 h       : Hash - md5, sha1 or sha256 (string)
 
 Optional:
-db      : Data sources to query (list of strings).
+db          : Data sources to query (list of strings).
+max_timeout : Maximum amount of time to wait for response, in seconds (float).
 
 Note: Not all hash types are supported by all data sources.
 """
@@ -23,6 +24,10 @@ Note: Not all hash types are supported by all data sources.
         kw = {}
         if db:
             kw['db'] = '|'.join(db)
+
+        if max_timeout:
+            kw['max_timeout'] = float(max_timeout)
+
         return self._connection.get(api_path('hash_search', h, **kw))
 
     def list_data_sources(self):
