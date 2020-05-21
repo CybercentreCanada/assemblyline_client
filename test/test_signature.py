@@ -89,7 +89,7 @@ def test_download_file_handle(datastore, client):
     signature_id = random_id_from_collection(datastore, 'signature', q="type:yara")
     query = "id:{}".format(signature_id)
     output = "/tmp/sigs_{}_obj".format(get_random_id())
-    res = client.signature.download(query=query, output=open(output, 'wb'), safe=False)
+    res = client.signature.download(query=query, output=open(output, 'wb'))
     assert res
 
     found = False
@@ -132,6 +132,11 @@ def test_download_raw(datastore, client):
     assert res[:2] == b"PK"
     assert b"yara/sample_rules.yar" in res
     assert b"suricata/sample_suricata.rules" in res
+
+
+def test_stats(datastore, client):
+    res = client.signature.stats()
+    assert len(res) == datastore.signature.search('id:*')['total']
 
 
 def test_update_available(datastore, client):
