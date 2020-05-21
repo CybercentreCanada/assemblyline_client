@@ -81,7 +81,7 @@ If content is provided, the path is used as metadata only.
             data = {'json': dumps(request)}
             headers = {'content-type': None}
         else:
-            data=dumps(request)
+            data = dumps(request)
             headers = None
 
         return self._connection.post(api_path('ingest'), data=data, files=files, headers=headers)
