@@ -7,6 +7,7 @@ from copy import deepcopy
 from assemblyline_client import ClientError
 
 try:
+    from assemblyline.common import forge
     from assemblyline.common.isotime import now_as_iso
     from assemblyline.common.uid import get_random_id
     from assemblyline.odm.random_data import random_model_obj
@@ -135,6 +136,15 @@ def test_download_raw(datastore, client):
 
 
 def test_stats(datastore, client):
+    cache = forge.get_statistics_cache()
+    cache.delete()
+
+    res = client.signature.stats()
+    assert len(res) == 0
+
+    stats = datastore.calculate_signature_stats()
+    cache.set('signatures', stats)
+
     res = client.signature.stats()
     assert len(res) == datastore.signature.search('id:*')['total']
 

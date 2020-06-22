@@ -1,5 +1,6 @@
 
 try:
+    from assemblyline.common import forge
     from utils import random_id_from_collection
 except ImportError:
     import pytest
@@ -8,6 +9,7 @@ except ImportError:
         pytestmark = pytest.mark.skip
     else:
         raise
+
 
 def test_get(datastore, client):
     heuristics_id = random_id_from_collection(datastore, 'heuristic')
@@ -22,5 +24,14 @@ def test_get(datastore, client):
 
 
 def test_stats(datastore, client):
+    cache = forge.get_statistics_cache()
+    cache.delete()
+
+    res = client.heuristics.stats()
+    assert len(res) == 0
+
+    stats = datastore.calculate_heuristic_stats()
+    cache.set('heuristics', stats)
+
     res = client.heuristics.stats()
     assert len(res) == datastore.heuristic.search('id:*')['total']
