@@ -24,6 +24,11 @@ except ImportError:
 
 def test_add_update(datastore, client):
     random_sig = random_model_obj(Signature, as_json=True)
+    random_sig['signature_id'] = "random"
+    random_sig['name'] = "sig_name_random"
+    random_sig['status'] = "DEPLOYED"
+    random_sig['source'] = "source"
+    random_sig['type'] = "type"
 
     res = client.signature.add_update(random_sig)
     assert res['success']
@@ -49,6 +54,8 @@ def test_add_update_many(datastore, client):
     sig_list = []
     for x in range(10):
         data = random_model_obj(Signature).as_primitives(hidden_fields=True)
+        data['signature_id'] = f"test_sig_{x}"
+        data['name'] = f"sig_name_{x}"
         data['status'] = "DEPLOYED"
         data['source'] = source
         data['type'] = s_type
