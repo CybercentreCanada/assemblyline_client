@@ -7,7 +7,7 @@ services:
       WORKERS: 1
       THREADS: 1
     volumes:
-      - ./config/:/etc/assemblyline/
+      - ${PATH_REWRITE:-.}/config/:/etc/assemblyline/
     depends_on:
       elasticsearch:
         condition: service_healthy
@@ -19,7 +19,7 @@ services:
   al_socketio:
     image: cccs/assemblyline-socketio:latest
     volumes:
-      - ./config/:/etc/assemblyline/
+      - ${PATH_REWRITE:-.}/config/:/etc/assemblyline/
     depends_on:
       elasticsearch:
         condition: service_healthy
