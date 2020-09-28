@@ -79,6 +79,7 @@ def test_submit_dynamic(datastore, client):
 def test_resubmit(datastore, client):
     submission_id = random_id_from_collection(datastore, 'submission')
     submission_data = datastore.submission.get(submission_id, as_obj=False)
+    submission_data['params']['services']['runtime_excluded'] = []
 
     res = client.submit.resubmit(submission_id)
     assert res['sid'] is not None
