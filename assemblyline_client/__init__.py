@@ -32,9 +32,9 @@ def Client(*args, **kwargs):
 
 
 def get_client(server, auth=None, cert=None, debug=lambda x: None, headers=None, retries=RETRY_FOREVER,
-               silence_requests_warnings=True, apikey=None, verify=True):
+               silence_requests_warnings=True, apikey=None, verify=True, timeout=None):
         connection = Connection(server, auth, cert, debug, headers, retries,
-                                silence_requests_warnings, apikey, verify)
+                                silence_requests_warnings, apikey, verify, timeout)
         if connection.is_v4:
             return Client4(connection)
         else:
@@ -44,7 +44,7 @@ def get_client(server, auth=None, cert=None, debug=lambda x: None, headers=None,
 class Connection(object):
     def __init__(  # pylint: disable=R0913
         self, server, auth, cert, debug, headers, retries,
-        silence_warnings, apikey, verify
+        silence_warnings, apikey, verify, timeout
     ):
         self.auth = auth
         self.apikey = apikey
@@ -54,6 +54,7 @@ class Connection(object):
         self.server = server
         self.silence_warnings = silence_warnings
         self.verify = verify
+        self.default_timeout = timeout
 
         session = requests.Session()
 
@@ -157,6 +158,9 @@ class Connection(object):
 
     def request(self, func, path, process, **kw):
         self.debug(path)
+
+        # Apply default timeout parameter if not passed elsewhere
+        kw.setdefault('timeout', self.default_timeout)
 
         retries = 0
         with warnings.catch_warnings():
