@@ -88,7 +88,7 @@ try:
         datastore.user.save('admin', user)
         api_key = "%s:%s" % (key_name, random_pass)
 
-        c = get_client(UI_HOST, apikey=('admin', api_key), verify=False)
+        c = get_client(UI_HOST, apikey=('admin', api_key), verify=False, retries=1)
         return c
 
 except ImportError:
