@@ -6,11 +6,13 @@ import pytest
 try:
     from assemblyline.odm.messages.alert import AlertMessage
     from assemblyline.odm.messages.alerter_heartbeat import AlerterMessage
+    from assemblyline.odm.messages.archive_heartbeat import ArchiveMessage
     from assemblyline.odm.messages.dispatcher_heartbeat import DispatcherMessage
     from assemblyline.odm.messages.expiry_heartbeat import ExpiryMessage
     from assemblyline.odm.messages.ingest_heartbeat import IngestMessage
+    from assemblyline.odm.messages.scaler_heartbeat import ScalerMessage
+    from assemblyline.odm.messages.scaler_status_heartbeat import ScalerStatusMessage
     from assemblyline.odm.messages.service_heartbeat import ServiceMessage
-    from assemblyline.odm.messages.service_timing_heartbeat import ServiceTimingMessage
     from assemblyline.odm.messages.submission import SubmissionMessage
     from assemblyline.odm.randomizer import random_model_obj
     from assemblyline.remote.datatypes.queues.comms import CommsQueue
@@ -63,14 +65,19 @@ def test_status_messages(datastore, client):
     test_res_array = []
 
     alerter_hb_msg = random_model_obj(AlerterMessage).as_primitives()
+    archive_hb_msg = random_model_obj(ArchiveMessage).as_primitives()
     dispatcher_hb_msg = random_model_obj(DispatcherMessage).as_primitives()
     expiry_hb_msg = random_model_obj(ExpiryMessage).as_primitives()
     ingest_hb_msg = random_model_obj(IngestMessage).as_primitives()
+    scaler_hb_msg = random_model_obj(ScalerMessage).as_primitives()
+    scaler_status_hb_msg = random_model_obj(ScalerStatusMessage).as_primitives()
     service_hb_msg = random_model_obj(ServiceMessage).as_primitives()
-    service_timing_msg = random_model_obj(ServiceTimingMessage).as_primitives()
 
     def alerter_callback(data):
         test_res_array.append(('alerter', alerter_hb_msg['msg'] == data))
+
+    def archive_callback(data):
+        test_res_array.append(('archive', archive_hb_msg['msg'] == data))
 
     def dispatcher_callback(data):
         test_res_array.append(('dispatcher', dispatcher_hb_msg['msg'] == data))
@@ -81,11 +88,14 @@ def test_status_messages(datastore, client):
     def ingest_callback(data):
         test_res_array.append(('ingest', ingest_hb_msg['msg'] == data))
 
+    def scaler_callback(data):
+        test_res_array.append(('scaler', scaler_hb_msg['msg'] == data))
+
+    def scaler_status_callback(data):
+        test_res_array.append(('scaler_status', scaler_status_hb_msg['msg'] == data))
+
     def service_callback(data):
         test_res_array.append(('service', service_hb_msg['msg'] == data))
-
-    def service_timing_callback(data):
-        test_res_array.append(('service_timing', service_timing_msg['msg'] == data))
 
     def publish_thread():
         time.sleep(1)
@@ -94,17 +104,20 @@ def test_status_messages(datastore, client):
         status_queue.publish(expiry_hb_msg)
         status_queue.publish(ingest_hb_msg)
         status_queue.publish(service_hb_msg)
-        status_queue.publish(service_timing_msg)
+        status_queue.publish(scaler_hb_msg)
+        status_queue.publish(scaler_status_hb_msg)
 
     threading.Thread(target=publish_thread).start()
     client.socketio.listen_on_status_messages(alerter_msg_callback=alerter_callback,
+                                              archive_msg_callback=archive_callback,
                                               dispatcher_msg_callback=dispatcher_callback,
                                               expiry_msg_callback=expiry_callback,
                                               ingest_msg_callback=ingest_callback,
+                                              scaler_msg_callback=scaler_callback,
+                                              scaler_status_msg_callback=scaler_status_callback,
                                               service_msg_callback=service_callback,
-                                              service_timing_msg_callback=service_timing_callback,
                                               timeout=2)
-    assert len(test_res_array) == 6
+    assert len(test_res_array) == 8
 
     for test, result in test_res_array:
         if not result:
@@ -115,14 +128,17 @@ def test_submission_ingested(datastore, client):
     submission_queue = CommsQueue('submissions', private=True)
     test_res_array = []
 
+    completed = random_model_obj(SubmissionMessage).as_primitives()
+    completed['msg_type'] = "SubmissionCompleted"
     ingested = random_model_obj(SubmissionMessage).as_primitives()
     ingested['msg_type'] = "SubmissionIngested"
     received = random_model_obj(SubmissionMessage).as_primitives()
     received['msg_type'] = "SubmissionReceived"
-    queued = random_model_obj(SubmissionMessage).as_primitives()
-    queued['msg_type'] = "SubmissionQueued"
     started = random_model_obj(SubmissionMessage).as_primitives()
     started['msg_type'] = "SubmissionStarted"
+
+    def completed_callback(data):
+        test_res_array.append(('completed', completed['msg'] == data))
 
     def ingested_callback(data):
         test_res_array.append(('ingested', ingested['msg'] == data))
@@ -130,23 +146,20 @@ def test_submission_ingested(datastore, client):
     def received_callback(data):
         test_res_array.append(('received', received['msg'] == data))
 
-    def queued_callback(data):
-        test_res_array.append(('queued', queued['msg'] == data))
-
     def started_callback(data):
         test_res_array.append(('started', started['msg'] == data))
 
     def publish_thread():
         time.sleep(1)
+        submission_queue.publish(completed)
         submission_queue.publish(ingested)
         submission_queue.publish(received)
-        submission_queue.publish(queued)
         submission_queue.publish(started)
 
     threading.Thread(target=publish_thread).start()
     client.socketio.listen_on_submissions(ingested_callback=ingested_callback,
                                           received_callback=received_callback,
-                                          queued_callback=queued_callback,
+                                          queued_callback=completed_callback,
                                           started_callback=started_callback,
                                           timeout=2)
 

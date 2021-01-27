@@ -77,25 +77,29 @@ This function wait indefinitely and calls the appropriate callback for each mess
             self._sio.sleep(timeout)
             self._sio.disconnect()
 
-    def listen_on_status_messages(self, alerter_msg_callback=None, dispatcher_msg_callback=None,
-                                  expiry_msg_callback=None, ingest_msg_callback=None,
-                                  service_msg_callback=None, service_timing_msg_callback=None,
+    def listen_on_status_messages(self, alerter_msg_callback=None, archive_msg_callback=None,
+                                  dispatcher_msg_callback=None, expiry_msg_callback=None,
+                                  ingest_msg_callback=None, scaler_msg_callback=None,
+                                  scaler_status_msg_callback=None, service_msg_callback=None,
                                   timeout=None):
         """\
 Listen to the various status messages you would find on the UI dashboard.
 
 Required (one of):
     alerter_msg_callback :         Callback function when an alerter message is received
+    archive_msg_callback :         Callback function when an archive message is received
     dispatcher_msg_callback :      Callback function when a dispatcher message is received
     expiry_msg_callback :          Callback function when an expiry message is received
     ingest_msg_callback :          Callback function when an ingest message is received
+    scaler_msg_callback :          Callback function when an scaler message is received
+    scaler_status_msg_callback :   Callback function when a scaler status message is received
     service_msg_callback :         Callback function when a service message is received
-    service_timing_msg_callback :  Callback function when a service timming message is received
 
 This function wait indefinitely and calls the appropriate callback for each messages returned
 """
         if dispatcher_msg_callback is None and ingest_msg_callback is None and service_msg_callback is None and \
-                alerter_msg_callback is None and expiry_msg_callback is None and service_timing_msg_callback is None:
+                alerter_msg_callback is None and expiry_msg_callback is None and scaler_msg_callback is None and \
+                archive_msg_callback is None and scaler_status_msg_callback is None:
             raise ClientError("At least one of the callbacks needs to be defined...", 400)
 
         self._sio = socketio.Client(ssl_verify=False)
@@ -103,16 +107,20 @@ This function wait indefinitely and calls the appropriate callback for each mess
 
         if alerter_msg_callback:
             self._sio.on("AlerterHeartbeat", alerter_msg_callback, namespace='/status')
+        if archive_msg_callback:
+            self._sio.on("ArchiveHeartbeat", archive_msg_callback, namespace='/status')
         if dispatcher_msg_callback:
             self._sio.on("DispatcherHeartbeat", dispatcher_msg_callback, namespace='/status')
         if expiry_msg_callback:
             self._sio.on("ExpiryHeartbeat", expiry_msg_callback, namespace='/status')
         if ingest_msg_callback:
             self._sio.on("IngestHeartbeat", ingest_msg_callback, namespace='/status')
+        if scaler_msg_callback:
+            self._sio.on("ScalerHeartbeat", scaler_msg_callback, namespace='/status')
+        if scaler_status_msg_callback:
+            self._sio.on("ScalerStatusHeartbeat", scaler_status_msg_callback, namespace='/status')
         if service_msg_callback:
             self._sio.on("ServiceHeartbeat", service_msg_callback, namespace='/status')
-        if service_timing_msg_callback:
-            self._sio.on("ServiceTimingHeartbeat", service_timing_msg_callback, namespace='/status')
 
         self._sio.connect(self._server, namespaces=['/status'], headers=deepcopy(self._header))
         self._sio.emit('monitor', {"status": "start", "client": "assemblyline_client"}, namespace='/status')
@@ -123,21 +131,21 @@ This function wait indefinitely and calls the appropriate callback for each mess
             self._sio.sleep(timeout)
             self._sio.disconnect()
 
-    def listen_on_submissions(self, ingested_callback=None, received_callback=None,
-                              queued_callback=None, started_callback=None, timeout=None):
+    def listen_on_submissions(self, completed_callback=None, ingested_callback=None,
+                              received_callback=None, started_callback=None, timeout=None):
         """\
 Listen to the various submission messages in the system and call the callback for each of them
 
 Required:
+    completed_callback : Callback function for when submission completed messages are received
     ingested_callback : Callback function for when submission ingested messages are received
     received_callback : Callback function for when submission received messages are received
-    queued_callback : Callback function for when submission queued messages are received
     started_callback : Callback function for when submission started messages are received
 
 This function wait indefinitely and calls the appropriate callback for each messages returned
 """
         if ingested_callback is None and received_callback is None and \
-                queued_callback is None and started_callback is None:
+                completed_callback is None and started_callback is None:
             raise ClientError("At least one of the callbacks needs to be defined...", 400)
 
         self._sio = socketio.Client(ssl_verify=False)
@@ -149,8 +157,8 @@ This function wait indefinitely and calls the appropriate callback for each mess
         if received_callback is not None:
             self._sio.on("SubmissionReceived", received_callback, namespace='/submissions')
 
-        if queued_callback is not None:
-            self._sio.on("SubmissionQueued", queued_callback, namespace='/submissions')
+        if completed_callback is not None:
+            self._sio.on("SubmissionCompleted", completed_callback, namespace='/submissions')
 
         if started_callback is not None:
             self._sio.on("SubmissionStarted", started_callback, namespace='/submissions')
