@@ -100,6 +100,7 @@ def test_status_messages(datastore, client):
     def publish_thread():
         time.sleep(1)
         status_queue.publish(alerter_hb_msg)
+        status_queue.publish(archive_hb_msg)
         status_queue.publish(dispatcher_hb_msg)
         status_queue.publish(expiry_hb_msg)
         status_queue.publish(ingest_hb_msg)
@@ -157,9 +158,9 @@ def test_submission_ingested(datastore, client):
         submission_queue.publish(started)
 
     threading.Thread(target=publish_thread).start()
-    client.socketio.listen_on_submissions(ingested_callback=ingested_callback,
+    client.socketio.listen_on_submissions(completed_callback=completed_callback,
+                                          ingested_callback=ingested_callback,
                                           received_callback=received_callback,
-                                          queued_callback=completed_callback,
                                           started_callback=started_callback,
                                           timeout=2)
 
