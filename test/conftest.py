@@ -43,7 +43,6 @@ try:
         except ConnectionError as err:
             pytest.skip(str(err))
 
-
     @pytest.fixture(scope='session')
     def datastore_connection():
         store = ESStore(config.datastore.hosts)
@@ -52,7 +51,6 @@ try:
             pytest.skip("Could not connect to datastore")
 
         return AssemblylineDatastore(store)
-
 
     @pytest.fixture(scope="session")
     def datastore(datastore_connection, filestore):
@@ -77,7 +75,6 @@ try:
             random_data.wipe_submissions(ds, filestore)
             random_data.wipe_users(ds)
             random_data.wipe_workflows(ds)
-
 
     @pytest.fixture(scope="module")
     def client(datastore):
