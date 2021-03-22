@@ -88,7 +88,7 @@ try:
         c = get_client(UI_HOST, apikey=('admin', api_key), verify=False, retries=1)
         return c
 
-except ImportError:
+except (ImportError, ModuleNotFoundError):
     import sys
 
     if sys.version_info < (3, 0):
