@@ -20,7 +20,7 @@ def test_create_to_file(datastore, client):
     try:
         client.bundle.create(submission_id, tested_bundle)
 
-        assert open(tested_bundle, 'rb').read(4) == b'\x1f\x8b\x08\x00'
+        assert open(tested_bundle, 'rb').read(4) == b'CART'
     finally:
         os.unlink(tested_bundle)
 
@@ -32,7 +32,7 @@ def test_create_to_file_using_object(datastore, client):
     try:
         client.bundle.create(submission_id, open(tested_bundle, "wb"))
 
-        assert open(tested_bundle, 'rb').read(4) == b'\x1f\x8b\x08\x00'
+        assert open(tested_bundle, 'rb').read(4) == b'CART'
     finally:
         os.unlink(tested_bundle)
 
@@ -42,7 +42,7 @@ def test_create_raw(datastore, client):
     submission_id = random_id_from_collection(datastore, 'submission')
     data = client.bundle.create(submission_id)
 
-    assert data[:4] == b'\x1f\x8b\x08\x00'
+    assert data[:4] == b'CART'
 
 
 def test_import(datastore, client):

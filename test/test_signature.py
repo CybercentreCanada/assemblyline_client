@@ -7,7 +7,6 @@ from copy import deepcopy
 from assemblyline_client import ClientError
 
 try:
-    from assemblyline.common import forge
     from assemblyline.common.isotime import now_as_iso
     from assemblyline.common.uid import get_random_id
     from assemblyline.odm.random_data import random_model_obj
@@ -88,8 +87,12 @@ def test_get_signature(datastore, client):
     signature_id = random_id_from_collection(datastore, 'signature')
 
     signature_data = datastore.signature.get(signature_id, as_obj=False)
-
     res = client.signature(signature_id)
+
+    # Stats are re-calculated during get operation, omitting stats...
+    signature_data.pop('stats')
+    res.pop('stats')
+
     assert res == signature_data
 
 
@@ -103,7 +106,7 @@ def test_download_file_handle(datastore, client):
     found = False
 
     with open(output, 'rb') as fh:
-        if b"yara/sample_rules.yar" in fh.read():
+        if b"yara/YAR_SAMPLE" in fh.read():
             found = True
 
     if not found:
@@ -120,10 +123,10 @@ def test_download_path(datastore, client):
     has_suricata_samples = False
 
     with open(output, 'rb') as fh:
-        for l in fh:
-            if b"yara/sample_rules.yar" in l:
+        for line in fh:
+            if b"yara/YAR_SAMPLE" in line:
                 has_yara_samples = True
-            if b"suricata/sample_suricata.rules" in l:
+            if b"suricata/ET_SAMPLE" in line:
                 has_suricata_samples = True
 
             if has_suricata_samples and has_suricata_samples:
@@ -138,20 +141,11 @@ def test_download_raw(datastore, client):
     res = client.signature.download(query=query)
 
     assert res[:2] == b"PK"
-    assert b"yara/sample_rules.yar" in res
-    assert b"suricata/sample_suricata.rules" in res
+    assert b"yara/YAR_SAMPLE" in res
+    assert b"suricata/ET_SAMPLE" in res
 
 
 def test_stats(datastore, client):
-    cache = forge.get_statistics_cache()
-    cache.delete()
-
-    res = client.signature.stats()
-    assert len(res) == 0
-
-    stats = datastore.calculate_signature_stats()
-    cache.set('signatures', stats)
-
     res = client.signature.stats()
     assert len(res) == datastore.signature.search('id:*')['total']
 
