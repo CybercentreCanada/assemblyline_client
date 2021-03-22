@@ -92,7 +92,7 @@ stages:
               sudo mkdir -p /etc/assemblyline/
               sudo cp $(Pipeline.Workspace)/pipelines/config.yml /etc/assemblyline/
               # Start service containers that can't be started by azure properly
-              sudo docker run -d --name nginx --network host --restart on-failure -e "UI_HOST=localhost" -e "SOCKET_HOST=localhost" -e "TEMPLATE=minimal" -e "FQDN=localhost" cccs/nginx-ssl
+              sudo docker run -d --name nginx --network host --restart on-failure -e "FRONTEND_HOST=localhost" -e "UI_HOST=localhost" -e "SOCKET_HOST=localhost" -e "TEMPLATE=minimal" -e "FQDN=localhost" cccs/nginx-ssl
               sudo docker run -d --name alui --network host -e "WORKERS=1" -e "THREADS=1"  -v "/etc/assemblyline/config.yml":"/etc/assemblyline/config.yml" cccs/assemblyline-ui:stable
               sudo docker run -d --name frontend --network host cccs/assemblyline-ui-frontend:stable
               sudo docker run -d --name alsocketio --network host  -v "/etc/assemblyline/config.yml":"/etc/assemblyline/config.yml" cccs/assemblyline-socketio:stable
