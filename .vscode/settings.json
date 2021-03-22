@@ -22,7 +22,7 @@
     "python.pythonPath": "venv/bin/python",
     "python.terminal.activateEnvironment": false,
     "python.testing.pytestEnabled": true,
-    "python.testing.pytestPath": ".",
+    "python.testing.pytestPath": "venv/bin/pytest",
     "taskExplorer.enableAnsiconForAnt": false,
     "taskExplorer.enableAnt": false,
     "taskExplorer.enableAppPublisher": false,
