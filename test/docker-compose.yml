@@ -1,8 +1,13 @@
-version: '2.4'
+version: "2.4"
 
 services:
+  al_frontend:
+    image: cccs/assemblyline-ui-frontend:stable
+    ports:
+      - "3000:3000"
+
   al_ui:
-    image: cccs/assemblyline-ui:latest
+    image: cccs/assemblyline-ui:stable
     environment:
       WORKERS: 1
       THREADS: 1
@@ -17,7 +22,7 @@ services:
         condition: service_started
 
   al_socketio:
-    image: cccs/assemblyline-socketio:latest
+    image: cccs/assemblyline-socketio:stable
     volumes:
       - ${PATH_REWRITE:-.}/config/:/etc/assemblyline/
     depends_on:
@@ -28,7 +33,6 @@ services:
       minio:
         condition: service_started
 
-
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.8.0
     environment:
@@ -36,9 +40,13 @@ services:
       - logger.level=WARN
       - "ES_JAVA_OPTS=-Xms1024m -Xmx1024m"
     ports:
-      - '9200:9200'
+      - "9200:9200"
     healthcheck:
-      test: ["CMD-SHELL", "curl --silent --fail localhost:9200/_cluster/health || exit 1"]
+      test:
+        [
+          "CMD-SHELL",
+          "curl --silent --fail localhost:9200/_cluster/health || exit 1",
+        ]
       interval: 30s
       timeout: 30s
       retries: 3
@@ -46,20 +54,20 @@ services:
   redis:
     image: redis
     ports:
-      - '6380:6379'
-      - '6379:6379'
+      - "6380:6379"
+      - "6379:6379"
     healthcheck:
-      test: ["CMD", "redis-cli","ping"]
+      test: ["CMD", "redis-cli", "ping"]
       interval: 30s
       timeout: 10s
       retries: 3
 
   nginx:
-    image: cccs/nginx-ssl
+    image: cccs/nginx-ssl-frontend
     environment:
       TEMPLATE: minimal
     ports:
-      - '443:443'
+      - "443:443"
     depends_on:
       al_ui:
         condition: service_started
@@ -72,7 +80,5 @@ services:
       MINIO_ACCESS_KEY: al_storage_key
       MINIO_SECRET_KEY: Ch@ngeTh!sPa33w0rd
     ports:
-      - '9000:9000'
+      - "9000:9000"
     command: server /data
-
-

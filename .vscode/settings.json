@@ -1,0 +1,44 @@
+{
+    "editor.formatOnSave": true,
+    "editor.rulers": [
+        120
+    ],
+    "editor.tabSize": 4,
+    "files.insertFinalNewline": true,
+    "files.trimFinalNewlines": true,
+    "files.trimTrailingWhitespace": true,
+    "python.formatting.autopep8Args": [
+        "--max-line-length",
+        "120",
+        "--experimental"
+    ],
+    "python.formatting.provider": "autopep8",
+    "python.linting.enabled": true,
+    "python.linting.flake8Enabled": true,
+    "python.linting.flake8Args": [
+        "--max-line-length=120"
+    ],
+    "python.linting.pylintEnabled": false,
+    "python.pythonPath": "venv/bin/python",
+    "python.terminal.activateEnvironment": false,
+    "python.testing.pytestEnabled": true,
+    "python.testing.pytestPath": "venv/bin/pytest",
+    "taskExplorer.enableAnsiconForAnt": false,
+    "taskExplorer.enableAnt": false,
+    "taskExplorer.enableAppPublisher": false,
+    "taskExplorer.enableBash": false,
+    "taskExplorer.enableBatch": false,
+    "taskExplorer.enableExplorerView": true,
+    "taskExplorer.enableGradle": false,
+    "taskExplorer.enableGrunt": false,
+    "taskExplorer.enableGulp": false,
+    "taskExplorer.enableMake": false,
+    "taskExplorer.enableNpm": false,
+    "taskExplorer.enableNsis": false,
+    "taskExplorer.enablePerl": false,
+    "taskExplorer.enablePowershell": false,
+    "taskExplorer.enablePython": false,
+    "taskExplorer.enableRuby": false,
+    "taskExplorer.enableSideBar": true,
+    "taskExplorer.enableTsc": false
+}

@@ -1,0 +1,20 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: Current File",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "al_submit",
+            "type": "python",
+            "request": "launch",
+            "program": "assemblyline_client/submit.py",
+            "args": [],
+            "console": "internalConsole"
+        }
+    ]
+}
