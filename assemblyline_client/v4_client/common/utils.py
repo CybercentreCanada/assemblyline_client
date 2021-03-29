@@ -44,8 +44,8 @@ def _join_kw(kw):
     ])
 
 
-def _join_params(q, l):
-    return '&'.join([quote(q)] + [_join_param(*e) for e in l if _param_ok(e)])
+def _join_params(q, params):
+    return '&'.join([quote(q)] + [_join_param(*e) for e in params if _param_ok(e)])
 
 
 def get_random_id():
