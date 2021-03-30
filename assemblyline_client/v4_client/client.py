@@ -6,6 +6,7 @@ from assemblyline_client.v4_client.module.bundle import Bundle
 from assemblyline_client.v4_client.module.error import Error
 from assemblyline_client.v4_client.module.file import File
 from assemblyline_client.v4_client.module.hash_search import HashSearch
+from assemblyline_client.v4_client.module.help import Help
 from assemblyline_client.v4_client.module.heuristics import Heuristics
 from assemblyline_client.v4_client.module.ingest import Ingest
 from assemblyline_client.v4_client.module.result import Result
@@ -27,6 +28,7 @@ class Client(object):
         self.error = Error(self._connection)
         self.file = File(self._connection)
         self.hash_search = HashSearch(self._connection)
+        self.help = Help(self._connection)
         self.heuristics = Heuristics(self._connection)
         self.ingest = Ingest(self._connection)
         self.live = Live(self._connection)
