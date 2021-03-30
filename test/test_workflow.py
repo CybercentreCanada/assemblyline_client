@@ -25,6 +25,5 @@ def test_label_list(datastore, client):
     res = client.workflow.labels()
 
     assert isinstance(res, list)
-    for l in workflow_data['labels']:
-        assert l in res
-
+    for label in workflow_data['labels']:
+        assert label in res
