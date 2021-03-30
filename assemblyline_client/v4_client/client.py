@@ -11,6 +11,7 @@ from assemblyline_client.v4_client.module.heuristics import Heuristics
 from assemblyline_client.v4_client.module.ingest import Ingest
 from assemblyline_client.v4_client.module.result import Result
 from assemblyline_client.v4_client.module.search import Search
+from assemblyline_client.v4_client.module.service import Service
 from assemblyline_client.v4_client.module.signature import Signature
 from assemblyline_client.v4_client.module.socketio import SocketIO
 from assemblyline_client.v4_client.module.submission import Live, Submission
@@ -34,6 +35,7 @@ class Client(object):
         self.live = Live(self._connection)
         self.result = Result(self._connection)
         self.search = Search(self._connection)
+        self.service = Service(self._connection)
         self.signature = Signature(self._connection)
         self.socketio = SocketIO(self._connection)
         self.submission = Submission(self._connection)
