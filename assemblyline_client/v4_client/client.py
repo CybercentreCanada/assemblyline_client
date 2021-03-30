@@ -3,6 +3,7 @@
 from assemblyline_client.v4_client.common.utils import walk_api_path
 from assemblyline_client.v4_client.module.alert import Alert
 from assemblyline_client.v4_client.module.bundle import Bundle
+from assemblyline_client.v4_client.module.error import Error
 from assemblyline_client.v4_client.module.file import File
 from assemblyline_client.v4_client.module.hash_search import HashSearch
 from assemblyline_client.v4_client.module.heuristics import Heuristics
@@ -23,6 +24,7 @@ class Client(object):
 
         self.alert = Alert(self._connection)
         self.bundle = Bundle(self._connection)
+        self.error = Error(self._connection)
         self.file = File(self._connection)
         self.hash_search = HashSearch(self._connection)
         self.heuristics = Heuristics(self._connection)
