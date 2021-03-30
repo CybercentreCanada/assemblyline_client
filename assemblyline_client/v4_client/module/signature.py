@@ -1,5 +1,5 @@
-from assemblyline_client.v4_client.common.utils import api_path, api_path_by_module, get_funtion_kwargs, stream_output, \
-    raw_output
+from assemblyline_client.v4_client.common.utils import api_path, api_path_by_module, \
+    get_funtion_kwargs, stream_output, raw_output
 
 
 class Signature(object):
@@ -106,5 +106,3 @@ Optional:
 since   : ISO 8601 date (%Y-%m-%dT%H:%M:%S). (string)
 """
         return self._connection.get(api_path_by_module(self, last_update=since, type=sig_type))
-
-

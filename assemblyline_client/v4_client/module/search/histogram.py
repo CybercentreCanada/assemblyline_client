@@ -24,7 +24,7 @@ class Histogram(object):
 
     def alert(self, field, query=None, mincount=None, filters=None, start=None, end=None, gap=None):
         """\
-Create an histogram of data from a given field in the alert bucket where the frequency 
+Create an histogram of data from a given field in the alert bucket where the frequency
 of the data is split between a given gap size.
 
 Required:
@@ -34,7 +34,7 @@ Optional:
 query    : Initial query to filter the data (default: 'id:*')
 filters  : Additional lucene queries used to filter the data (list of strings)
 mincount : Minimum amount of hits for the value to be returned
-start    : Beginning of the histogram range (Default: now-1d or 0) 
+start    : Beginning of the histogram range (Default: now-1d or 0)
 end      : End of the histogram range (Default: now or 1000)
 gap      : Interval in between each histogram points (Default: 1h or 100)
 
@@ -45,7 +45,7 @@ Returns all results.
 
     def file(self, field, query=None, mincount=None, filters=None, start=None, end=None, gap=None):
         """\
-Create an histogram of data from a given field in the file bucket where the frequency 
+Create an histogram of data from a given field in the file bucket where the frequency
 of the data is split between a given gap size.
 
 Required:
@@ -55,7 +55,7 @@ Optional:
 query    : Initial query to filter the data (default: 'id:*')
 filters  : Additional lucene queries used to filter the data (list of strings)
 mincount : Minimum amount of hits for the value to be returned
-start    : Beginning of the histogram range (Default: now-1d or 0) 
+start    : Beginning of the histogram range (Default: now-1d or 0)
 end      : End of the histogram range (Default: now or 1000)
 gap      : Interval in between each histogram points (Default: 1h or 100)
 
@@ -66,7 +66,7 @@ Returns all results.
 
     def result(self, field, query=None, mincount=None, filters=None, start=None, end=None, gap=None):
         """\
-Create an histogram of data from a given field in the result bucket where the frequency 
+Create an histogram of data from a given field in the result bucket where the frequency
 of the data is split between a given gap size.
 
 Required:
@@ -76,7 +76,7 @@ Optional:
 query    : Initial query to filter the data (default: 'id:*')
 filters  : Additional lucene queries used to filter the data (list of strings)
 mincount : Minimum amount of hits for the value to be returned
-start    : Beginning of the histogram range (Default: now-1d or 0) 
+start    : Beginning of the histogram range (Default: now-1d or 0)
 end      : End of the histogram range (Default: now or 1000)
 gap      : Interval in between each histogram points (Default: 1h or 100)
 
@@ -87,7 +87,7 @@ Returns all results.
 
     def signature(self, field, query=None, mincount=None, filters=None, start=None, end=None, gap=None):
         """\
-Create an histogram of data from a given field in the signature bucket where the frequency 
+Create an histogram of data from a given field in the signature bucket where the frequency
 of the data is split between a given gap size.
 
 Required:
@@ -97,7 +97,7 @@ Optional:
 query    : Initial query to filter the data (default: 'id:*')
 filters  : Additional lucene queries used to filter the data (list of strings)
 mincount : Minimum amount of hits for the value to be returned
-start    : Beginning of the histogram range (Default: now-1d or 0) 
+start    : Beginning of the histogram range (Default: now-1d or 0)
 end      : End of the histogram range (Default: now or 1000)
 gap      : Interval in between each histogram points (Default: 1h or 100)
 
@@ -108,7 +108,7 @@ Returns all results.
 
     def submission(self, field, query=None, mincount=None, filters=None, start=None, end=None, gap=None):
         """\
-Create an histogram of data from a given field in the submission bucket where the frequency 
+Create an histogram of data from a given field in the submission bucket where the frequency
 of the data is split between a given gap size.
 
 Required:
@@ -118,7 +118,7 @@ Optional:
 query    : Initial query to filter the data (default: 'id:*')
 filters  : Additional lucene queries used to filter the data (list of strings)
 mincount : Minimum amount of hits for the value to be returned
-start    : Beginning of the histogram range (Default: now-1d or 0) 
+start    : Beginning of the histogram range (Default: now-1d or 0)
 end      : End of the histogram range (Default: now or 1000)
 gap      : Interval in between each histogram points (Default: 1h or 100)
 
