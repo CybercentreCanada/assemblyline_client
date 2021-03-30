@@ -106,9 +106,9 @@ class Live(object):
     def __init__(self, connection):
         self._connection = connection
 
-    def get_message_list(self, wq):
+    def get_message(self, wq):
         """\
-Return messages from the given watch queue.
+Get a message from the given watch queue.
 
 Required:
 wq      : Watch queue name. (string)
@@ -116,6 +116,29 @@ wq      : Watch queue name. (string)
 Throws a Client exception if the watch queue does not exist.
 """
         return self._connection.get(api_path_by_module(self, wq))
+
+    def get_message_list(self, wq):
+        """\
+Return all current messages from the given watch queue.
+
+Required:
+wq      : Watch queue name. (string)
+
+Throws a Client exception if the watch queue does not exist.
+"""
+        return self._connection.get(api_path_by_module(self, wq))
+
+    def outstanding_services(self, sid):
+        """\
+List outstanding services and the number of file each
+of them still have to process.
+
+Required:
+sid:   Submission ID (string)
+
+Throws a Client exception if the submission does not exist.
+"""
+        return self._connection.get(api_path_by_module(self, sid))
 
     def setup_watch_queue(self, sid):
         """\
