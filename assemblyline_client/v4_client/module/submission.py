@@ -79,6 +79,57 @@ Throws a Client exception if the submission does not exist.
 """
         return self._connection.get(api_path_by_module(self, sid))
 
+    def list(self, user=None, group=None, fq=None, rows=10, offset=0):
+        """\
+List all submissions of a given group or user.
+
+Required:
+sid        : Submission ID. (string)
+
+Optional:
+user       : user to get the submissions from
+group      : groups to get the submissions from
+offset     : Offset at which we start giving submissions
+rows       : Numbers of submissions to return
+fq         : Query to filter to the submission list
+"""
+        kw = {
+            'rows': rows,
+            'offset': offset
+        }
+
+        if fq:
+            kw['query'] = fq
+
+        if user:
+            return self._connection.get(api_path_by_module(self, 'user', user, **kw))
+        if group:
+            return self._connection.get(api_path_by_module(self, 'group', group, **kw))
+        return self._connection.get(api_path_by_module(self, 'group', 'ALL', **kw))
+
+    def report(self, sid):
+        """\
+Create a report for a submission based on its ID.
+
+Required:
+sid     : Submission ID. (string)
+
+Throws a Client exception if the submission does not exist.
+"""
+        return self._connection.get(api_path_by_module(self, sid))
+
+    def set_verdict(self, sid, verdict):
+        """\
+Set the verdict of a submission based on its ID.
+
+Required:
+sid       : Submission ID. (string)
+verdict   : Verdict that the user think the submission is (malicious, non_malicious)
+
+Throws a Client exception if the submission does not exist.
+"""
+        return self._connection.put(api_path('submission', 'verdict', sid, verdict))
+
     def summary(self, sid):
         """\
 Return the executive summary for the submission with the given sid.

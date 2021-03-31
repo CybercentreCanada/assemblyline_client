@@ -53,6 +53,38 @@ def test_is_completed(datastore, client):
     assert res == (submissison_data.state == 'completed')
 
 
+def test_list(datastore, client):
+    res = client.submission.list()
+    assert res['total'] == datastore.submission.search('id:*', rows=0)['total']
+
+    res = client.submission.list(user='admin')
+    assert res['total'] == datastore.submission.search('params.submitter:admin', rows=0)['total']
+
+    res = client.submission.list(group='USERS')
+    assert res['total'] == datastore.submission.search('params.groups:USERS', rows=0)['total']
+
+
+def test_report(datastore, client):
+    submission_id = random_id_from_collection(datastore, 'submission')
+
+    res = client.submission.report(submission_id)
+    assert res['sid'] == submission_id
+    assert 'report_filtered' in res
+    assert 'attack_matrix' in res
+    assert 'important_files' in res
+
+
+def test_set_verdict(datastore, client):
+    submission_id = random_id_from_collection(datastore, 'submission')
+
+    for verdict in ['malicious', 'non_malicious']:
+        res = client.submission.set_verdict(submission_id, verdict)
+        assert res['success']
+
+        submission_data = datastore.submission.get(submission_id, as_obj=False)
+        assert 'admin' in submission_data['verdict'][verdict]
+
+
 def test_submission(datastore, client):
     submission_id = random_id_from_collection(datastore, 'submission')
     res = client.submission(submission_id)
