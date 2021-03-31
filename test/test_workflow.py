@@ -27,6 +27,9 @@ def test_delete(datastore, client):
     workflow_id = random_id_from_collection(datastore, 'workflow')
     res = client.workflow.delete(workflow_id)
     assert res['success']
+
+    datastore.workflow.commit()
+
     assert datastore.workflow.get(workflow_id) is None
 
 

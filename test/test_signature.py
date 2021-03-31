@@ -101,6 +101,8 @@ def test_delete(datastore, client):
     res = client.signature.delete(signature_id)
     assert res['success']
 
+    datastore.signature.commit()
+
     assert datastore.signature.get(signature_id, as_obj=False) is None
 
 

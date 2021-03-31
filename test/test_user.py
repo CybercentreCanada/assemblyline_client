@@ -105,6 +105,8 @@ def test_delete(datastore, client):
     res = client.user.delete(user_id)
     assert res['success']
 
+    datastore.user.commit()
+
     assert datastore.user.get(user_id, as_obj=False) is None
 
 

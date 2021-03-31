@@ -45,6 +45,8 @@ def test_delete(datastore, client):
         res = client.signature.sources.delete(service, source['name'])
         assert res['success']
 
+    datastore.service_delta.commit()
+
     # Test if the source was deleted
     service_data = datastore.get_service_with_delta(service, as_obj=False)
     assert service_data['update_config']['sources'] == []
