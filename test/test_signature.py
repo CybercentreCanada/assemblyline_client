@@ -83,6 +83,27 @@ def test_add_update_many(datastore, client):
     assert res['success'] == 1
 
 
+def test_change_status(datastore, client):
+    signature_id = random_id_from_collection(datastore, 'signature')
+    signature_data = datastore.signature.get(signature_id, as_obj=False)
+
+    res = client.signature.change_status(signature_id, 'DISABLED')
+    assert res['success']
+
+    new_signature_data = datastore.signature.get(signature_id, as_obj=False)
+    assert new_signature_data['status'] == 'DISABLED'
+
+    assert signature_data['status'] != new_signature_data['status']
+
+
+def test_delete(datastore, client):
+    signature_id = random_id_from_collection(datastore, 'signature')
+    res = client.signature.delete(signature_id)
+    assert res['success']
+
+    assert datastore.signature.get(signature_id, as_obj=False) is None
+
+
 def test_get_signature(datastore, client):
     signature_id = random_id_from_collection(datastore, 'signature')
 

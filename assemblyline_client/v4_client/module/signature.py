@@ -5,6 +5,7 @@ from assemblyline_client.v4_client.common.utils import api_path, api_path_by_mod
 class Signature(object):
     def __init__(self, connection):
         self._connection = connection
+        self.sources = Sources(connection)
 
     def __call__(self, signature_id):
         """\
@@ -75,6 +76,29 @@ Returns:
         """
         return self._connection.post(api_path_by_module(self, **get_funtion_kwargs('data', 'self')), json=data)
 
+    def change_status(self, signature_id, status):
+        """\
+Change the status of a signature
+
+Required:
+signature_id     : ID of the signature to change the status
+status           : New status fir the signature (DEPLOYED, NOISY, DISABLED, TESTING, STAGING)
+
+Throws a Client exception if the signature does not exist or the status is invalid.
+"""
+        return self._connection.get(api_path_by_module(self, signature_id, status))
+
+    def delete(self, signature_id):
+        """\
+Delete a signature based of its ID
+
+Required:
+signature_id     : ID of the signature to be deleted
+
+Throws a Client exception if the signature does not exist.
+"""
+        return self._connection.delete(api_path('signature', signature_id))
+
     # noinspection PyUnusedLocal
     def download(self, output=None, query=None):
         """\
@@ -106,3 +130,45 @@ Optional:
 since   : ISO 8601 date (%Y-%m-%dT%H:%M:%S). (string)
 """
         return self._connection.get(api_path_by_module(self, last_update=since, type=sig_type))
+
+
+class Sources(object):
+    def __init__(self, connection):
+        self._connection = connection
+
+    def __call__(self):
+        """\
+Get all signature sources.
+"""
+        return self._connection.get(api_path('signature', 'sources'))
+
+    def add(self, service, new_source):
+        """\
+Add a signature source for a given service
+
+Required:
+service      : Service to which we want to add the source to
+source_data  : Data of the signature source
+"""
+        return self._connection.put(api_path('signature', 'sources', service), json=new_source)
+
+    def delete(self, service, name):
+        """\
+Delete a signature source by name for a given service
+
+Required:
+service      : Service to which we want to delete the source from
+name         : Name of the source you want to remove
+"""
+        return self._connection.delete(api_path('signature', 'sources', service, name))
+
+    def update(self, service, name, source_data):
+        """\
+Update a signature source by name for a given service
+
+Required:
+service      : Service to which we want to update the signature source from
+name         : Name of the signaturesource you want to update
+source_data  : Data of the signature source
+"""
+        return self._connection.post(api_path('signature', 'sources', service, name), json=source_data)
