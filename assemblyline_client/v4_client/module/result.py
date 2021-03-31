@@ -1,6 +1,6 @@
 from json import dumps
 
-from assemblyline_client.v4_client.common.utils import api_path, api_path_by_module, get_funtion_kwargs
+from assemblyline_client.v4_client.common.utils import api_path, api_path_by_module, get_function_kwargs
 
 
 class Result(object):
@@ -42,5 +42,5 @@ result  : List of result keys. (list of strings).
             result = []
         if error is None:
             error = []
-        data = dumps(get_funtion_kwargs('self'))
+        data = dumps(get_function_kwargs('self'))
         return self._connection.post(api_path('result', 'multiple_keys'), data=data)

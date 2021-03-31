@@ -2,7 +2,7 @@ import os
 import tempfile
 from json import dumps
 
-from assemblyline_client.v4_client.common.utils import api_path, api_path_by_module, get_funtion_kwargs, ClientError
+from assemblyline_client.v4_client.common.utils import api_path, api_path_by_module, get_function_kwargs, ClientError
 
 
 class Submit(object):
@@ -81,7 +81,7 @@ sid     : Submission ID. (string)
 
 Throws a Client exception if the submission does not exist.
 """
-        kw = get_funtion_kwargs('self', 'sha256')
+        kw = get_function_kwargs('self', 'sha256')
         return self._connection.get(api_path_by_module(self, sha256, **kw))
 
     def resubmit(self, sid):

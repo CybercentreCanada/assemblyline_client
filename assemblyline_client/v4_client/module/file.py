@@ -1,4 +1,4 @@
-from assemblyline_client.v4_client.common.utils import api_path_by_module, get_funtion_kwargs, stream_output, raw_output
+from assemblyline_client.v4_client.common.utils import api_path_by_module, get_function_kwargs, stream_output, raw_output
 
 
 class File(object):
@@ -45,7 +45,7 @@ If output is not specified the content is returned.
 
 Throws a Client exception if the file does not exist.
 """
-        kw = get_funtion_kwargs('output', 'self', 'sha256')
+        kw = get_function_kwargs('output', 'self', 'sha256')
         path = api_path_by_module(self, sha256, **kw)
         if output:
             return self._connection.download(path, stream_output(output))

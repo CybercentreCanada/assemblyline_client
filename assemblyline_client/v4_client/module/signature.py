@@ -1,5 +1,5 @@
 from assemblyline_client.v4_client.common.utils import api_path, api_path_by_module, \
-    get_funtion_kwargs, stream_output, raw_output
+    get_function_kwargs, stream_output, raw_output
 
 
 class Signature(object):
@@ -41,7 +41,7 @@ Returns:
  "signature_id": <ID of the saved signature>
 }
         """
-        return self._connection.post(api_path_by_module(self, **get_funtion_kwargs('data', 'self')), json=data)
+        return self._connection.post(api_path_by_module(self, **get_function_kwargs('data', 'self')), json=data)
 
     # noinspection PyUnusedLocal
     def add_update_many(self, source, sig_type, data, dedup_name=True):
@@ -74,7 +74,7 @@ Returns:
  "skipped": [],       # List of skipped signatures, they already exist
 }
         """
-        return self._connection.post(api_path_by_module(self, **get_funtion_kwargs('data', 'self')), json=data)
+        return self._connection.post(api_path_by_module(self, **get_function_kwargs('data', 'self')), json=data)
 
     def change_status(self, signature_id, status):
         """\
@@ -110,7 +110,7 @@ query   : lucene query (string)
 
 If output is not specified the content is returned.
 """
-        path = api_path_by_module(self, **get_funtion_kwargs('output', 'self'))
+        path = api_path_by_module(self, **get_function_kwargs('output', 'self'))
         if output:
             return self._connection.download(path, stream_output(output))
         return self._connection.download(path, raw_output)

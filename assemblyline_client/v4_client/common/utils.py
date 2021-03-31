@@ -59,7 +59,7 @@ def get_id_from_path(path):
 
 
 # noinspection PyProtectedMember
-def get_funtion_kwargs(*ex):
+def get_function_kwargs(*ex):
     local_frames = sys._getframe().f_back.f_locals  # pylint: disable=W0212
     return {
         k: _bool_to_param_string(v) for k, v in local_frames.items() if k not in ex

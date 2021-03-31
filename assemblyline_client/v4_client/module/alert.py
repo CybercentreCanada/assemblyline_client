@@ -1,4 +1,4 @@
-from assemblyline_client.v4_client.common.utils import api_path_by_module, get_funtion_kwargs, api_path
+from assemblyline_client.v4_client.common.utils import api_path_by_module, get_function_kwargs, api_path
 
 
 class Alert(object):
@@ -270,7 +270,7 @@ fq_list    : List of filter queries (list of strings)
         if not fq_list:
             fq_list = []
 
-        kw = get_funtion_kwargs('self', 'fq_list', 'labels')
+        kw = get_function_kwargs('self', 'fq_list', 'labels')
         path = api_path('alert/label/batch', params_tuples=[('fq', fq) for fq in fq_list], **kw)
 
         return self._connection.post(path, json=labels)
@@ -290,7 +290,7 @@ fq_list    : List of filter queries (list of strings)
         if not fq_list:
             fq_list = []
 
-        kw = get_funtion_kwargs('self', 'fq_list', 'ownership')
+        kw = get_function_kwargs('self', 'fq_list', 'ownership')
         path = api_path('alert/ownership/batch', params_tuples=[('fq', fq) for fq in fq_list], **kw)
 
         return self._connection.get(path)
@@ -311,7 +311,7 @@ fq_list    : List of filter queries (list of strings)
         if not fq_list:
             fq_list = []
 
-        kw = get_funtion_kwargs('self', 'fq_list', 'priority')
+        kw = get_function_kwargs('self', 'fq_list', 'priority')
         path = api_path('alert/priority/batch', params_tuples=[('fq', fq) for fq in fq_list], **kw)
 
         return self._connection.post(path, json=priority)
@@ -332,7 +332,7 @@ fq_list    : List of filter queries (list of strings)
         if not fq_list:
             fq_list = []
 
-        kw = get_funtion_kwargs('self', 'fq_list', 'status')
+        kw = get_function_kwargs('self', 'fq_list', 'status')
         path = api_path('alert/status/batch', params_tuples=[('fq', fq) for fq in fq_list], **kw)
 
         return self._connection.post(path, json=status)

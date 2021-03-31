@@ -1,4 +1,4 @@
-from assemblyline_client.v4_client.common.utils import api_path, api_path_by_module, get_funtion_kwargs
+from assemblyline_client.v4_client.common.utils import api_path, api_path_by_module, get_function_kwargs
 
 
 class Workflow(object):
@@ -53,7 +53,7 @@ query     : query to filter the workflow
 rows      : number of items returned
 offset    : offset in the results to start returning data
 """
-        return self._connection.get(api_path('search', 'workflow', **get_funtion_kwargs('self')))
+        return self._connection.get(api_path('search', 'workflow', **get_function_kwargs('self')))
 
     def update(self, workflow_id, workflow):
         """\
