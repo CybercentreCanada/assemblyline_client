@@ -20,7 +20,8 @@ except ImportError:
 def test_add(datastore, client):
     user_id = 'to_be_added'
 
-    user_data = random_model_obj(User, as_json=True)
+    user_data = random_model_obj(User).as_primitives()
+    user_data['email'] = user_data['email']
     user_data['uname'] = user_id
 
     assert datastore.user.get(user_id, as_obj=False) is None
