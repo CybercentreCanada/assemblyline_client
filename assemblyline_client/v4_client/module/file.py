@@ -1,4 +1,5 @@
-from assemblyline_client.v4_client.common.utils import api_path_by_module, get_function_kwargs, stream_output, raw_output
+from assemblyline_client.v4_client.common.utils import api_path_by_module, get_function_kwargs, \
+    stream_output, raw_output
 
 
 class File(object):
