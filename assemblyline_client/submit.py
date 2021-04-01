@@ -273,7 +273,8 @@ def _main(arguments):
         kw["params"] = json.loads(params.json_params)
 
     if params.srv_spec:
-        kw["srv_spec"] = json.loads(params.srv_spec)
+        kw.setdefault("params", {})
+        kw["params"]["service_spec"] = json.loads(params.srv_spec)
 
     auth = None
     api_auth = None
