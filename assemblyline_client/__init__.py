@@ -33,12 +33,12 @@ def Client(*args, **kwargs):
 
 def get_client(server, auth=None, cert=None, debug=lambda x: None, headers=None, retries=RETRY_FOREVER,
                silence_requests_warnings=True, apikey=None, verify=True, timeout=None):
-        connection = Connection(server, auth, cert, debug, headers, retries,
-                                silence_requests_warnings, apikey, verify, timeout)
-        if connection.is_v4:
-            return Client4(connection)
-        else:
-            return Client3(connection)
+    connection = Connection(server, auth, cert, debug, headers, retries,
+                            silence_requests_warnings, apikey, verify, timeout)
+    if connection.is_v4:
+        return Client4(connection)
+    else:
+        return Client3(connection)
 
 
 class Connection(object):
@@ -155,6 +155,9 @@ class Connection(object):
 
     def post(self, path, **kw):
         return self.request(self.session.post, path, convert_api_output, **kw)
+
+    def put(self, path, **kw):
+        return self.request(self.session.put, path, convert_api_output, **kw)
 
     def request(self, func, path, process, **kw):
         self.debug(path)

@@ -25,13 +25,13 @@ You can instantiate the client using the following snippet of code:
     # The new v4 client will test connection to detect if the server is v3 or v4. You should now use the get_client method.
     from assemblyline_client import get_client
     al_client = get_client("https://localhost:443", auth=('user', 'password'))
-    
+
     # or with an apikey
-    
+
     al_client = get_client("https://localhost:443", apikey=('user', 'key'))
-    
-    # or with a cert 
-    
+
+    # or with a cert
+
     al_client = get_client("https://localhost:443", cert='/path/to/cert/file.pem')
 
     # and if your assemblyline server is using a self-signed cert
@@ -89,14 +89,16 @@ Instead of using a strait search and getting a page of result, you can use the s
 #### Using search parameters
 
 ##### Version 3
+
 You can pass search parameters for any given query. The following examples a Lucene facet search to get the top users submitting to a server.
 
     kwargs = {'facet':'on', 'facet.field':'submission.submitter', 'facet.sort':'count', 'facet.limit':50, 'rows':0}  # rows=0 so that only facet results return
     c.search.submission('times.submitted:[NOW-7DAYS TO NOW]', **kwargs)
 
 ##### Version 4
+
 Version 4 server will support facet query out of the box, no need to learn the Lucene facetting syntax.
-    
+
     c.search.facet.submission('submission.submitter', query='times.submitted:[NOW-7DAYS TO NOW]')
 
 #### Listen for message instead of querying for data
@@ -110,7 +112,7 @@ You can listen on the different message queues and execute a callback on each me
 
 **NOTE**: Depending on the volume of data, you might process a ton of messages!
 
-----------------------------------------------------------------------------------------------
+---
 
 # Bibliothèque cliente d’Assemblyline
 
@@ -203,16 +205,18 @@ Plutôt que d’utiliser une recherche directe et d’obtenir une page de résul
 #### Utilisation des paramètres de recherche
 
 ##### Version 3
+
 Vous pouvez transmettre des paramètres de recherche pour une requête donnée. Les exemples suivants démontrent une recherche de facettes Lucene pour obtenir les utilisateurs les plus fréquants soumettant à un server.
 
     kwargs = {'facet':'on', 'facet.field':'submission.submitter', 'facet.sort':'count', 'facet.limit':50, 'rows':0}  # rows=0 pour que seuls les résultats de la facette soient retourné
     c.search.submission('times.submitted:[NOW-7DAYS TO NOW]', **kwargs)
 
 ##### Version 4
+
 Le serveur version 4 supporte directement les recherches de facettes, vous navez donc pas besoin den apprendre la syntaxe.
-    
+
     c.search.facet.submission('submission.submitter', query='times.submitted:[NOW-7DAYS TO NOW]')
-    
+
 #### L’écoute du message plutôt que la recherche de données
 
 Vous pouvez écouter les différentes files d’attente de messages et effectuer un rappel pour chaque message.

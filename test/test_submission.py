@@ -10,14 +10,7 @@ except ImportError:
         raise
 
 
-def test_get_submission(datastore, client):
-    submission_id = random_id_from_collection(datastore, 'submission')
-    res = client.submission(submission_id)
-    assert res == datastore.submission.get(submission_id, as_obj=False)
-    assert res['sid'] == submission_id
-
-
-def test_delete_submission(datastore, client):
+def test_delete(datastore, client):
     submission_id = random_id_from_collection(datastore, 'submission')
     pre_del_data = datastore.submission.get(submission_id)
 
@@ -30,7 +23,7 @@ def test_delete_submission(datastore, client):
     assert post_del_data is None
 
 
-def test_get_file_detail_for_submission(datastore, client):
+def test_file_of_submission_details(datastore, client):
     submission_id = random_id_from_collection(datastore, 'submission')
     submissison_data = datastore.submission.get(submission_id)
 
@@ -39,7 +32,7 @@ def test_get_file_detail_for_submission(datastore, client):
     assert submissison_data.params.submitter in res['metadata']['submitter']
 
 
-def test_get_full_submission(datastore, client):
+def test_full_submission(datastore, client):
     submission_id = random_id_from_collection(datastore, 'submission', q="file_count:[2 TO *]")
     submissison_data = datastore.submission.get(submission_id, as_obj=False)
 
@@ -52,7 +45,7 @@ def test_get_full_submission(datastore, client):
     assert 'errors' in res
 
 
-def test_is_submission_completed(datastore, client):
+def test_is_completed(datastore, client):
     submission_id = random_id_from_collection(datastore, 'submission')
     submissison_data = datastore.submission.get(submission_id)
 
@@ -60,7 +53,46 @@ def test_is_submission_completed(datastore, client):
     assert res == (submissison_data.state == 'completed')
 
 
-def test_get_submission_summary(datastore, client):
+def test_list(datastore, client):
+    res = client.submission.list()
+    assert res['total'] == datastore.submission.search('id:*', rows=0)['total']
+
+    res = client.submission.list(user='admin')
+    assert res['total'] == datastore.submission.search('params.submitter:admin', rows=0)['total']
+
+    res = client.submission.list(group='USERS')
+    assert res['total'] == datastore.submission.search('params.groups:USERS', rows=0)['total']
+
+
+def test_report(datastore, client):
+    submission_id = random_id_from_collection(datastore, 'submission')
+
+    res = client.submission.report(submission_id)
+    assert res['sid'] == submission_id
+    assert 'report_filtered' in res
+    assert 'attack_matrix' in res
+    assert 'important_files' in res
+
+
+def test_set_verdict(datastore, client):
+    submission_id = random_id_from_collection(datastore, 'submission')
+
+    for verdict in ['malicious', 'non_malicious']:
+        res = client.submission.set_verdict(submission_id, verdict)
+        assert res['success']
+
+        submission_data = datastore.submission.get(submission_id, as_obj=False)
+        assert 'admin' in submission_data['verdict'][verdict]
+
+
+def test_submission(datastore, client):
+    submission_id = random_id_from_collection(datastore, 'submission')
+    res = client.submission(submission_id)
+    assert res == datastore.submission.get(submission_id, as_obj=False)
+    assert res['sid'] == submission_id
+
+
+def test_summary(datastore, client):
     submission_id = random_id_from_collection(datastore, 'submission')
 
     res = client.submission.summary(submission_id)
@@ -68,7 +100,7 @@ def test_get_submission_summary(datastore, client):
     assert 'map' in res
 
 
-def test_get_submission_tree(datastore, client):
+def test_tree(datastore, client):
     submission_id = random_id_from_collection(datastore, 'submission', q="file_count:[2 TO *]")
     submission_data = datastore.submission.get(submission_id)
 

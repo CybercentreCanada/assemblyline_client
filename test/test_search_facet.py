@@ -64,6 +64,3 @@ def test_workflow(datastore, client):
     assert isinstance(res, dict)
     for v in res.values():
         assert v >= 1
-
-
-

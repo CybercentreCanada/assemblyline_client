@@ -23,7 +23,7 @@ class Grouped(object):
         path = api_path('search', 'grouped', bucket, field, **kwargs)
         return self._connection.get(path)
 
-    def alert(self, field, group_sort=None, limit=None, query=None, filters=None, 
+    def alert(self, field, group_sort=None, limit=None, query=None, filters=None,
               offset=None, rows=None, sort=None, fl=None):
         """\
 Search alert collection and group result to a given field
@@ -43,10 +43,10 @@ fl         : List of fields to return (comma separated string of fields)
 
 Returns a generator that transparently and efficiently pages through results.
 """
-        return self._do_grouped('alert', field, group_sort=group_sort, limit=limit, query=query, filters=filters, 
+        return self._do_grouped('alert', field, group_sort=group_sort, limit=limit, query=query, filters=filters,
                                 offset=offset, rows=rows, sort=sort, fl=fl)
 
-    def file(self, field, group_sort=None, limit=None, query=None, filters=None, 
+    def file(self, field, group_sort=None, limit=None, query=None, filters=None,
              offset=None, rows=None, sort=None, fl=None):
         """\
 Search file collection and group result to a given field
@@ -66,10 +66,10 @@ fl         : List of fields to return (comma separated string of fields)
 
 Returns a generator that transparently and efficiently pages through results.
 """
-        return self._do_grouped('file', field, group_sort=group_sort, limit=limit, query=query, filters=filters, 
+        return self._do_grouped('file', field, group_sort=group_sort, limit=limit, query=query, filters=filters,
                                 offset=offset, rows=rows, sort=sort, fl=fl)
 
-    def heuristic(self, field, group_sort=None, limit=None, query=None, filters=None, 
+    def heuristic(self, field, group_sort=None, limit=None, query=None, filters=None,
                   offset=None, rows=None, sort=None, fl=None):
         """\
 Search heuristic collection and group result to a given field
@@ -89,10 +89,10 @@ fl         : List of fields to return (comma separated string of fields)
 
 Returns a generator that transparently and efficiently pages through results.
 """
-        return self._do_grouped('heuristic', field, group_sort=group_sort, limit=limit, query=query, filters=filters, 
+        return self._do_grouped('heuristic', field, group_sort=group_sort, limit=limit, query=query, filters=filters,
                                 offset=offset, rows=rows, sort=sort, fl=fl)
 
-    def result(self, field, group_sort=None, limit=None, query=None, filters=None, 
+    def result(self, field, group_sort=None, limit=None, query=None, filters=None,
                offset=None, rows=None, sort=None, fl=None):
         """\
 Search result collection and group result to a given field
@@ -112,10 +112,10 @@ fl         : List of fields to return (comma separated string of fields)
 
 Returns a generator that transparently and efficiently pages through results.
 """
-        return self._do_grouped('result', field, group_sort=group_sort, limit=limit, query=query, filters=filters, 
+        return self._do_grouped('result', field, group_sort=group_sort, limit=limit, query=query, filters=filters,
                                 offset=offset, rows=rows, sort=sort, fl=fl)
 
-    def signature(self, field, group_sort=None, limit=None, query=None, filters=None, 
+    def signature(self, field, group_sort=None, limit=None, query=None, filters=None,
                   offset=None, rows=None, sort=None, fl=None):
         """\
 Search signature collection and group result to a given field
@@ -135,10 +135,10 @@ fl         : List of fields to return (comma separated string of fields)
 
 Returns a generator that transparently and efficiently pages through results.
 """
-        return self._do_grouped('signature', field, group_sort=group_sort, limit=limit, query=query, filters=filters, 
+        return self._do_grouped('signature', field, group_sort=group_sort, limit=limit, query=query, filters=filters,
                                 offset=offset, rows=rows, sort=sort, fl=fl)
 
-    def submission(self, field, group_sort=None, limit=None, query=None, filters=None, 
+    def submission(self, field, group_sort=None, limit=None, query=None, filters=None,
                    offset=None, rows=None, sort=None, fl=None):
         """\
 Search submission collection and group result to a given field
@@ -158,7 +158,7 @@ fl         : List of fields to return (comma separated string of fields)
 
 Returns a generator that transparently and efficiently pages through results.
 """
-        return self._do_grouped('submission', field, group_sort=group_sort, limit=limit, query=query, filters=filters, 
+        return self._do_grouped('submission', field, group_sort=group_sort, limit=limit, query=query, filters=filters,
                                 offset=offset, rows=rows, sort=sort, fl=fl)
 
     def workflow(self, field, group_sort=None, limit=None, query=None, filters=None,
@@ -181,5 +181,5 @@ fl         : List of fields to return (comma separated string of fields)
 
 Returns a generator that transparently and efficiently pages through results.
 """
-        return self._do_grouped('workflow', field, group_sort=group_sort, limit=limit, query=query, filters=filters, 
+        return self._do_grouped('workflow', field, group_sort=group_sort, limit=limit, query=query, filters=filters,
                                 offset=offset, rows=rows, sort=sort, fl=fl)

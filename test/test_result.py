@@ -18,6 +18,7 @@ def test_get_result(datastore, client):
     assert res['sha256'] == ds_res['sha256']
     assert res['sha256'] == result_id[:64]
 
+
 def test_get_result_error(datastore, client):
     error_id = random_id_from_collection(datastore, 'error')
     res = client.result.error(error_id)

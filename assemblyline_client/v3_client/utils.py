@@ -91,8 +91,8 @@ def al_result_to_text(r, show_errors=True, verbose_error=False):
                     "\tService %s failed for file %s [%s]" % (service, sha256, r['errors'][key]["response"]['status']))
                 if verbose_error and r['errors'][key]["response"]["message"] != "":
                     err_lines = r['errors'][key]["response"]["message"].split("\n")
-                    for l in err_lines:
-                        lines.append("\t\t%s" % l)
+                    for line in err_lines:
+                        lines.append("\t\t%s" % line)
 
     lines.append("")
     lines.append(":: Service results ::")
