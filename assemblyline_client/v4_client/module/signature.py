@@ -82,7 +82,7 @@ Change the status of a signature
 
 Required:
 signature_id     : ID of the signature to change the status
-status           : New status fir the signature (DEPLOYED, NOISY, DISABLED, TESTING, STAGING)
+status           : New status for the signature (DEPLOYED, NOISY, DISABLED, TESTING, STAGING)
 
 Throws a Client exception if the signature does not exist or the status is invalid.
 """
@@ -90,7 +90,7 @@ Throws a Client exception if the signature does not exist or the status is inval
 
     def delete(self, signature_id):
         """\
-Delete a signature based of its ID
+Delete a signature based off its ID
 
 Required:
 signature_id     : ID of the signature to be deleted
@@ -168,7 +168,7 @@ Update a signature source by name for a given service
 
 Required:
 service      : Service to which we want to update the signature source from
-name         : Name of the signaturesource you want to update
+name         : Name of the signature source you want to update
 source_data  : Data of the signature source
 """
         return self._connection.post(api_path('signature', 'sources', service, name), json=source_data)

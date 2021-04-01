@@ -18,12 +18,12 @@ Throws a Client exception if the error does not exist.
 
     def list(self, query=None, offset=0, rows=10, sort=None):
         """\
-List all error in the system (per page)
+List all errors in the system (per page)
 
 Required:
 offset:   Offset at which we start giving errors
 query :   Query to apply to the error list
-rows  :   Numbers of errors to return
+rows  :   Number of errors to return
 sort  :   Sort order
 """
         kw = {

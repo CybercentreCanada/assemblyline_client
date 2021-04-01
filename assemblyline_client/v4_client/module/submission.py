@@ -90,7 +90,7 @@ Optional:
 user       : user to get the submissions from
 group      : groups to get the submissions from
 offset     : Offset at which we start giving submissions
-rows       : Numbers of submissions to return
+rows       : Number of submissions to return
 fq         : Query to filter to the submission list
 """
         kw = {
@@ -124,7 +124,7 @@ Set the verdict of a submission based on its ID.
 
 Required:
 sid       : Submission ID. (string)
-verdict   : Verdict that the user think the submission is (malicious, non_malicious)
+verdict   : Verdict that the user thinks the submission is (malicious, non_malicious)
 
 Throws a Client exception if the submission does not exist.
 """
@@ -181,7 +181,7 @@ Throws a Client exception if the watch queue does not exist.
 
     def outstanding_services(self, sid):
         """\
-List outstanding services and the number of file each
+List outstanding services and the number of files each
 of them still have to process.
 
 Required:

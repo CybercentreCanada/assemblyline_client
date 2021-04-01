@@ -130,6 +130,6 @@ List the different versions of a service stored in the system
 Required:
 service_name:   Name of the service to get the versions for
 
-Throws a Client exception if the signature does not exist.
+Throws a Client exception if the service does not exist.
 """
         return self._connection.get(api_path_by_module(self, service_name))

@@ -23,7 +23,7 @@ Return the current system configuration:
 
     def constants(self):
         """\
-Return the current system configuration constants which includes:
+Return the current system configuration constants which include:
     * Priorities
     * File types
     * Service tag types

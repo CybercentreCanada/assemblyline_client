@@ -25,11 +25,11 @@ Required:
 field:    Field to group the alerts by
 
 Optional:
-fq      : Post filter queries (you can have multiple of those)
+fq      : Post filter queries (you can have multiple of these)
 q       : Query to apply to the alert list
 no_delay: Do not delay alerts
 offset  : Offset at which we start giving alerts
-rows    : Numbers of alerts to return
+rows    : Number of alerts to return
 tc_start: Time offset at which we start the time constraint
 tc      : Time constraint applied to the API
 """
@@ -64,7 +64,7 @@ Throws a Client exception if the alert does not exist.
 Find the different labels matching the query.
 
 Optional:
-fq      : Post filter queries (you can have multiple of those)
+fq      : Post filter queries (you can have multiple of these)
 q       : Query to apply to the alert list
 tc_start: Time offset at which we start the time constraint
 tc      : Time constraint applied to the API
@@ -84,14 +84,14 @@ no_delay: Do not delay alerts
 
     def list(self, fq=[], q=None, tc_start=None, tc=None, no_delay=False, offset=0, rows=10):
         """\
-List all alert in the system (per page)
+List all alerts in the system (per page)
 
 Optional:
-fq      : Post filter queries (you can have multiple of those)
+fq      : Post filter queries (you can have multiple of these)
 q       : Query to apply to the alert list
 no_delay: Do not delay alerts
 offset  : Offset at which we start giving alerts
-rows    : Numbers of alerts to return
+rows    : Number of alerts to return
 tc_start: Time offset at which we start the time constraint
 tc      : Time constraint applied to the API
 """
@@ -137,7 +137,7 @@ Throws a Client exception if the alert does not exist.
 Find the different priorities matching the query.
 
 Optional:
-fq      : Post filter queries (you can have multiple of those)
+fq      : Post filter queries (you can have multiple of these)
 q       : Query to apply to the alert list
 tc_start: Time offset at which we start the time constraint
 tc      : Time constraint applied to the API
@@ -160,7 +160,7 @@ no_delay: Do not delay alerts
 Return the list of all IDs related to the currently selected query.
 
 Optional:
-fq      : Post filter queries (you can have multiple of those)
+fq      : Post filter queries (you can have multiple of these)
 q       : Query to apply to the alert list
 tc_start: Time offset at which we start the time constraint
 tc      : Time constraint applied to the API
@@ -183,7 +183,7 @@ no_delay: Do not delay alerts
 Find the different statistics for the alerts matching the query.
 
 Optional:
-fq      : Post filter queries (you can have multiple of those)
+fq      : Post filter queries (you can have multiple of these)
 q       : Query to apply to the alert list
 tc_start: Time offset at which we start the time constraint
 tc      : Time constraint applied to the API
@@ -218,7 +218,7 @@ Throws a Client exception if the alert does not exist.
 Find the different statuses matching the query.
 
 Optional:
-fq      : Post filter queries (you can have multiple of those)
+fq      : Post filter queries (you can have multiple of these)
 q       : Query to apply to the alert list
 tc_start: Time offset at which we start the time constraint
 tc      : Time constraint applied to the API

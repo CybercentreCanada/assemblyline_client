@@ -174,7 +174,7 @@ Throws a Client exception if the user does not exist.
 Specified user send agreement to Terms of Service
 
 Required:
-username    : Username of the user that agrees with tos (string)
+username    : Username of the user that agrees with terms of service (string)
 
 Throws a Client exception if the user does not exist.
 """
