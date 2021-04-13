@@ -25,7 +25,7 @@ setup(
     long_description=long_description,
     long_description_content_type='text/markdown',
     license='MIT',
-    url='https://github.com/CybercentreCanada/assemblyline-client',
+    url='https://github.com/CybercentreCanada/assemblyline_client',
     author='CSE-CST Assemblyline development team',
     author_email='assemblyline@cyber.gc.ca',
 
