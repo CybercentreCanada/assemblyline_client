@@ -21,4 +21,4 @@ def test_constants(client):
 
 def test_tos(client):
     res = client.help.tos()
-    assert res is None
+    assert res is None or isinstance(res, str)

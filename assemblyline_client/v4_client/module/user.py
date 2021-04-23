@@ -68,7 +68,7 @@ name        : Name of favorite to remove (string)
 
 Throws a Client exception if the user does not exist.
 """
-        return self._connection.delete(api_path('user', 'favorites', username, fav_type), data=name)
+        return self._connection.delete(api_path('user', 'favorites', username, fav_type), json=name)
 
     def update(self, username, favorites):
         """\
