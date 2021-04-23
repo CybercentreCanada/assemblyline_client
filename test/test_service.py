@@ -29,7 +29,7 @@ def test_add_service(datastore, client):
 
     # Cleanup so the new service does not interfere with other tests
     datastore.service_delta.delete('ResultSample')
-    datastore.service.delete_matching('name:ResultSample')
+    datastore.service.delete_by_query('name:ResultSample')
     datastore.service.commit()
     datastore.service_delta.commit()
 
