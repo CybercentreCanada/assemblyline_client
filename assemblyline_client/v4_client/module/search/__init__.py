@@ -1,3 +1,5 @@
+import json
+
 from assemblyline_client.v4_client.common.utils import SEARCHABLE, ClientError, api_path
 from assemblyline_client.v4_client.module.search.facet import Facet
 from assemblyline_client.v4_client.module.search.fields import Fields
@@ -26,14 +28,12 @@ class Search(object):
             if isinstance(filters, str):
                 filters = [filters]
 
-            filters = [('filters', fq) for fq in filters]
+            kwargs['filters'] = filters
 
-        kwargs = {k: v for k, v in kwargs.items() if v is not None and k != 'filters'}
+        kwargs = {k: v for k, v in kwargs.items() if v is not None}
         kwargs['query'] = query
-        if filters is not None:
-            kwargs['params_tuples'] = filters
-        path = api_path('search', bucket, **kwargs)
-        return self._connection.get(path)
+        path = api_path('search', bucket)
+        return self._connection.post(path, data=json.dumps(kwargs))
 
     def alert(self, query, filters=None, fl=None, offset=0, rows=25, sort=None, timeout=None):
         """\
