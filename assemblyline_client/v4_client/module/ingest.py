@@ -88,7 +88,7 @@ If content is provided, the path is used as metadata only.
         retries = 0
         while True:
             if retries:
-                time.sleep(min(2, 2 ** (retries - 7)))
+                time.sleep(min(8, 2 ** (retries - 4)))
 
             try:
                 return self._connection.post(api_path('ingest'), data=data, files=files, headers=headers)
