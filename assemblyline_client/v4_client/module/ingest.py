@@ -1,5 +1,6 @@
 import os
 import tempfile
+import time
 from json import dumps
 
 from assemblyline_client.v4_client.common.utils import api_path, api_path_by_module, ClientError
@@ -84,7 +85,22 @@ If content is provided, the path is used as metadata only.
             data = dumps(request)
             headers = None
 
-        return self._connection.post(api_path('ingest'), data=data, files=files, headers=headers)
+        retries = 0
+        while True:
+            if retries:
+                time.sleep(min(2, 2 ** (retries - 7)))
+
+            try:
+                return self._connection.post(api_path('ingest'), data=data, files=files, headers=headers)
+            except ClientError as e:
+                if "File empty. Ingestion failed" in str(e):
+                    if path and os.path.getsize(path) != 0:
+                        pass
+                    else:
+                        raise
+                else:
+                    raise
+            retries += 1
 
     def get_message(self, nq):
         """\
