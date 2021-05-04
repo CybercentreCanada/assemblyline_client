@@ -205,7 +205,8 @@ class Connection(object):
                                 raise
 
                             raise ClientError(response.content, response.status_code)
-                except ConnectionResetError:
-                    pass
+                except OSError as e:
+                    if "Connection aborted" not in str(e):
+                        raise
 
                 retries += 1
