@@ -85,22 +85,7 @@ If content is provided, the path is used as metadata only.
             data = dumps(request)
             headers = None
 
-        retries = 0
-        while True:
-            if retries:
-                time.sleep(min(8, 2 ** (retries - 4)))
-
-            try:
-                return self._connection.post(api_path('ingest'), data=data, files=files, headers=headers)
-            except ClientError as e:
-                if "File empty. Ingestion failed" in str(e):
-                    if path and os.path.getsize(path) != 0:
-                        pass
-                    else:
-                        raise
-                else:
-                    raise
-            retries += 1
+        return self._connection.post(api_path('ingest'), data=data, files=files, headers=headers)
 
     def get_message(self, nq):
         """\
