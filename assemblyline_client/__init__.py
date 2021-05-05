@@ -172,6 +172,9 @@ class Connection(object):
             while self.max_retries < 1 or retries <= self.max_retries:
                 if retries:
                     time.sleep(min(2, 2 ** (retries - 7)))
+                    stream = kw.get('files', {}).get('bin', None)
+                    if stream and 'seek' in dir(stream):
+                        stream.seek(0)
 
                 try:
                     response = func('/'.join((self.server, path)), **kw)
