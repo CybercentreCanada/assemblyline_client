@@ -185,7 +185,11 @@ class Connection(object):
                     elif response.status_code == 401:
                         try:
                             resp_data = response.json()
-                            if resp_data["api_error_message"] == "Authentication required":
+                            if resp_data["api_error_message"] in ["Session rejected",
+                                                                  "Session not found",
+                                                                  "Session expired",
+                                                                  "Invalid source IP for this session",
+                                                                  "Invalid user agent for this session"]:
                                 self._authenticate()
                             else:
                                 raise ClientError(resp_data["api_error_message"], response.status_code,
@@ -208,8 +212,12 @@ class Connection(object):
                                 raise
 
                             raise ClientError(response.content, response.status_code)
+                except requests.ConnectionError:
+                    pass
                 except OSError as e:
                     if "Connection aborted" not in str(e):
                         raise
 
                 retries += 1
+
+            raise ClientError("Max retry reached, could not perform the request.")
