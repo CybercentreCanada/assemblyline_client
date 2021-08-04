@@ -60,11 +60,11 @@ jobs:
       - script: |
           set -x  # Echo commands before they are run
           # Check which version we are building
-          export VERSION=${BUILD_SOURCEBRANCH#"refs/tags/v"}
-          if [[ "$VERSION" == *dev* ]]; then
-              export CONTAINER=latest
-          else
+          export VERSION="${BUILD_SOURCEBRANCH#"refs/tags/v"}"
+          if [[ "$VERSION" == *master* ]]; then
               export CONTAINER=stable
+          else
+              export CONTAINER=latest
           if
           # Run the container pulls in parallel, wait for them all to finish before next step
           sudo docker pull -q cccs/nginx-ssl-frontend &
@@ -76,11 +76,11 @@ jobs:
       - script: |
           set -x  # Echo commands before they are run
           # Check which version we are building
-          export VERSION=${BUILD_SOURCEBRANCH#"refs/tags/v"}
-          if [[ "$VERSION" == *dev* ]]; then
-              export CONTAINER=latest
-          else
+          export "VERSION=${BUILD_SOURCEBRANCH#"refs/tags/v"}"
+          if [[ "$VERSION" == *master* ]]; then
               export CONTAINER=stable
+          else
+              export CONTAINER=latest
           if
           # Install configuration file
           sudo mkdir -p /etc/assemblyline/
