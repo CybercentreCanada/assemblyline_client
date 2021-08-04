@@ -83,7 +83,7 @@ stages:
                   export CONTAINER=latest
               else
                   export CONTAINER=stable
-              if
+              fi
               # Run the container pulls in parallel, wait for them all to finish before next step
               sudo docker pull -q cccs/nginx-ssl-frontend &
               sudo docker pull -q cccs/assemblyline-ui:$CONTAINER &
@@ -99,7 +99,7 @@ stages:
                   export CONTAINER=latest
               else
                   export CONTAINER=stable
-              if
+              fi
               # Install configuration file
               sudo mkdir -p /etc/assemblyline/
               sudo cp $(Pipeline.Workspace)/pipelines/config.yml /etc/assemblyline/
