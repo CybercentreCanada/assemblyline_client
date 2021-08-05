@@ -50,7 +50,7 @@ setup(
         'requests',
         'requests[security]',
         'python-baseconv',
-        'python-socketio[client]<5.0.0',
+        'python-socketio[client]',
         'socketio-client==0.5.7.4'
     ],
     extras_require={
