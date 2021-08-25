@@ -61,6 +61,7 @@ try:
             random_data.create_signatures(ds)
             random_data.create_users(ds)
             random_data.create_workflows(ds)
+            random_data.create_safelists(ds)
             submissions = []
             for _ in range(2):
                 submissions.append(random_data.create_submission(ds, filestore))
@@ -70,6 +71,7 @@ try:
             # Cleanup test data
             random_data.wipe_alerts(ds)
             random_data.wipe_heuristics(ds)
+            random_data.wipe_safelist(ds)
             random_data.wipe_services(ds)
             random_data.wipe_signatures(ds)
             random_data.wipe_submissions(ds, filestore)
