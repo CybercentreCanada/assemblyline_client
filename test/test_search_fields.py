@@ -44,6 +44,17 @@ def test_result(datastore, client):
         assert 'type' in v
 
 
+def test_safelist(datastore, client):
+    res = client.search.fields.safelist()
+    assert isinstance(res, dict)
+    for v in res.values():
+        assert 'default' in v
+        assert 'indexed' in v
+        assert 'list' in v
+        assert 'stored' in v
+        assert 'type' in v
+
+
 def test_signature(datastore, client):
     res = client.search.fields.signature()
     assert isinstance(res, dict)

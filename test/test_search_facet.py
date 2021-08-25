@@ -42,6 +42,14 @@ def test_result(datastore, client):
         assert v >= 1
 
 
+def test_safelist(datastore, client):
+    safelist_id = random_id_from_collection(datastore, 'safelist')
+    res = client.search.facet.safelist('file.name', "id:{}".format(safelist_id), mincount=1)
+    assert isinstance(res, dict)
+    for v in res.values():
+        assert v >= 1
+
+
 def test_signature(datastore, client):
     signature_id = random_id_from_collection(datastore, 'signature')
     res = client.search.facet.signature('status', "id:{}".format(signature_id), mincount=1)

@@ -24,6 +24,12 @@ def test_result(datastore, client):
     assert res == sorted(list(datastore.result.stream_search("id:*", as_obj=False)), key=lambda k: k['id'])
 
 
+def test_safelist(datastore, client):
+    res = sorted([x for x in client.search.stream.safelist("id:*")], key=lambda k: k['id'])
+    assert len(res) > 0
+    assert res == sorted(list(datastore.safelist.stream_search("id:*", as_obj=False)), key=lambda k: k['id'])
+
+
 def test_signature(datastore, client):
     res = sorted([x for x in client.search.stream.signature("id:*")], key=lambda k: k['id'])
     assert len(res) > 0

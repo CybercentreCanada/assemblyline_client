@@ -70,6 +70,16 @@ def test_submission(datastore, client):
     assert res['total'] > 1
 
 
+def test_safelist(datastore, client):
+    safelist_id = random_id_from_collection(datastore, 'safelist')
+    res = client.search.safelist("id:{}".format(safelist_id), fl="id")
+    assert res['total'] == 1
+    assert res['items'][0]['id'] == safelist_id
+
+    res = client.search.safelist("id:*")
+    assert res['total'] > 1
+
+
 def test_workflow(datastore, client):
     workflow_id = random_id_from_collection(datastore, 'workflow')
     res = client.search.workflow("id:{}".format(workflow_id), fl="id")

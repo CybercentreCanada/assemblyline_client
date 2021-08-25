@@ -21,6 +21,13 @@ def test_result(datastore, client):
         assert isinstance(v, int) or isinstance(v, float)
 
 
+def test_safelist(datastore, client):
+    res = client.search.stats.safelist('file.size', query="id:*")
+    assert list(res.keys()) == ['avg', 'count', 'max', 'min', 'sum']
+    for v in res.values():
+        assert isinstance(v, int) or isinstance(v, float)
+
+
 def test_signature(datastore, client):
     res = client.search.stats.signature('order', query="id:*")
     assert list(res.keys()) == ['avg', 'count', 'max', 'min', 'sum']
