@@ -115,6 +115,29 @@ Returns a generator that transparently and efficiently pages through results.
         return self._do_grouped('result', field, group_sort=group_sort, limit=limit, query=query, filters=filters,
                                 offset=offset, rows=rows, sort=sort, fl=fl)
 
+    def safelist(self, field, group_sort=None, limit=None, query=None, filters=None,
+                 offset=None, rows=None, sort=None, fl=None):
+        """\
+Search safelist collection and group result to a given field
+
+Required:
+field   : Field used to group the results
+
+Optional:
+group_sort : Field used for sorting items in the groups with direction (string: ex. 'id desc')
+limit      : Maximum number of items returned per group (integer)
+query      : lucene query (string)
+filters    : Additional lucene queries used to filter the data (list of strings)
+offset     : Offset at which the query items should start (integer)
+rows       : Number of records to return (integer)
+sort       : Field used for sorting with direction (string: ex. 'id desc')
+fl         : List of fields to return (comma separated string of fields)
+
+Returns a generator that transparently and efficiently pages through results.
+"""
+        return self._do_grouped('safelist', field, group_sort=group_sort, limit=limit, query=query, filters=filters,
+                                offset=offset, rows=rows, sort=sort, fl=fl)
+
     def signature(self, field, group_sort=None, limit=None, query=None, filters=None,
                   offset=None, rows=None, sort=None, fl=None):
         """\

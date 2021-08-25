@@ -36,6 +36,12 @@ List all fields details for the result collection.
 """
         return self._do_fields('result')
 
+    def safelist(self):
+        """\
+List all fields details for the safelist collection.
+"""
+        return self._do_fields('safelist')
+
     def signature(self):
         """\
 List all fields details for the signature collection.

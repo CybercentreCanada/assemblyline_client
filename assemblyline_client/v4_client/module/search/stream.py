@@ -141,6 +141,21 @@ Returns a generator that transparently and efficiently pages through results.
 """
         return self._do_stream('signature', query, filters=filters, fl=fl)
 
+    def safelist(self, query, filters=None, fl=None):
+        """\
+Get all safelists from a lucene query.
+
+Required:
+query   : lucene query (string)
+
+Optional:
+filters : Additional lucene queries used to filter the data (list of strings)
+fl      : List of fields to return (comma separated string of fields)
+
+Returns a generator that transparently and efficiently pages through results.
+"""
+        return self._do_stream('safelist', query, filters=filters, fl=fl)
+
     def submission(self, query, filters=None, fl=None):
         """\
 Get all submissions from a lucene query.
