@@ -55,6 +55,52 @@ The assemblyline client is fully documented in the docstrings so if you use an i
     File:      /usr/local/lib/python2.7/dist-packages/assemblyline_client/__init__.py
     Type:      instancemethod
 
+## Using a configuration file
+Rather than passing authentication and server details as parameters in a command line, you can use a configuration file.
+This configuration file should be placed at `~/.al/submit.cfg`. A template for this configuration 
+file can be found below.
+NOTE: You can use `=` or `:` as the delimiter between key and value.
+```
+[auth]
+# There are two main methods of authentication. Choose one:
+# - Certificate
+#   File path to client cert used to connect to server.
+cert = 
+
+# - User Account
+#   Username for Assemblyline account.
+user = 
+#   There are three methods to authenticate a user account. Choose one:
+#   - Password Provided via User Prompt
+#       Leave the `password' configuration value below empty. You will prompted to enter the password upon 
+#       running 'al-submit'. You will have to enter this password every time that you use the 'al-submit' tool. 
+#   - Password Provided in Configuration File
+#       Enter the password for Assemblyline account in plaintext.
+password = 
+#   - API Key in Configuration File
+#       Enter the API key to use in plaintext for the user to login.
+#       NOTE: The API key must have WRITE access for INGEST and WRITE+READ for SUBMIT.
+apikey = 
+
+# Skip server cert validation. 
+# Value can be one of: true, false, yes, no
+# If not supplied, default value is: false
+insecure = 
+
+[server]
+# Method of network transport. 
+# If not supplied, default value is: https
+transport = 
+# Domain of Assemblyline instance.
+# If not supplied, default value is: localhost
+host = 
+# Port to which traffic will be sent.
+# If not supplied, default value is: 443
+port = 
+# Server cert used to connect to server.
+cert = 
+```
+
 ### Examples
 
 #### Submit a file
@@ -170,6 +216,8 @@ Le client d’Assemblyline est pleinement documenté dans les docstrings. Si vou
     Returns all results.
     File:      /usr/local/lib/python2.7/dist-packages/assemblyline_client/__init__.py
     Type:      instancemethod
+
+## TODO: Using a configuration file en Francais
 
 ### Exemples
 
