@@ -151,7 +151,7 @@ username    : Name of the user to remove from the system
 List users of the system (per page)
 
 Required:
-offset     : Offset in the user bucket
+offset     : Offset in the user index
 query      : Filter to apply to the user list
 rows       : Max number of user returned
 sort       : Sort order

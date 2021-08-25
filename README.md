@@ -65,7 +65,7 @@ Submitting a file to the system is just as simple as passing the file path
 
 #### Getting a key
 
-To get a key of a given bucket, you simply need to pass it it's ID
+To get a key of a given index, you simply need to pass it it's ID
 
     submission_details = al_client.submission("4nxrpBePQDLH427aA8m3TZ")
 

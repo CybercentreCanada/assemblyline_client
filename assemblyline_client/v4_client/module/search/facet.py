@@ -5,9 +5,9 @@ class Facet(object):
     def __init__(self, connection):
         self._connection = connection
 
-    def _do_facet(self, bucket, field, **kwargs):
-        if bucket not in SEARCHABLE:
-            raise ClientError("Bucket %s is not searchable" % bucket, 400)
+    def _do_facet(self, index, field, **kwargs):
+        if index not in SEARCHABLE:
+            raise ClientError("Index %s is not searchable" % index, 400)
 
         filters = kwargs.pop('filters', None)
         if filters is not None:
@@ -19,7 +19,7 @@ class Facet(object):
         kwargs = {k: v for k, v in kwargs.items() if v is not None and k != 'filters'}
         if filters is not None:
             kwargs['params_tuples'] = filters
-        path = api_path('search', 'facet', bucket, field, **kwargs)
+        path = api_path('search', 'facet', index, field, **kwargs)
         return self._connection.get(path)
 
     def alert(self, field, query=None, mincount=None, filters=None):

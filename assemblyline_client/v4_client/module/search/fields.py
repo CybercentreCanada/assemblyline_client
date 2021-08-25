@@ -5,11 +5,11 @@ class Fields(object):
     def __init__(self, connection):
         self._connection = connection
 
-    def _do_fields(self, bucket):
-        if bucket not in SEARCHABLE:
-            raise ClientError("Bucket %s is not searchable" % bucket, 400)
+    def _do_fields(self, index):
+        if index not in SEARCHABLE:
+            raise ClientError("Index %s is not searchable" % index, 400)
 
-        path = api_path('search', 'fields', bucket)
+        path = api_path('search', 'fields', index)
         return self._connection.get(path)
 
     def alert(self):

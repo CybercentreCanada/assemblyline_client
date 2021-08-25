@@ -19,9 +19,9 @@ class Search(object):
         self.stats = Stats(connection)
         self.stream = Stream(connection, self._do_search)
 
-    def _do_search(self, bucket, query, **kwargs):
-        if bucket not in SEARCHABLE:
-            raise ClientError("Bucket %s is not searchable" % bucket, 400)
+    def _do_search(self, index, query, **kwargs):
+        if index not in SEARCHABLE:
+            raise ClientError("Index %s is not searchable" % index, 400)
 
         filters = kwargs.pop('filters', None)
         if filters is not None:
@@ -32,7 +32,7 @@ class Search(object):
 
         kwargs = {k: v for k, v in kwargs.items() if v is not None}
         kwargs['query'] = query
-        path = api_path('search', bucket)
+        path = api_path('search', index)
         return self._connection.post(path, data=json.dumps(kwargs))
 
     def alert(self, query, filters=None, fl=None, offset=0, rows=25, sort=None, timeout=None):
