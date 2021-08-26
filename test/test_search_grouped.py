@@ -50,6 +50,16 @@ def test_result(datastore, client):
     assert res['total'] > 1
 
 
+def test_safelist(datastore, client):
+    safelist_id = random_id_from_collection(datastore, 'safelist')
+    res = client.search.grouped.safelist("id", query="id:{}".format(safelist_id), fl="id")
+    assert res['total'] == 1
+    assert res['items'][0]['value'] == safelist_id
+
+    res = client.search.grouped.safelist("hashes.sha256", query="id:*")
+    assert res['total'] >= 1
+
+
 def test_signature(datastore, client):
     signature_id = random_id_from_collection(datastore, 'signature')
     res = client.search.grouped.signature("id", query="id:{}".format(signature_id), fl="id")

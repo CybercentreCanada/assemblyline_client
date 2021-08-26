@@ -5,9 +5,9 @@ class Stats(object):
     def __init__(self, connection):
         self._connection = connection
 
-    def _do_stats(self, bucket, field, **kwargs):
-        if bucket not in SEARCHABLE:
-            raise ClientError("Bucket %s is not searchable" % bucket, 400)
+    def _do_stats(self, index, field, **kwargs):
+        if index not in SEARCHABLE:
+            raise ClientError("Index %s is not searchable" % index, 400)
 
         filters = kwargs.pop('filters', None)
         if filters is not None:
@@ -19,7 +19,7 @@ class Stats(object):
         kwargs = {k: v for k, v in kwargs.items() if v is not None and k != 'filters'}
         if filters is not None:
             kwargs['params_tuples'] = filters
-        path = api_path('search', 'stats', bucket, field, **kwargs)
+        path = api_path('search', 'stats', index, field, **kwargs)
         return self._connection.get(path)
 
     def alert(self, field, query=None, filters=None):
@@ -66,6 +66,21 @@ filters  : Additional lucene queries used to filter the data (list of strings)
 Returns statistics about the field.
 """
         return self._do_stats('result', field, query=query, filters=filters)
+
+    def safelist(self, field, query=None, filters=None):
+        """\
+Generates statistics about the distribution of an integer field of the safelist collection.
+
+Required:
+field   : field to create the stats on (only work on number fields)
+
+Optional:
+query    : Initial query to filter the data (default: 'id:*')
+filters  : Additional lucene queries used to filter the data (list of strings)
+
+Returns statistics about the field.
+"""
+        return self._do_stats('safelist', field, query=query, filters=filters)
 
     def signature(self, field, query=None, filters=None):
         """\

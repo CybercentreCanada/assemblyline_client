@@ -11,7 +11,7 @@ class Stream(object):
         self._page_size = 100
         self._max_yield_cache = 100
 
-    def _auto_fill(self, items, lock, bucket, query, **kwargs):
+    def _auto_fill(self, items, lock, index, query, **kwargs):
         done = False
         while not done:
             skip = False
@@ -23,7 +23,7 @@ class Stream(object):
                 time.sleep(0.01)
                 continue
 
-            j = self._do_search(bucket, query, **kwargs)
+            j = self._do_search(index, query, **kwargs)
 
             # Replace cursorMark.
             kwargs['deep_paging_id'] = j.get('next_deep_paging_id', '*')
@@ -33,9 +33,9 @@ class Stream(object):
 
             done = self._page_size - len(j['items'])
 
-    def _do_stream(self, bucket, query, **kwargs):
-        if bucket not in SEARCHABLE:
-            raise ClientError("Bucket %s is not searchable" % bucket, 400)
+    def _do_stream(self, index, query, **kwargs):
+        if index not in SEARCHABLE:
+            raise ClientError("Index %s is not searchable" % index, 400)
 
         for arg in list(kwargs.keys()):
             if arg in INVALID_STREAM_SEARCH_PARAMS:
@@ -52,7 +52,7 @@ class Stream(object):
         yield_done = False
         items = []
         lock = threading.Lock()
-        sf_t = threading.Thread(target=self._auto_fill, args=[items, lock, bucket, query], kwargs=kwargs)
+        sf_t = threading.Thread(target=self._auto_fill, args=[items, lock, index, query], kwargs=kwargs)
         sf_t.setDaemon(True)
         sf_t.start()
         while not yield_done:
@@ -140,6 +140,21 @@ fl      : List of fields to return (comma separated string of fields)
 Returns a generator that transparently and efficiently pages through results.
 """
         return self._do_stream('signature', query, filters=filters, fl=fl)
+
+    def safelist(self, query, filters=None, fl=None):
+        """\
+Get all safelists from a lucene query.
+
+Required:
+query   : lucene query (string)
+
+Optional:
+filters : Additional lucene queries used to filter the data (list of strings)
+fl      : List of fields to return (comma separated string of fields)
+
+Returns a generator that transparently and efficiently pages through results.
+"""
+        return self._do_stream('safelist', query, filters=filters, fl=fl)
 
     def submission(self, query, filters=None, fl=None):
         """\

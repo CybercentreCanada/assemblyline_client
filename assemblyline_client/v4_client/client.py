@@ -10,12 +10,14 @@ from assemblyline_client.v4_client.module.help import Help
 from assemblyline_client.v4_client.module.heuristics import Heuristics
 from assemblyline_client.v4_client.module.ingest import Ingest
 from assemblyline_client.v4_client.module.result import Result
+from assemblyline_client.v4_client.module.safelist import Safelist
 from assemblyline_client.v4_client.module.search import Search
 from assemblyline_client.v4_client.module.service import Service
 from assemblyline_client.v4_client.module.signature import Signature
 from assemblyline_client.v4_client.module.socketio import SocketIO
 from assemblyline_client.v4_client.module.submission import Live, Submission
 from assemblyline_client.v4_client.module.submit import Submit
+from assemblyline_client.v4_client.module.system import System
 from assemblyline_client.v4_client.module.user import User
 from assemblyline_client.v4_client.module.workflow import Workflow
 
@@ -34,12 +36,14 @@ class Client(object):
         self.ingest = Ingest(self._connection)
         self.live = Live(self._connection)
         self.result = Result(self._connection)
+        self.safelist = Safelist(self._connection)
         self.search = Search(self._connection)
         self.service = Service(self._connection)
         self.signature = Signature(self._connection)
         self.socketio = SocketIO(self._connection)
         self.submission = Submission(self._connection)
         self.submit = Submit(self._connection)
+        self.system = System(self._connection)
         self.user = User(self._connection)
         self.workflow = Workflow(self._connection)
 

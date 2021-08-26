@@ -19,9 +19,9 @@ class Search(object):
         self.stats = Stats(connection)
         self.stream = Stream(connection, self._do_search)
 
-    def _do_search(self, bucket, query, **kwargs):
-        if bucket not in SEARCHABLE:
-            raise ClientError("Bucket %s is not searchable" % bucket, 400)
+    def _do_search(self, index, query, **kwargs):
+        if index not in SEARCHABLE:
+            raise ClientError("Index %s is not searchable" % index, 400)
 
         filters = kwargs.pop('filters', None)
         if filters is not None:
@@ -32,7 +32,7 @@ class Search(object):
 
         kwargs = {k: v for k, v in kwargs.items() if v is not None}
         kwargs['query'] = query
-        path = api_path('search', bucket)
+        path = api_path('search', index)
         return self._connection.post(path, data=json.dumps(kwargs))
 
     def alert(self, query, filters=None, fl=None, offset=0, rows=25, sort=None, timeout=None):
@@ -113,6 +113,26 @@ timeout : Max amount of miliseconds the query will run (integer)
 Returns all results.
 """
         return self._do_search('result', query, filters=filters, fl=fl, offset=offset,
+                               rows=rows, sort=sort, timeout=timeout)
+
+    def safelist(self, query, filters=None, fl=None, offset=0, rows=25, sort=None, timeout=None):
+        """\
+Search safelist with a lucene query.
+
+Required:
+query   : lucene query (string)
+
+Optional:
+filters : Additional lucene queries used to filter the data (list of strings)
+fl      : List of fields to return (comma separated string of fields)
+offset  : Offset at which the query items should start (integer)
+rows    : Number of records to return (integer)
+sort    : Field used for sorting with direction (string: ex. 'id desc')
+timeout : Max amount of miliseconds the query will run (integer)
+
+Returns all results.
+"""
+        return self._do_search('safelist', query, filters=filters, fl=fl, offset=offset,
                                rows=rows, sort=sort, timeout=timeout)
 
     def signature(self, query, filters=None, fl=None, offset=0, rows=25, sort=None, timeout=None):

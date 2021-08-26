@@ -5,9 +5,9 @@ class Facet(object):
     def __init__(self, connection):
         self._connection = connection
 
-    def _do_facet(self, bucket, field, **kwargs):
-        if bucket not in SEARCHABLE:
-            raise ClientError("Bucket %s is not searchable" % bucket, 400)
+    def _do_facet(self, index, field, **kwargs):
+        if index not in SEARCHABLE:
+            raise ClientError("Index %s is not searchable" % index, 400)
 
         filters = kwargs.pop('filters', None)
         if filters is not None:
@@ -19,7 +19,7 @@ class Facet(object):
         kwargs = {k: v for k, v in kwargs.items() if v is not None and k != 'filters'}
         if filters is not None:
             kwargs['params_tuples'] = filters
-        path = api_path('search', 'facet', bucket, field, **kwargs)
+        path = api_path('search', 'facet', index, field, **kwargs)
         return self._connection.get(path)
 
     def alert(self, field, query=None, mincount=None, filters=None):
@@ -85,6 +85,22 @@ mincount : Minimum amount of hits for the value to be returned
 Returns all results.
 """
         return self._do_facet('result', field, query=query, mincount=mincount, filters=filters)
+
+    def safelist(self, field, query=None, mincount=None, filters=None):
+        """\
+List most frequent value for a field in the safelist collection.
+
+Required:
+field   : field to extract the facets from
+
+Optional:
+qeury    : Initial query to filter the data (default: 'id:*')
+filters  : Additional lucene queries used to filter the data (list of strings)
+mincount : Minimum amount of hits for the value to be returned
+
+Returns all results.
+"""
+        return self._do_facet('safelist', field, query=query, mincount=mincount, filters=filters)
 
     def signature(self, field, query=None, mincount=None, filters=None):
         """\
