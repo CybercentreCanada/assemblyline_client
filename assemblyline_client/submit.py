@@ -162,25 +162,28 @@ def _main(arguments):
     config.read([expanduser("~/.al/submit.cfg")])
     for section in config.sections():
         if section == "auth":
-            if 'user' in config.options('auth'):
+            if 'user' in config.options('auth') and config.get('auth', 'user'):
                 user = config.get('auth', 'user')
-            if 'password' in config.options('auth'):
+            if 'password' in config.options('auth') and config.get('auth', 'password'):
                 pw = config.get('auth', 'password')
-            if 'cert' in config.options('auth'):
+            if 'cert' in config.options('auth') and config.get('auth', 'cert'):
                 cert = config.get('auth', 'cert')
-            if 'apikey' in config.options('auth'):
+            if 'apikey' in config.options('auth') and config.get('auth', 'apikey'):
                 apikey = config.get('auth', 'apikey')
-            if 'insecure' in config.options('auth'):
+            if 'insecure' in config.options('auth') and config.get('auth', 'insecure'):
                 verify = config.get('auth', 'insecure').lower() not in ['true', 'yes']
         elif section == "server":
-            if 'transport' in config.options('server'):
+            if 'transport' in config.options('server') and config.get('server', 'transport'):
                 transport = config.get('server', 'transport')
-            if 'host' in config.options('server'):
+            if 'host' in config.options('server') and config.get('server', 'host'):
                 host = config.get('server', 'host')
-            if 'port' in config.options('server'):
+            if 'port' in config.options('server') and config.get('server', 'port'):
                 port = config.get('server', 'port')
-            if 'cert' in config.options('server'):
+            if 'cert' in config.options('server') and config.get('server', 'cert'):
                 verify = config.get('server', 'cert')
+        else:
+            sys.stderr.write("The configuration section '[%s]' is invalid. "
+                             "The only valid sections are '[auth]' and '[server]'.\n" % section)
 
     server = "%s://%s:%s" % (transport, host, port)
 
