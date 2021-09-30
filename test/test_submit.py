@@ -1,4 +1,5 @@
 import os
+import tempfile
 
 try:
     from assemblyline.common import forge
@@ -25,6 +26,22 @@ def test_submit_content(datastore, client):
     assert res is not None
     assert res['sid'] is not None
     assert res['files'][0]['name'] == fname
+    assert res == datastore.submission.get(res['sid'], as_obj=False)
+
+
+def test_submit_openfile(datastore, client):
+    content = get_random_phrase(wmin=15, wmax=50).encode()
+    fname = "test_submit_{}.txt".format(get_random_id())
+    with tempfile.TemporaryFile() as test_file:
+        test_file.write(content + b"OPENFILE")
+        test_file.seek(0)
+
+        params = {'service_spec': {"extract": {"password": "test"}}}
+        res = client.submit(openfile=test_file, fname=fname, params=params)
+    assert res is not None
+    assert res.get('sid', None) is not None
+    assert res['files'][0]['name'] == fname
+    assert res['params']['service_spec'] == params['service_spec']
     assert res == datastore.submission.get(res['sid'], as_obj=False)
 
 

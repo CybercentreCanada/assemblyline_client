@@ -49,6 +49,7 @@ setup(
         'pycryptodome',
         'requests',
         'requests[security]',
+        'requests-toolbelt',
         'python-baseconv',
         'python-socketio[client]',
         'socketio-client==0.5.7.4'
