@@ -1,6 +1,6 @@
 import os
-import tempfile
 from json import dumps
+from tempfile import NamedTemporaryFile
 
 from assemblyline_client.v4_client.common.utils import api_path, api_path_by_module, get_function_kwargs, ClientError
 
@@ -26,12 +26,14 @@ params  : Additional submission parameters. (dict)
 
 If content is provided, the path is used as metadata only.
 """
+        temp_file = None
         if content:
-            fd, path = tempfile.mkstemp()
-            with os.fdopen(fd, 'wb') as fh:
-                if isinstance(content, str):
-                    content = content.encode()
-                fh.write(content)
+            temp_file = NamedTemporaryFile(mode="w+b", delete=False)
+            if isinstance(content, str):
+                content = content.encode()
+            temp_file.write(content)
+            temp_file.seek(0)
+            path = temp_file.name
 
         files = {}
         if path:
@@ -43,6 +45,8 @@ If content is provided, the path is used as metadata only.
             request = {
                 'name': fname or os.path.basename(path)
             }
+            if temp_file:
+                temp_file.close()
         elif url:
             request = {
                 'url': url,
