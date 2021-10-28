@@ -1,6 +1,7 @@
 import os
+import tempfile
+
 from json import dumps
-from tempfile import NamedTemporaryFile
 
 from assemblyline_client.v4_client.common.utils import api_path, api_path_by_module, get_function_kwargs, ClientError
 
@@ -9,15 +10,16 @@ class Submit(object):
     def __init__(self, connection):
         self._connection = connection
 
-    def __call__(self, path=None, content=None, url=None, sha256=None, fname=None, params=None, metadata=None):
+    def __call__(self, fh=None, path=None, content=None, url=None, sha256=None, fname=None, params=None, metadata=None):
         """\
 Submit a file to be dispatched.
 
 Required (one of)
-content : Content of the file to scan
+fh      : Opened file handle to a file to scan
+content : Content of the file to scan (byte array)
 path    : Path/name of file. (string)
-sha256  : Sha256 of the file to scan
-url     : Url to scan
+sha256  : Sha256 of the file to scan (string)
+url     : Url to scan (string)
 
 Optional
 fname   : Name of the file to scan
@@ -26,54 +28,70 @@ params  : Additional submission parameters. (dict)
 
 If content is provided, the path is used as metadata only.
 """
-        temp_file = None
-        if content:
-            temp_file = NamedTemporaryFile(mode="w+b", delete=False)
-            if isinstance(content, str):
-                content = content.encode()
-            temp_file.write(content)
-            temp_file.seek(0)
-            path = temp_file.name
+        rmpath = None
+        try:
+            if content:
+                fd, path = tempfile.mkstemp()
+                rmpath = path
+                with os.fdopen(fd, 'wb') as content_fh:
+                    if isinstance(content, str):
+                        content = content.encode()
+                    content_fh.write(content)
 
-        files = {}
-        if path:
-            if os.path.exists(path):
-                files = {'bin': open(path, 'rb')}
+            files = {}
+            if fh:
+                if fname is None:
+                    if hasattr(fh, 'name'):
+                        fname = fh.name
+                    else:
+                        raise ClientError('Could not guess the file name, please provide an fname parameter', 400)
+                fh.seek(0)
+                files = {'bin': (fname, fh)}
+                request = {
+                    'name': fname,
+                }
+            elif path:
+                if os.path.exists(path):
+                    files = {'bin': open(path, 'rb')}
+                else:
+                    raise ClientError('File does not exist "%s"' % path, 400)
+
+                request = {
+                    'name': fname or os.path.basename(path)
+                }
+            elif url:
+                request = {
+                    'url': url,
+                    'name': fname or os.path.basename(url).split("?")[0],
+                }
+            elif sha256:
+                request = {
+                    'sha256': sha256,
+                    'name': fname or sha256,
+                }
             else:
-                raise ClientError('File does not exist "%s"' % path, 400)
+                raise ClientError('You need to provide at least content, a path, a url or a sha256', 400)
 
-            request = {
-                'name': fname or os.path.basename(path)
-            }
-            if temp_file:
-                temp_file.close()
-        elif url:
-            request = {
-                'url': url,
-                'name': fname or os.path.basename(url).split("?")[0],
-            }
-        elif sha256:
-            request = {
-                'sha256': sha256,
-                'name': fname or sha256,
-            }
-        else:
-            raise ClientError('You need to provide at least content, a path, a url or a sha256', 400)
+            if params:
+                request['params'] = params
 
-        if params:
-            request['params'] = params
+            if metadata:
+                request['metadata'] = metadata
 
-        if metadata:
-            request['metadata'] = metadata
+            if files:
+                data = {'json': dumps(request)}
+                headers = {'content-type': None}
+            else:
+                data = dumps(request)
+                headers = None
 
-        if files:
-            data = {'json': dumps(request)}
-            headers = {'content-type': None}
-        else:
-            data = dumps(request)
-            headers = None
-
-        return self._connection.post(api_path('submit'), data=data, files=files, headers=headers)
+            return self._connection.post(api_path('submit'), data=data, files=files, headers=headers)
+        finally:
+            if rmpath:
+                try:
+                    os.unlink(rmpath)
+                except OSError:
+                    pass
 
     # noinspection PyUnusedLocal
     def dynamic(self, sha256, copy_sid=None, name=None):
