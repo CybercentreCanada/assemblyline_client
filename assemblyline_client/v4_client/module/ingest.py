@@ -10,7 +10,7 @@ class Ingest(object):
     def __init__(self, connection):
         self._connection = connection
 
-    def __call__(self, path=None, content=None, url=None, sha256=None, fname=None, params=None, metadata=None,
+    def __call__(self, fh=None, path=None, content=None, url=None, sha256=None, fname=None, params=None, metadata=None,
                  alert=False, nq=None, nt=None, ingest_type='AL_CLIENT'):
         """\
 Submit a file to the ingestion queue.
