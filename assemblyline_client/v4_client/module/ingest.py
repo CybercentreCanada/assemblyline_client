@@ -38,10 +38,10 @@ If content is provided, the path is used as metadata only.
             if content:
                 fd, path = tempfile.mkstemp()
                 rmpath = path
-                with os.fdopen(fd, 'wb') as fh:
+                with os.fdopen(fd, 'wb') as content_fh:
                     if isinstance(content, str):
                         content = content.encode()
-                    fh.write(content)
+                    content_fh.write(content)
 
             files = {}
             if fh:
