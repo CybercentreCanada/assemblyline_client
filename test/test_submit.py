@@ -1,4 +1,7 @@
 import os
+import tempfile
+
+from io import BytesIO
 
 try:
     from assemblyline.common import forge
@@ -24,6 +27,31 @@ def test_submit_content(datastore, client):
     res = client.submit(content=content, fname=fname)
     assert res is not None
     assert res['sid'] is not None
+    assert res['files'][0]['name'] == fname
+    assert res == datastore.submission.get(res['sid'], as_obj=False)
+
+
+def test_submit_fh(datastore, client):
+    content = get_random_phrase(wmin=15, wmax=50).encode()
+    fname = "test_submit_{}.txt".format(get_random_id())
+    with tempfile.TemporaryFile() as test_file:
+        test_file.write(content + b"FILE_HANDLE")
+        params = {'service_spec': {"extract": {"password": "test"}}}
+        res = client.submit(fh=test_file, fname=fname, params=params)
+    assert res is not None
+    assert res.get('sid', None) is not None
+    assert res['files'][0]['name'] == fname
+    assert res['params']['service_spec'] == params['service_spec']
+    assert res == datastore.submission.get(res['sid'], as_obj=False)
+
+
+def test_submit_bio(datastore, client):
+    bio = BytesIO()
+    bio.write(get_random_phrase(wmin=15, wmax=50).encode() + b"BIO")
+    fname = "test_submit_{}.txt".format(get_random_id())
+    res = client.submit(fh=bio, fname=fname)
+    assert res is not None
+    assert res.get('sid', None) is not None
     assert res['files'][0]['name'] == fname
     assert res == datastore.submission.get(res['sid'], as_obj=False)
 
