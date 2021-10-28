@@ -61,20 +61,20 @@ def test_ingest_content(datastore, client):
     assert res.get('ingest_id', None) is not None
 
 
-def test_submit_fh(datastore, client):
+def test_ingest_fh(datastore, client):
     content = get_random_phrase(wmin=15, wmax=50).encode()
     fname = "test_ingest_{}.txt".format(get_random_id())
     with tempfile.TemporaryFile() as test_file:
         test_file.write(content + b"FILE_HANDLE")
-        res = client.submit(fh=test_file, fname=fname)
+        res = client.ingest(fh=test_file, fname=fname)
     assert res.get('ingest_id', None) is not None
 
 
-def test_submit_bio(datastore, client):
+def test_ingest_bio(datastore, client):
     bio = BytesIO()
     bio.write(get_random_phrase(wmin=15, wmax=50).encode() + b"BIO")
     fname = "test_ingest_{}.txt".format(get_random_id())
-    res = client.submit(fh=bio, fname=fname)
+    res = client.ingest(fh=bio, fname=fname)
     assert res.get('ingest_id', None) is not None
 
 
