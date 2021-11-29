@@ -22,8 +22,8 @@ def test_result(datastore, client):
 
 
 def test_safelist(datastore, client):
-    res = client.search.histogram.safelist('added', "id:*", mincount=1, start="now-6h",
-                                           end="now+6h", gap="+30m")
+    res = client.search.histogram.safelist('added', "id:*", mincount=1, start="now-15d",
+                                           end="now+15d", gap="+1d")
     assert isinstance(res, dict)
     for v in res.values():
         assert v >= 1
@@ -31,7 +31,7 @@ def test_safelist(datastore, client):
 
 def test_signature(datastore, client):
     res = client.search.histogram.signature('last_modified', "id:*", mincount=1, start="now-6h",
-                                            end="now+6h", gap="+30m")
+                                            end="now+6h", gap="+1h")
     assert isinstance(res, dict)
     for v in res.values():
         assert v >= 1
