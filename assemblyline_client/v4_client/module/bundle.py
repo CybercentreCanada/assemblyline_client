@@ -7,7 +7,7 @@ class Bundle(object):
     def __init__(self, connection):
         self._connection = connection
 
-    def create(self, sid, output=None):
+    def create(self, sid, output=None, use_alert=False):
         """\
 Creates a bundle containing the submission results and the associated files
 
@@ -15,17 +15,18 @@ Required:
 sid    : Submission ID (string)
 
 Optional:
-output  : Path or file handle. (string or file-like object)
+output     : Path or file handle. (string or file-like object)
+use_alert  : The ID provided is an alert ID and will be used for bundle creation. (bool)
 
 If output is not specified the content is returned by the function
 """
-        path = api_path('bundle', sid)
+        path = api_path('bundle', sid, use_alert=use_alert)
 
         if output:
             return self._connection.download(path, stream_output(output))
         return self._connection.download(path, raw_output)
 
-    def import_bundle(self, bundle, min_classification=None):
+    def import_bundle(self, bundle, min_classification=None, rescan_services=None, exist_ok=False):
         """\
 Import a submission bundle into the system
 
@@ -33,7 +34,9 @@ Required:
 bundle              : bundle to import (string, bytes or file_handle)
 
 Optional:
+exist_ok            : Do not throw an exception if the submission already exists (bool)
 min_classification  : Minimum classification at which the bundle is imported. (string)
+rescan_services     : List of services to rescan after import. (Comma seperated strings)
 
 Returns {'success': True/False } depending if it was imported or not
 """
@@ -48,8 +51,10 @@ Returns {'success': True/False } depending if it was imported or not
         else:
             raise TypeError("Invalid bundle")
 
-        kw = {}
+        kw = {'exist_ok': str(exist_ok)}
         if min_classification:
             kw['min_classification'] = min_classification
+        if rescan_services:
+            kw['rescan_services'] = ','.join(rescan_services)
 
         return self._connection.post(api_path('bundle', **kw), data=contents)
