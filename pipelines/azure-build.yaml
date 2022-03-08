@@ -37,7 +37,7 @@ stages:
         steps:
           - task: UsePythonVersion@0
             displayName: Set python version
-            inputs: { versionSpec: 3.8 }
+            inputs: { versionSpec: 3.9 }
           - script: |
               sudo env "PATH=$PATH" python -m pip install --no-cache-dir -U wheel pip
               python setup.py bdist_wheel
@@ -129,7 +129,7 @@ stages:
         steps:
           - task: UsePythonVersion@0
             displayName: Set python version
-            inputs: { versionSpec: 3.8 }
+            inputs: { versionSpec: 3.9 }
           - download: current
             artifact: dist
           - script: |
