@@ -39,10 +39,6 @@ jobs:
   - job: run_test
     strategy:
       matrix:
-        python3_7:
-          python.version: "3.7"
-        Python3_8:
-          python.version: "3.8"
         Python3_9:
           python.version: "3.9"
 
