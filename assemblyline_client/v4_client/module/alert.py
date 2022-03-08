@@ -17,7 +17,8 @@ Throws a Client exception if the alert does not exist.
 """
         return self._connection.get(api_path('alert', alert_id))
 
-    def grouped(self, field, fq=[], q=None, tc_start=None, tc=None, no_delay=False, offset=0, rows=10):
+    def grouped(self, field, fq=[], q=None, tc_start=None, tc=None, no_delay=False, offset=0, rows=10,
+                use_archive=False, track_total_hits=None):
         """\
 List all alert grouped by a given field
 
@@ -25,13 +26,15 @@ Required:
 field:    Field to group the alerts by
 
 Optional:
-fq      : Post filter queries (you can have multiple of these)
-q       : Query to apply to the alert list
-no_delay: Do not delay alerts
-offset  : Offset at which we start giving alerts
-rows    : Number of alerts to return
-tc_start: Time offset at which we start the time constraint
-tc      : Time constraint applied to the API
+fq                : Post filter queries (you can have multiple of these)
+q                 : Query to apply to the alert list
+no_delay          : Do not delay alerts
+offset            : Offset at which we start giving alerts
+rows              : Number of alerts to return
+tc_start          : Time offset at which we start the time constraint
+tc                : Time constraint applied to the API
+use_archive       : Also query the archive
+track_total_hits  : Number of hits to track (default: 10k)
 """
         params_tuples = [('fq', x) for x in fq]
         kw = {
@@ -44,6 +47,10 @@ tc      : Time constraint applied to the API
         }
         if no_delay:
             kw['no_delay'] = True
+        if use_archive:
+            kw['use_archive'] = ''
+        if track_total_hits:
+            kw['track_total_hits'] = track_total_hits
 
         return self._connection.get(api_path_by_module(self, field, **kw))
 
@@ -82,18 +89,21 @@ no_delay: Do not delay alerts
 
         return self._connection.get(api_path_by_module(self, **kw))
 
-    def list(self, fq=[], q=None, tc_start=None, tc=None, no_delay=False, offset=0, rows=10):
+    def list(self, fq=[], q=None, tc_start=None, tc=None, no_delay=False, offset=0, rows=10,
+             use_archive=False, track_total_hits=None):
         """\
 List all alerts in the system (per page)
 
 Optional:
-fq      : Post filter queries (you can have multiple of these)
-q       : Query to apply to the alert list
-no_delay: Do not delay alerts
-offset  : Offset at which we start giving alerts
-rows    : Number of alerts to return
-tc_start: Time offset at which we start the time constraint
-tc      : Time constraint applied to the API
+fq                : Post filter queries (you can have multiple of these)
+q                 : Query to apply to the alert list
+no_delay          : Do not delay alerts
+offset            : Offset at which we start giving alerts
+rows              : Number of alerts to return
+tc_start          : Time offset at which we start the time constraint
+tc                : Time constraint applied to the API
+use_archive       : Also query the archive
+track_total_hits  : Number of hits to track (default: 10k)
 """
         params_tuples = [('fq', x) for x in fq]
         kw = {
@@ -105,7 +115,11 @@ tc      : Time constraint applied to the API
             'tc': tc
         }
         if no_delay:
-            kw['no_delay'] = True
+            kw['no_delay'] = ''
+        if use_archive:
+            kw['use_archive'] = ''
+        if track_total_hits:
+            kw['track_total_hits'] = track_total_hits
 
         return self._connection.get(api_path_by_module(self, **kw))
 

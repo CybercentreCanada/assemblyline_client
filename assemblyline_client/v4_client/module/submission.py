@@ -79,7 +79,7 @@ Throws a Client exception if the submission does not exist.
 """
         return self._connection.get(api_path_by_module(self, sid))
 
-    def list(self, user=None, group=None, fq=None, rows=10, offset=0):
+    def list(self, user=None, group=None, fq=None, rows=10, offset=0, use_archive=False, track_total_hits=None):
         """\
 List all submissions of a given group or user.
 
@@ -87,11 +87,13 @@ Required:
 sid        : Submission ID. (string)
 
 Optional:
-user       : user to get the submissions from
-group      : groups to get the submissions from
-offset     : Offset at which we start giving submissions
-rows       : Number of submissions to return
-fq         : Query to filter to the submission list
+user              : user to get the submissions from
+group             : groups to get the submissions from
+offset            : Offset at which we start giving submissions
+rows              : Number of submissions to return
+fq                : Query to filter to the submission list
+use_archive       : Also query the archive
+track_total_hits  : Number of hits to track (default: 10k)
 """
         kw = {
             'rows': rows,
@@ -100,6 +102,10 @@ fq         : Query to filter to the submission list
 
         if fq:
             kw['query'] = fq
+        if use_archive:
+            kw['use_archive'] = ''
+        if track_total_hits:
+            kw['track_total_hits'] = track_total_hits
 
         if user:
             return self._connection.get(api_path_by_module(self, 'user', user, **kw))
