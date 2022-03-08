@@ -25,7 +25,7 @@ pytest.skip = skip_or_fail
 
 try:
     from assemblyline.common.security import get_random_password
-    from assemblyline.datastore.stores.es_store import ESStore
+    from assemblyline.datastore.store import ESStore
     from assemblyline.datastore.helper import AssemblylineDatastore
     from assemblyline.common.uid import get_random_id
     from passlib.hash import bcrypt
