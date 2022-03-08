@@ -20,7 +20,7 @@ use_alert  : The ID provided is an alert ID and will be used for bundle creation
 
 If output is not specified the content is returned by the function
 """
-        path = api_path('bundle', sid, use_alert=use_alert)
+        path = api_path('bundle', sid, use_alert='' if use_alert else None)
 
         if output:
             return self._connection.download(path, stream_output(output))
@@ -51,7 +51,9 @@ Returns {'success': True/False } depending if it was imported or not
         else:
             raise TypeError("Invalid bundle")
 
-        kw = {'exist_ok': str(exist_ok)}
+        kw = {}
+        if exist_ok:
+            kw['exist_ok'] = ''
         if min_classification:
             kw['min_classification'] = min_classification
         if rescan_services:
