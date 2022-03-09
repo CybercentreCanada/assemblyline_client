@@ -2,12 +2,12 @@ version: "2.4"
 
 services:
   al_frontend:
-    image: cccs/assemblyline-ui-frontend:stable
+    image: cccs/assemblyline-ui-frontend:latest
     ports:
       - "3000:3000"
 
   al_ui:
-    image: cccs/assemblyline-ui:stable
+    image: cccs/assemblyline-ui:latest
     environment:
       WORKERS: 1
       THREADS: 1
@@ -22,7 +22,7 @@ services:
         condition: service_started
 
   al_socketio:
-    image: cccs/assemblyline-socketio:stable
+    image: cccs/assemblyline-socketio:latest
     volumes:
       - ${PATH_REWRITE:-.}/config/:/etc/assemblyline/
     depends_on:
