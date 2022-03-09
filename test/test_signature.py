@@ -165,7 +165,6 @@ def test_download_raw(datastore, client):
 
     assert res[:2] == b"PK"
     assert b"yara/YAR_SAMPLE" in res
-    assert b"suricata/ET_SAMPLE" in res
 
 
 def test_stats(datastore, client):
