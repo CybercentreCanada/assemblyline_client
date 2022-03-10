@@ -46,13 +46,13 @@ If output is not specified the content is returned.
 
 Throws a Client exception if the file does not exist.
 """
-        kw = get_function_kwargs('output', 'self', 'sha256')
+        kw = get_function_kwargs('output', 'sid', 'sha256')
         path = api_path_by_module(self, sha256, **kw)
         if output:
             return self._connection.download(path, stream_output(output))
         return self._connection.download(path, raw_output)
 
-    def hex(self, sha256):
+    def hex(self, sha256, bytes_only=False, length=None):
         """\
 Return an hexadecimal representation of the file.
 
@@ -61,7 +61,13 @@ sha256     : File key (string)
 
 Throws a Client exception if the file does not exist.
 """
-        return self._connection.get(api_path_by_module(self, sha256))
+        kw = {}
+        if bytes_only:
+            kw['bytes_only'] = ''
+        if length:
+            kw['length'] = length
+
+        return self._connection.get(api_path_by_module(self, sha256, **kw))
 
     def info(self, sha256):
         """\

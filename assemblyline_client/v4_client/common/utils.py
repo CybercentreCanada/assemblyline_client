@@ -35,7 +35,10 @@ def convert_api_output(response):
 
 
 def _join_param(k, v):
-    return '='.join((k, quote(str(v))))
+    val = quote(str(v))
+    if not val:
+        return k
+    return '='.join((k, val))
 
 
 def _join_kw(kw):

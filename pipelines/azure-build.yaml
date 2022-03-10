@@ -37,7 +37,7 @@ stages:
         steps:
           - task: UsePythonVersion@0
             displayName: Set python version
-            inputs: { versionSpec: 3.8 }
+            inputs: { versionSpec: 3.9 }
           - script: |
               sudo env "PATH=$PATH" python -m pip install --no-cache-dir -U wheel pip
               python setup.py bdist_wheel
@@ -52,10 +52,6 @@ stages:
       - job: run_test
         strategy:
           matrix:
-            python3_7:
-              python.version: "3.7"
-            Python3_8:
-              python.version: "3.8"
             Python3_9:
               python.version: "3.9"
         timeoutInMinutes: 10
@@ -133,7 +129,7 @@ stages:
         steps:
           - task: UsePythonVersion@0
             displayName: Set python version
-            inputs: { versionSpec: 3.8 }
+            inputs: { versionSpec: 3.9 }
           - download: current
             artifact: dist
           - script: |

@@ -26,6 +26,18 @@ def test_create_to_file(datastore, client):
 
 
 # noinspection PyUnusedLocal
+def test_create_alert_to_file(datastore, client):
+    alert_id = random_id_from_collection(datastore, 'alert')
+    tested_bundle = "/tmp/bundle_alert_{}".format(alert_id)
+    try:
+        client.bundle.create(alert_id, tested_bundle, use_alert=True)
+
+        assert open(tested_bundle, 'rb').read(4) == b'CART'
+    finally:
+        os.unlink(tested_bundle)
+
+
+# noinspection PyUnusedLocal
 def test_create_to_file_using_object(datastore, client):
     submission_id = random_id_from_collection(datastore, 'submission')
     tested_bundle = "/tmp/bundle_{}_fobj".format(submission_id)
@@ -52,12 +64,18 @@ def test_import(datastore, client):
     try:
         client.bundle.create(submission_id, tested_bundle)
 
+        # Test failure to import because already exists
         with pytest.raises(ClientError):
             client.bundle.import_bundle(tested_bundle, min_classification="RESTRICTED")
 
+        # Test import with exist_ok
+        client.bundle.import_bundle(tested_bundle, exist_ok=True)
+
+        # Delete submission
         datastore.delete_submission_tree(submission_id)
         datastore.submission.commit()
 
+        # Test normal import
         client.bundle.import_bundle(tested_bundle)
 
         assert datastore.submission.get(submission_id) is not None
