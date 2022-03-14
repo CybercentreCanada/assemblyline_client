@@ -212,7 +212,9 @@ class Connection(object):
                                 raise
 
                             raise ClientError(response.content, response.status_code)
-                except requests.ConnectionError:
+                except (requests.exceptions.SSLError, requests.exceptions.ProxyError):
+                    raise
+                except requests.exceptions.ConnectionError:
                     pass
                 except OSError as e:
                     if "Connection aborted" not in str(e):
