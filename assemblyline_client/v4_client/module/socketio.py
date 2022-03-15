@@ -1,7 +1,9 @@
 import logging
-from copy import deepcopy
-
 import socketio
+import time
+import warnings
+
+from copy import deepcopy
 
 from assemblyline_client.v4_client.common.utils import ClientError
 
@@ -31,6 +33,7 @@ class SocketIO(object):
         self._stop_on_warning = TerminateLogHandler()
         self._log.addHandler(self._stop_on_warning)
         self._verify = connection.verify
+        self._silence_warnings = connection.silence_warnings
 
     # noinspection PyUnusedLocal,PyBroadException
     def _stop_callback(self, data):
@@ -48,7 +51,27 @@ class SocketIO(object):
 
         raise ClientError(data['err_msg'], data['status_code'])
 
-    def listen_on_alerts_messages(self, alert_created_callback=None, alert_updated_callback=None, timeout=None):
+    def _listen_loop(self, listen, timeout, reconnect):
+        with warnings.catch_warnings():
+            if self._silence_warnings:
+                warnings.simplefilter("ignore")
+
+            loop = True
+            while loop:
+                try:
+                    listen()
+                except socketio.exceptions.ConnectionRefusedError as cre:
+                    raise ClientError(f"Connection refused to the socketIO server [{str(cre)}]", 403)
+                except socketio.exceptions.ConnectionError:
+                    pass
+
+                if not reconnect or timeout:
+                    loop = False
+                else:
+                    time.sleep(.5)
+
+    def listen_on_alerts_messages(self, alert_created_callback=None, alert_updated_callback=None, timeout=None,
+                                  reconnect=True):
         """\
 Listen to the various alerts created messages in the system and call the callback for each alerts
 
@@ -61,27 +84,30 @@ This function wait indefinitely and calls the appropriate callback for each mess
         if alert_created_callback is None and alert_updated_callback is None:
             raise ClientError("At least one of the callbacks needs to be defined...", 400)
 
-        self._sio = socketio.Client(ssl_verify=False)
-        self._stop_on_warning.set_sio(self._sio)
+        def listen():
+            self._sio = socketio.Client(ssl_verify=False, reconnection=False)
+            self._stop_on_warning.set_sio(self._sio)
 
-        if alert_created_callback:
-            self._sio.on("AlertCreated", alert_created_callback, namespace='/alerts')
-        if alert_updated_callback:
-            self._sio.on("AlertUpdated", alert_updated_callback, namespace='/alerts')
+            if alert_created_callback:
+                self._sio.on("AlertCreated", alert_created_callback, namespace='/alerts')
+            if alert_updated_callback:
+                self._sio.on("AlertUpdated", alert_updated_callback, namespace='/alerts')
 
-        self._sio.connect(self._server, namespaces=['/alerts'], headers=deepcopy(self._header))
-        self._sio.emit('alert', {"status": "start", "client": "assemblyline_client"}, namespace='/alerts')
-        if timeout is None:
-            self._sio.wait()
-        else:
-            self._sio.sleep(timeout)
-            self._sio.disconnect()
+            self._sio.connect(self._server, namespaces=['/alerts'], headers=deepcopy(self._header))
+            self._sio.emit('alert', {"status": "start", "client": "assemblyline_client"}, namespace='/alerts')
+            if timeout is None:
+                self._sio.wait()
+            else:
+                self._sio.sleep(timeout)
+                self._sio.disconnect()
+
+        self._listen_loop(listen, timeout, reconnect)
 
     def listen_on_status_messages(self, alerter_msg_callback=None, archive_msg_callback=None,
                                   dispatcher_msg_callback=None, expiry_msg_callback=None,
                                   ingest_msg_callback=None, scaler_msg_callback=None,
                                   scaler_status_msg_callback=None, service_msg_callback=None,
-                                  timeout=None):
+                                  timeout=None, reconnect=True):
         """\
 Listen to the various status messages you would find on the UI dashboard.
 
@@ -102,37 +128,40 @@ This function wait indefinitely and calls the appropriate callback for each mess
                 archive_msg_callback is None and scaler_status_msg_callback is None:
             raise ClientError("At least one of the callbacks needs to be defined...", 400)
 
-        self._sio = socketio.Client(ssl_verify=False)
-        self._stop_on_warning.set_sio(self._sio)
+        def listen():
+            self._sio = socketio.Client(ssl_verify=False, reconnection=False)
+            self._stop_on_warning.set_sio(self._sio)
 
-        if alerter_msg_callback:
-            self._sio.on("AlerterHeartbeat", alerter_msg_callback, namespace='/status')
-        if archive_msg_callback:
-            self._sio.on("ArchiveHeartbeat", archive_msg_callback, namespace='/status')
-        if dispatcher_msg_callback:
-            self._sio.on("DispatcherHeartbeat", dispatcher_msg_callback, namespace='/status')
-        if expiry_msg_callback:
-            self._sio.on("ExpiryHeartbeat", expiry_msg_callback, namespace='/status')
-        if ingest_msg_callback:
-            self._sio.on("IngestHeartbeat", ingest_msg_callback, namespace='/status')
-        if scaler_msg_callback:
-            self._sio.on("ScalerHeartbeat", scaler_msg_callback, namespace='/status')
-        if scaler_status_msg_callback:
-            self._sio.on("ScalerStatusHeartbeat", scaler_status_msg_callback, namespace='/status')
-        if service_msg_callback:
-            self._sio.on("ServiceHeartbeat", service_msg_callback, namespace='/status')
+            if alerter_msg_callback:
+                self._sio.on("AlerterHeartbeat", alerter_msg_callback, namespace='/status')
+            if archive_msg_callback:
+                self._sio.on("ArchiveHeartbeat", archive_msg_callback, namespace='/status')
+            if dispatcher_msg_callback:
+                self._sio.on("DispatcherHeartbeat", dispatcher_msg_callback, namespace='/status')
+            if expiry_msg_callback:
+                self._sio.on("ExpiryHeartbeat", expiry_msg_callback, namespace='/status')
+            if ingest_msg_callback:
+                self._sio.on("IngestHeartbeat", ingest_msg_callback, namespace='/status')
+            if scaler_msg_callback:
+                self._sio.on("ScalerHeartbeat", scaler_msg_callback, namespace='/status')
+            if scaler_status_msg_callback:
+                self._sio.on("ScalerStatusHeartbeat", scaler_status_msg_callback, namespace='/status')
+            if service_msg_callback:
+                self._sio.on("ServiceHeartbeat", service_msg_callback, namespace='/status')
 
-        self._sio.connect(self._server, namespaces=['/status'], headers=deepcopy(self._header))
-        self._sio.emit('monitor', {"status": "start", "client": "assemblyline_client"}, namespace='/status')
+            self._sio.connect(self._server, namespaces=['/status'], headers=deepcopy(self._header))
+            self._sio.emit('monitor', {"status": "start", "client": "assemblyline_client"}, namespace='/status')
 
-        if timeout is None:
-            self._sio.wait()
-        else:
-            self._sio.sleep(timeout)
-            self._sio.disconnect()
+            if timeout is None:
+                self._sio.wait()
+            else:
+                self._sio.sleep(timeout)
+                self._sio.disconnect()
+
+        self._listen_loop(listen, timeout, reconnect)
 
     def listen_on_submissions(self, completed_callback=None, ingested_callback=None,
-                              received_callback=None, started_callback=None, timeout=None):
+                              received_callback=None, started_callback=None, timeout=None, reconnect=True):
         """\
 Listen to the various submission messages in the system and call the callback for each of them
 
@@ -148,31 +177,34 @@ This function wait indefinitely and calls the appropriate callback for each mess
                 completed_callback is None and started_callback is None:
             raise ClientError("At least one of the callbacks needs to be defined...", 400)
 
-        self._sio = socketio.Client(ssl_verify=False)
-        self._stop_on_warning.set_sio(self._sio)
+        def listen():
+            self._sio = socketio.Client(ssl_verify=False, reconnection=False)
+            self._stop_on_warning.set_sio(self._sio)
 
-        if ingested_callback is not None:
-            self._sio.on("SubmissionIngested", ingested_callback, namespace='/submissions')
+            if ingested_callback is not None:
+                self._sio.on("SubmissionIngested", ingested_callback, namespace='/submissions')
 
-        if received_callback is not None:
-            self._sio.on("SubmissionReceived", received_callback, namespace='/submissions')
+            if received_callback is not None:
+                self._sio.on("SubmissionReceived", received_callback, namespace='/submissions')
 
-        if completed_callback is not None:
-            self._sio.on("SubmissionCompleted", completed_callback, namespace='/submissions')
+            if completed_callback is not None:
+                self._sio.on("SubmissionCompleted", completed_callback, namespace='/submissions')
 
-        if started_callback is not None:
-            self._sio.on("SubmissionStarted", started_callback, namespace='/submissions')
+            if started_callback is not None:
+                self._sio.on("SubmissionStarted", started_callback, namespace='/submissions')
 
-        self._sio.connect(self._server, namespaces=['/submissions'], headers=deepcopy(self._header))
-        self._sio.emit('monitor', {"status": "start", "client": "assemblyline_client"}, namespace='/submissions')
+            self._sio.connect(self._server, namespaces=['/submissions'], headers=deepcopy(self._header))
+            self._sio.emit('monitor', {"status": "start", "client": "assemblyline_client"}, namespace='/submissions')
 
-        if timeout is None:
-            self._sio.wait()
-        else:
-            self._sio.sleep(timeout)
-            self._sio.disconnect()
+            if timeout is None:
+                self._sio.wait()
+            else:
+                self._sio.sleep(timeout)
+                self._sio.disconnect()
 
-    def listen_on_watch_queue(self, wq, result_callback=None, error_callback=None, timeout=None):
+        self._listen_loop(listen, timeout, reconnect)
+
+    def listen_on_watch_queue(self, wq, result_callback=None, error_callback=None, timeout=None, reconnect=True):
         """\
 Listen to the various messages of a currently running submission's watch queue
 
@@ -186,25 +218,28 @@ This function wait indefinitely and calls the appropriate callback for each mess
         if result_callback is None and error_callback is None:
             raise ClientError("At least one of the callbacks needs to be defined...", 400)
 
-        self._sio = socketio.Client(ssl_verify=False)
-        self._stop_on_warning.set_sio(self._sio)
+        def listen():
+            self._sio = socketio.Client(ssl_verify=False, reconnection=False)
+            self._stop_on_warning.set_sio(self._sio)
 
-        if result_callback:
-            self._sio.on("cachekey", result_callback, namespace='/live_submission')
-        if error_callback:
-            self._sio.on("cachekeyerr", error_callback, namespace='/live_submission')
+            if result_callback:
+                self._sio.on("cachekey", result_callback, namespace='/live_submission')
+            if error_callback:
+                self._sio.on("cachekeyerr", error_callback, namespace='/live_submission')
 
-        self._sio.on("stop", self._stop_callback, namespace='/live_submission')
-        self._sio.on("error", self._error_callback, namespace='/live_submission')
+            self._sio.on("stop", self._stop_callback, namespace='/live_submission')
+            self._sio.on("error", self._error_callback, namespace='/live_submission')
 
-        self._sio.connect(self._server, namespaces=['/live_submission'], headers=deepcopy(self._header))
+            self._sio.connect(self._server, namespaces=['/live_submission'], headers=deepcopy(self._header))
 
-        self._sio.emit('listen',
-                       {"status": "start", "client": "assemblyline_client", "wq_id": wq, 'from_start': True},
-                       namespace="/live_submission")
+            self._sio.emit('listen',
+                           {"status": "start", "client": "assemblyline_client", "wq_id": wq, 'from_start': True},
+                           namespace="/live_submission")
 
-        if timeout is None:
-            self._sio.wait()
-        else:
-            self._sio.sleep(timeout)
-            self._sio.disconnect()
+            if timeout is None:
+                self._sio.wait()
+            else:
+                self._sio.sleep(timeout)
+                self._sio.disconnect()
+
+        self._listen_loop(listen, timeout, reconnect)
