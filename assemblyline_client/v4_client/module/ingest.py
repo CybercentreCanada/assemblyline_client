@@ -1,9 +1,9 @@
 import os
-import tempfile
 
 from json import dumps
 
 from assemblyline_client.v4_client.common.utils import api_path, api_path_by_module, ClientError
+from assemblyline_client.v4_client.common.submit_utils import get_content_handler
 
 
 class Ingest(object):
@@ -36,12 +36,7 @@ If content is provided, the path is used as metadata only.
         rmpath = None
         try:
             if content:
-                fd, path = tempfile.mkstemp()
-                rmpath = path
-                with os.fdopen(fd, 'wb') as content_fh:
-                    if isinstance(content, str):
-                        content = content.encode()
-                    content_fh.write(content)
+                fh = get_file_handler(content, fname)
 
             files = {}
             if fh:

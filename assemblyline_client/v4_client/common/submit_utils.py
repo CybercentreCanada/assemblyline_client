@@ -1,6 +1,10 @@
 import json
+import hashlib
 import pprint
 import sys
+
+from io import BytesIO
+from typing import Union
 
 SRV_BUSY_ID = "20"
 SRV_DOWN_ID = "21"
@@ -30,6 +34,14 @@ else:
     L4 = u"\u2588".encode("utf-8")
     LD = u"\u02e7".encode("utf-8")
     RD = u"\ua714".encode("utf-8")
+
+
+def get_file_handler(content: Union[str, bytes], fname=None) -> BytesIO:
+    if isinstance(content, str):
+        content = content.encode()
+    fh = BytesIO(content)
+    fh.name = fname or hashlib.sha256(content).hexdigest()
+    return fh
 
 
 def al_result_to_text(r, show_errors=True, verbose_error=False):
