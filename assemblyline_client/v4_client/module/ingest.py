@@ -3,7 +3,7 @@ import os
 from json import dumps
 
 from assemblyline_client.v4_client.common.utils import api_path, api_path_by_module, ClientError
-from assemblyline_client.v4_client.common.submit_utils import get_content_handler
+from assemblyline_client.v4_client.common.submit_utils import get_file_handler
 
 
 class Ingest(object):

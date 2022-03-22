@@ -4,7 +4,7 @@ from io import BytesIO
 from json import dumps
 
 from assemblyline_client.v4_client.common.utils import api_path, api_path_by_module, get_function_kwargs, ClientError
-from assemblyline_client.v4_client.common.submit_utils import get_content_handler
+from assemblyline_client.v4_client.common.submit_utils import get_file_handler
 
 
 class Submit(object):
