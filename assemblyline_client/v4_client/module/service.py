@@ -87,6 +87,21 @@ service_data     : New configuration for the service
 """
         return self._connection.post(api_path('service', service_name), json=service_data)
 
+    def stats(self, service_name, version=None):
+        """\
+Get statistics for a service
+
+Required:
+service_name     : Name of the service to get stats for
+
+Optional:
+version          : Version of the service to get stats for
+"""
+        kw = {}
+        if version:
+            kw['version'] = version
+        return self._connection.get(api_path('service', 'stats', service_name, **kw))
+
     def update(self, name, image, tag, username=None, password=None):
         """\
 Update a given service
