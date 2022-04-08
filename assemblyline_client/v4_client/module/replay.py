@@ -7,6 +7,29 @@ class Replay(object):
     def __init__(self, connection):
         self._connection = connection
 
+    def get_message(self, m_type):
+        """\
+Get the next message of a given type for processing in a worker
+
+Required:
+m_type   : Type of message to get (alert, submission or file)
+
+Throws a Client exception if the message type is invalid.
+"""
+        return self._connection.get(api_path('replay', m_type))
+
+    def put_message(self, m_type, message):
+        """\
+Put a message in the replay queues for processing in a worker
+
+Required:
+m_type   : Type of message to be transfered (alert, submission or file)
+message  : Message for the worker
+
+Throws a Client exception if the message type or message is invalid.
+"""
+        return self._connection.put(api_path('replay', m_type), data=json.dumps())
+
     def request(self, index, doc_id):
         """\
 Request an alert or a submission to be transfered to another system
