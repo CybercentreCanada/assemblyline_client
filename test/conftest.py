@@ -56,7 +56,7 @@ try:
     def datastore(datastore_connection, filestore):
         ds = datastore_connection
         try:
-            random_data.create_heuristics(ds, heuristics_count=10)
+            random_data.create_heuristics(ds)
             random_data.create_services(ds)
             random_data.create_signatures(ds)
             random_data.create_users(ds)
