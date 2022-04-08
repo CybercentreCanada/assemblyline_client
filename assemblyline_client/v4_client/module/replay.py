@@ -16,7 +16,7 @@ m_type   : Type of message to get (alert, submission or file)
 
 Throws a Client exception if the message type is invalid.
 """
-        return self._connection.get(api_path('replay', m_type))
+        return self._connection.get(api_path('replay', 'queue', m_type))
 
     def put_message(self, m_type, message):
         """\
@@ -28,7 +28,7 @@ message  : Message for the worker
 
 Throws a Client exception if the message type or message is invalid.
 """
-        return self._connection.put(api_path('replay', m_type), data=json.dumps())
+        return self._connection.put(api_path('replay', 'queue', m_type), data=json.dumps(message))
 
     def request(self, index, doc_id):
         """\
