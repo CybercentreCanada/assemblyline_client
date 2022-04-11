@@ -4,6 +4,7 @@ import requests
 import yaml
 
 from assemblyline_client import ClientError
+from assemblyline.common.version import FRAMEWORK_VERSION, SYSTEM_VERSION, BUILD_MINOR
 from copy import deepcopy
 
 try:
@@ -73,15 +74,17 @@ def test_get_service(datastore, client):
     with pytest.raises(ClientError):
         client.service(random_service, version='5.0.0')
 
-    res = client.service(random_service, version='3.3.0')
-    assert res['version'] == '3.3.0'
+    version = f"{FRAMEWORK_VERSION}.{SYSTEM_VERSION}.{BUILD_MINOR}.1"
+    res = client.service(random_service, version=version)
+    assert res['version'] == version
 
 
 def test_get_service_versions(datastore, client):
     random_service = random_id_from_collection(datastore, 'service_delta')
     res = client.service.versions(random_service)
     assert len(res) >= 1
-    assert '4.0.0' in res
+    for v in res:
+        assert v.startswith(f"{FRAMEWORK_VERSION}.{SYSTEM_VERSION}.{BUILD_MINOR}.")
 
 
 def test_list_services(datastore, client):
@@ -132,7 +135,8 @@ def test_set_service(datastore, client):
 
 def test_update(datastore, client):
     random_service = random_id_from_collection(datastore, 'service_delta')
-    res = client.service.update(random_service, "cccs/assemblyline-service-extract:4.0.0", "4.0.stable0")
+    version = f"{FRAMEWORK_VERSION}.{SYSTEM_VERSION}.{BUILD_MINOR}.1"
+    res = client.service.update(random_service, f"cccs/assemblyline-service-extract:{version}", version)
     assert res['success']
     assert res['status'] == 'updated'
 
