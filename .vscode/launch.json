@@ -9,21 +9,30 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "al_submit - smtp",
+            "name": "Submit - Synced",
             "type": "python",
             "request": "launch",
-            "program": "git/al_client/assemblyline_client/submit.py",
-            "args": ["-m", "{\"dict\": {\"a\": 1, \"b\": true}, \"items\": [1,2,3,\"four\"],  \"subject\": \"FW: This is definitely an email subject.\", \"protocol\": \"SMTP\", \"replay\":\"requested\"}", "-j", "{\"ignore_cache\": true}", "Assemblyline 3.2 - Reference Manual.pdf"],
-            "cwd": "${workspaceFolder}/../../",
+            "program": "assemblyline_client/submit.py",
+            "args": ["-m", "{\"dict\": {\"a\": 1, \"b\": true}, \"items\": [1,2,3,\"four\"],  \"subject\": \"Here's the setup.cfg file ;)\", \"protocol\": \"SMTP\"}", "-j", "{\"ignore_cache\": true}", "setup.cfg"],
+            "cwd": "${workspaceFolder}",
             "console": "internalConsole"
         },
         {
-            "name": "al_submit - http",
+            "name": "Submit - Async",
             "type": "python",
             "request": "launch",
-            "program": "git/al_client/assemblyline_client/submit.py",
-            "args": ["-a", "-n", "-m", "{\"web_url\": \"http://baddomain.com/badfile/Assemblyline 3.2 - Reference Manual.pdf\", \"protocol\": \"HTTP\"}", "-j", "{\"generate_alert\": true, \"services\": {\"resubmit\": [\"ExtraFeature\"]}}", "Assemblyline 3.2 - Reference Manual.pdf"],
-            "cwd": "${workspaceFolder}/../../",
+            "program": "assemblyline_client/submit.py",
+            "args": ["-a", "-n", "-m", "{\"web_url\": \"https://github.com/CybercentreCanada/assemblyline_client/blob/master/setup.py\", \"protocol\": \"HTTPS\"}", "-j", "{\"generate_alert\": true}", "setup.py"],
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole"
+        },
+        {
+            "name": "Submit - Async with extended scan",
+            "type": "python",
+            "request": "launch",
+            "program": "assemblyline_client/submit.py",
+            "args": ["-a", "-n", "-m", "{\"web_url\": \"https://github.com/CybercentreCanada/assemblyline_client/blob/master/setup_vscode.sh\", \"protocol\": \"HTTPS\"}", "-j", "{\"generate_alert\": true, \"services\": {\"resubmit\": [\"ExtraFeature\"]}}", "setup_vscode.sh"],
+            "cwd": "${workspaceFolder}",
             "console": "internalConsole"
         }
     ]
