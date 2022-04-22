@@ -9,6 +9,7 @@ from assemblyline_client.v4_client.module.hash_search import HashSearch
 from assemblyline_client.v4_client.module.help import Help
 from assemblyline_client.v4_client.module.heuristics import Heuristics
 from assemblyline_client.v4_client.module.ingest import Ingest
+from assemblyline_client.v4_client.module.ontology import Ontology
 from assemblyline_client.v4_client.module.replay import Replay
 from assemblyline_client.v4_client.module.result import Result
 from assemblyline_client.v4_client.module.safelist import Safelist
@@ -36,6 +37,7 @@ class Client(object):
         self.heuristics = Heuristics(self._connection)
         self.ingest = Ingest(self._connection)
         self.live = Live(self._connection)
+        self.ontology = Ontology(self._connection)
         self.replay = Replay(self._connection)
         self.result = Result(self._connection)
         self.safelist = Safelist(self._connection)
