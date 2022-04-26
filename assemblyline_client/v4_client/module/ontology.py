@@ -9,6 +9,10 @@ class Ontology(object):
 
     def alert(self, alert_id, sha256s=[], services=[]):
         """\
+WARNING:
+    This APIs output is considered stable but the ontology model itself is still in its
+    alpha state. Do not use the results of this API in a production system just yet.
+
 Get all ontology records for a given alert
 
 Required:
@@ -35,6 +39,10 @@ Throws a Client exception if the alert or submission does not exist.
 
     def file(self, sha256, services=[], all=False):
         """\
+WARNING:
+    This APIs output is considered stable but the ontology model itself is still in its
+    alpha state. Do not use the results of this API in a production system just yet.
+
 Get all ontology records for a given file
 
 Required:
@@ -59,6 +67,10 @@ Throws a Client exception if the file does not exist.
 
     def submission(self, sid, sha256s=[], services=[]):
         """\
+WARNING:
+    This APIs output is considered stable but the ontology model itself is still in its
+    alpha state. Do not use the results of this API in a production system just yet.
+
 Get all ontology records for a given submission
 
 Required:
