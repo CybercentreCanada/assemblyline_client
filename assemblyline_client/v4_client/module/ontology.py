@@ -1,13 +1,13 @@
 import json
 
-from assemblyline_client.v4_client.common.utils import api_path, raw_output
+from assemblyline_client.v4_client.common.utils import api_path, raw_output, stream_output
 
 
 class Ontology(object):
     def __init__(self, connection):
         self._connection = connection
 
-    def alert(self, alert_id, sha256s=[], services=[]):
+    def alert(self, alert_id, sha256s=[], services=[], output=None):
         """\
 WARNING:
     This APIs output is considered stable but the ontology model itself is still in its
@@ -21,6 +21,8 @@ alert_id     : Alert ID to get ontology records for (string)
 Optional:
 sha256s       : List of sha256 to get ontology records for (strings - default: all)
 services      : List of services to get ontology records for (strings - Default: all)
+output        : Output stream that will receive the raw data of
+                the API instead of json loading every record (file handle or BytesIO)
 
 Throws a Client exception if the alert or submission does not exist.
 """
@@ -32,12 +34,13 @@ Throws a Client exception if the alert or submission does not exist.
         if params_tuples:
             kw['params_tuples'] = params_tuples
 
-        data = self._connection.download(api_path('ontology', 'alert',  alert_id, **kw), raw_output)
-        return [
-            json.loads(line) for line in data.splitlines()
-        ]
+        if output:
+            return self._connection.download(api_path('ontology', 'alert',  alert_id, **kw), stream_output(output))
 
-    def file(self, sha256, services=[], all=False):
+        data = self._connection.download(api_path('ontology', 'alert',  alert_id, **kw), raw_output)
+        return [json.loads(line) for line in data.splitlines()]
+
+    def file(self, sha256, services=[], all=False, output=None):
         """\
 WARNING:
     This APIs output is considered stable but the ontology model itself is still in its
@@ -49,8 +52,10 @@ Required:
 sha256     : SHA256 hash to get ontology records for (string)
 
 Optional:
-services      : List of services to get ontology records for (strings - default: all)
+services     : List of services to get ontology records for (strings - default: all)
 all          : If there are multiple version of the ontology records, get them all (bool)
+output       : Output stream that will receive the raw data of
+                the API instead of json loading every record (file handle or BytesIO)
 
 Throws a Client exception if the file does not exist.
 """
@@ -60,12 +65,13 @@ Throws a Client exception if the file does not exist.
         if services:
             kw['params_tuples'] = [('service', x) for x in services]
 
-        data = self._connection.download(api_path('ontology', 'file',  sha256, **kw), raw_output)
-        return [
-            json.loads(line) for line in data.splitlines()
-        ]
+        if output:
+            return self._connection.download(api_path('ontology', 'file',  sha256, **kw), stream_output(output))
 
-    def submission(self, sid, sha256s=[], services=[]):
+        data = self._connection.download(api_path('ontology', 'file',  sha256, **kw), raw_output)
+        return [json.loads(line) for line in data.splitlines()]
+
+    def submission(self, sid, sha256s=[], services=[], output=None):
         """\
 WARNING:
     This APIs output is considered stable but the ontology model itself is still in its
@@ -79,6 +85,8 @@ sid     : Submission ID to get ontology records for (string)
 Optional:
 sha256s       : List of sha256 to get ontology records for (Default: all)
 services      : List of services to get ontology records for (Default: all)
+output        : Output stream that will receive the raw data of
+                the API instead of json loading every record (file handle or BytesIO)
 
 Throws a Client exception if the submission does not exist.
 """
@@ -90,7 +98,8 @@ Throws a Client exception if the submission does not exist.
         if params_tuples:
             kw['params_tuples'] = params_tuples
 
+        if output:
+            return self._connection.download(api_path('ontology', 'submission',  sid, **kw), stream_output(output))
+
         data = self._connection.download(api_path('ontology', 'submission',  sid, **kw), raw_output)
-        return [
-            json.loads(line) for line in data.splitlines()
-        ]
+        return [json.loads(line) for line in data.splitlines()]
