@@ -42,7 +42,7 @@ sha256     : SHA256 hash to get ontology records for (string)
 
 Optional:
 services      : List of services to get ontology records for (strings - default: all)
-all          : If there are multiple version off the ontology records, get them all (bool)
+all          : If there are multiple version of the ontology records, get them all (bool)
 
 Throws a Client exception if the file does not exist.
 """
