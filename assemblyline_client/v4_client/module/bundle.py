@@ -36,7 +36,6 @@ bundle              : bundle to import (string, bytes or file_handle)
 
 Optional:
 allow_incomplete    : allow importing incomplete submission. (bool)
-complete_queue      : Queue to listen on for completion messages, only used with rescan_services (string)
 exist_ok            : Do not throw an exception if the submission already exists (bool)
 min_classification  : Minimum classification at which the bundle is imported. (string)
 rescan_services     : List of services to rescan after import. (Comma seperated strings)
@@ -63,7 +62,5 @@ Returns {'success': True/False } depending if it was imported or not
             kw['rescan_services'] = ','.join(rescan_services)
         if allow_incomplete:
             kw['allow_incomplete'] = ''
-        if complete_queue:
-            kw['complete_queue'] = complete_queue
 
         return self._connection.post(api_path('bundle', **kw), data=contents)
