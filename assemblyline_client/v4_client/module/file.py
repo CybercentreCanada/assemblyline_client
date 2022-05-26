@@ -29,7 +29,7 @@ Throws a Client exception if the file does not exist.
         return self._connection.get(api_path_by_module(self, sha256))
 
     # noinspection PyUnusedLocal
-    def download(self, sha256, encoding=None, sid=None, output=None):
+    def download(self, sha256, encoding=None, sid=None, output=None, password=None):
         """\
 Download the file with the given sha256.
 
