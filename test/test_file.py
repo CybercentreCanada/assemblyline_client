@@ -60,6 +60,14 @@ def test_download_to_obj_raw(datastore, client):
 
 
 # noinspection PyUnusedLocal
+def test_download_to_obj_zip(datastore, client):
+    file_id = random_id_from_collection(datastore, 'file')
+    res = client.file.download(file_id, encoding="zip")
+
+    assert res[:2] == b"PK"
+
+
+# noinspection PyUnusedLocal
 def test_download_to_file(datastore, client):
     file_id = random_id_from_collection(datastore, 'file')
     download_output = "/tmp/download_{}".format(file_id)
