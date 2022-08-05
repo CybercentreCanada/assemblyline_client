@@ -83,7 +83,7 @@ def test_submit_sha(datastore, client):
 
 
 def test_submit_url(datastore, client):
-    url = 'https://www.cyber.gc.ca/en/theme-gcwu-fegc/assets/wmms.svg'
+    url = 'https://raw.githubusercontent.com/CybercentreCanada/assemblyline-ui/master/README.md'
     params = {"deep_scan": True, "ignore_cache": True, "priority": 100}
     res = client.submit(url=url, params=params)
     assert res is not None

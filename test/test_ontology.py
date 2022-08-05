@@ -18,7 +18,7 @@ def test_get_ontology_for_alert(datastore, client):
     alert_data = datastore.alert.get(alert_id, as_obj=False)
     res = client.ontology.alert(alert_id)
     assert len(res) != 0
-    assert any([record['header']['sha256'] == alert_data['file']['sha256'] for record in res])
+    assert any([record['file']['sha256'] == alert_data['file']['sha256'] for record in res])
 
 
 def test_get_ontology_for_alert_raw(datastore, client):
@@ -36,7 +36,7 @@ def test_get_ontology_for_file(datastore, client):
     sha256 = submission_data['files'][0]['sha256']
     res = client.ontology.file(sha256)
     assert len(res) != 0
-    assert all([record['header']['sha256'] == sha256 for record in res])
+    assert all([record['file']['sha256'] == sha256 for record in res])
 
 
 def test_get_ontology_for_file_raw(datastore, client):
@@ -55,7 +55,7 @@ def test_get_ontology_for_submission(datastore, client):
     submission_data = datastore.submission.get(sid, as_obj=False)
     res = client.ontology.submission(sid)
     assert len(res) != 0
-    assert any([record['header']['sha256'] == submission_data['files'][0]['sha256'] for record in res])
+    assert any([record['file']['sha256'] == submission_data['files'][0]['sha256'] for record in res])
 
 
 def test_get_ontology_for_submission_raw(datastore, client):
