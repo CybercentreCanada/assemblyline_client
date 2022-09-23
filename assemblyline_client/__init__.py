@@ -32,9 +32,9 @@ def Client(*args, **kwargs):
 
 
 def get_client(server, auth=None, cert=None, debug=lambda x: None, headers=None, retries=RETRY_FOREVER,
-               silence_requests_warnings=True, apikey=None, verify=True, timeout=None):
+               silence_requests_warnings=True, apikey=None, verify=True, timeout=None, oauth=None):
     connection = Connection(server, auth, cert, debug, headers, retries,
-                            silence_requests_warnings, apikey, verify, timeout)
+                            silence_requests_warnings, apikey, verify, timeout, oauth)
     if connection.is_v4:
         return Client4(connection)
     else:
