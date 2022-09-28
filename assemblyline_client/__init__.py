@@ -32,9 +32,9 @@ def Client(*args, **kwargs):
 
 
 def get_client(server, auth=None, cert=None, debug=lambda x: None, headers=None, retries=RETRY_FOREVER,
-               silence_requests_warnings=True, apikey=None, verify=True, timeout=None):
+               silence_requests_warnings=True, apikey=None, verify=True, timeout=None, oauth=None):
     connection = Connection(server, auth, cert, debug, headers, retries,
-                            silence_requests_warnings, apikey, verify, timeout)
+                            silence_requests_warnings, apikey, verify, timeout, oauth)
     if connection.is_v4:
         return Client4(connection)
     else:
@@ -44,10 +44,11 @@ def get_client(server, auth=None, cert=None, debug=lambda x: None, headers=None,
 class Connection(object):
     def __init__(  # pylint: disable=R0913
         self, server, auth, cert, debug, headers, retries,
-        silence_warnings, apikey, verify, timeout
+        silence_warnings, apikey, verify, timeout, oauth
     ):
         self.auth = auth
         self.apikey = apikey
+        self.oauth = oauth
         self.debug = debug
         self.is_v4 = False
         self.max_retries = retries
@@ -113,6 +114,11 @@ class Connection(object):
                 auth = {
                     'user': self.auth[0],
                     'password': self.auth[1]
+                }
+            elif self.oauth and len(self.oauth) == 2:
+                auth = {
+                    "oauth_provider": self.oauth[0],
+                    "oauth_token": self.oauth[1]
                 }
             else:
                 auth = {}
