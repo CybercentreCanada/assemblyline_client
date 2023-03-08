@@ -12,6 +12,7 @@ from assemblyline_client.v4_client.module.ingest import Ingest
 from assemblyline_client.v4_client.module.ontology import Ontology
 from assemblyline_client.v4_client.module.replay import Replay
 from assemblyline_client.v4_client.module.result import Result
+from assemblyline_client.v4_client.module.retrohunt import Retrohunt
 from assemblyline_client.v4_client.module.safelist import Safelist
 from assemblyline_client.v4_client.module.search import Search
 from assemblyline_client.v4_client.module.service import Service
@@ -40,6 +41,7 @@ class Client(object):
         self.ontology = Ontology(self._connection)
         self.replay = Replay(self._connection)
         self.result = Result(self._connection)
+        self.retrohunt = Retrohunt(self._connection)
         self.safelist = Safelist(self._connection)
         self.search = Search(self._connection)
         self.service = Service(self._connection)
