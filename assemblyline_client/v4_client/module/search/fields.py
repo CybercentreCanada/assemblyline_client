@@ -36,6 +36,12 @@ List all fields details for the result collection.
 """
         return self._do_fields('result')
 
+    def retrohunt(self):
+        """\
+List all fields details for the retrohunt collection.
+"""
+        return self._do_fields('retrohunt')
+
     def safelist(self):
         """\
 List all fields details for the safelist collection.

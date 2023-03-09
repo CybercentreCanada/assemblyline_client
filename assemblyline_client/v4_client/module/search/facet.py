@@ -86,6 +86,22 @@ Returns all results.
 """
         return self._do_facet('result', field, query=query, mincount=mincount, filters=filters)
 
+    def retrohunt(self, field, query=None, mincount=None, filters=None):
+        """\
+List most frequent value for a field in the retrohunt collection.
+
+Required:
+field   : field to extract the facets from
+
+Optional:
+qeury    : Initial query to filter the data (default: 'id:*')
+filters  : Additional lucene queries used to filter the data (list of strings)
+mincount : Minimum amount of hits for the value to be returned
+
+Returns all results.
+"""
+        return self._do_facet('retrohunt', field, query=query, mincount=mincount, filters=filters)
+
     def safelist(self, field, query=None, mincount=None, filters=None):
         """\
 List most frequent value for a field in the safelist collection.

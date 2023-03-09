@@ -12,7 +12,7 @@ except ImportError:
 
 
 INVALID_STREAM_SEARCH_PARAMS = ('deep_paging_id', 'rows', 'sort')
-SEARCHABLE = ('alert', 'file', 'heuristic', 'result', 'safelist', 'signature', 'submission', 'workflow')
+SEARCHABLE = ('alert', 'file', 'heuristic', 'result', 'retrohunt', 'safelist', 'signature', 'submission', 'workflow')
 API = 'v4'
 
 

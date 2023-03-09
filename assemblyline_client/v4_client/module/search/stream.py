@@ -126,6 +126,21 @@ Returns a generator that transparently and efficiently pages through results.
 """
         return self._do_stream('result', query, filters=filters, fl=fl)
 
+    def retrohunt(self, query, filters=None, fl=None):
+        """\
+Get all retrohunts from a lucene query.
+
+Required:
+query   : lucene query (string)
+
+Optional:
+filters : Additional lucene queries used to filter the data (list of strings)
+fl      : List of fields to return (comma separated string of fields)
+
+Returns a generator that transparently and efficiently pages through results.
+"""
+        return self._do_stream('retrohunt', query, filters=filters, fl=fl)
+
     def signature(self, query, filters=None, fl=None):
         """\
 Get all signatures from a lucene query.
