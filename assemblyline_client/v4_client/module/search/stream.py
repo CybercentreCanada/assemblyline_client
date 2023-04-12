@@ -41,7 +41,7 @@ class Stream(object):
             if arg in INVALID_STREAM_SEARCH_PARAMS:
                 raise ClientError(
                     "The following parameters cannot be used with stream search: %s",
-                    ", ".join(INVALID_STREAM_SEARCH_PARAMS)
+                    ", ".join(INVALID_STREAM_SEARCH_PARAMS), 400
                 )
 
         kwargs.update({

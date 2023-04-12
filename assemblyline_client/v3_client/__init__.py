@@ -957,7 +957,7 @@ class Stream(object):
             if arg[0] in INVALID_STREAM_SEARCH_PARAMS:
                 raise ClientError(
                     "The following parameters cannot be used with stream search: %s",
-                    ", ".join(INVALID_STREAM_SEARCH_PARAMS)
+                    ", ".join(INVALID_STREAM_SEARCH_PARAMS), 0
                 )
 
         args = list(args) + [
