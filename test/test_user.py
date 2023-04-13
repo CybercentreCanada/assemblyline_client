@@ -38,12 +38,13 @@ def test_avatar(datastore, client):
     res = client.user.avatar.update('admin', new_avatar)
     assert res['success']
 
-    # Test getting the user avatar
+    # Test getting the our own avatar
     avatar = client.user.avatar('admin')
     assert avatar == new_avatar
 
-    with pytest.raises(ClientError):
-        client.user.avatar.update('user', new_avatar)
+    # As an admin, test adding another user's avatar
+    res = client.user.avatar.update('user', new_avatar)
+    assert res['success']
 
 
 def test_favorites(datastore, client):
