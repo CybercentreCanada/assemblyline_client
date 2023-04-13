@@ -41,7 +41,7 @@ def test_delete(datastore, client):
     service = list(sources.keys())[0]
 
     # Delete all sources for the service
-    for source in sources[service]:
+    for source in sources[service]["sources"]:
         res = client.signature.sources.delete(service, source['name'])
         assert res['success']
 
@@ -58,9 +58,9 @@ def test_list(datastore, client):
 
     for name, srcs in sources.items():
         assert isinstance(name, str)
-        assert isinstance(srcs, list)
+        assert isinstance(srcs["sources"], list)
 
-        for src in srcs:
+        for src in srcs["sources"]:
             assert 'name' in src
             assert 'uri' in src
 
@@ -73,7 +73,7 @@ def test_update(datastore, client):
     service = list(sources.keys())[0]
 
     # Update uri of all sources for the service
-    for source in sources[service]:
+    for source in sources[service]["sources"]:
         source['uri'] = new_uri
         res = client.signature.sources.update(service, source['name'], source)
         assert res['success']

@@ -40,8 +40,8 @@ class Stream(object):
         for arg in list(kwargs.keys()):
             if arg in INVALID_STREAM_SEARCH_PARAMS:
                 raise ClientError(
-                    "The following parameters cannot be used with stream search: %s",
-                    ", ".join(INVALID_STREAM_SEARCH_PARAMS)
+                    "The following parameters cannot be used with stream search: %s" %
+                    ", ".join(INVALID_STREAM_SEARCH_PARAMS), 400
                 )
 
         kwargs.update({

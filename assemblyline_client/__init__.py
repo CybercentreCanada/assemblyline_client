@@ -228,4 +228,4 @@ class Connection(object):
 
                 retries += 1
 
-            raise ClientError("Max retry reached, could not perform the request.")
+            raise ClientError("Max retry reached, could not perform the request.", 429)
