@@ -30,7 +30,7 @@ track_total_hits  : Number of hits to track (default: 10k)
 """
         kw = {
             'offset': offset,
-            'q': query,
+            'query': query,
             'rows': rows,
             'sort': sort
         }
