@@ -28,7 +28,17 @@ Throws a Client exception if the file does not exist.
 """
         return self._connection.get(api_path_by_module(self, sha256))
 
-    # noinspection PyUnusedLocal
+    def comment(self, sha256):
+        """\
+Return all the comments for the the file with the given sha256.
+
+Required:
+sha256     : File key (string)
+
+Throws a Client exception if the file does not exist.
+"""
+        return self._connection.get(api_path_by_module(self, sha256))
+
     def download(self, sha256, encoding=None, sid=None, output=None, password=None):
         """\
 Download the file with the given sha256.
@@ -72,6 +82,17 @@ Throws a Client exception if the file does not exist.
     def info(self, sha256):
         """\
 Return info for the the file with the given sha256.
+
+Required:
+sha256     : File key (string)
+
+Throws a Client exception if the file does not exist.
+"""
+        return self._connection.get(api_path_by_module(self, sha256))
+
+    def label(self, sha256):
+        """\
+Return all the labels for the the file with the given sha256.
 
 Required:
 sha256     : File key (string)
