@@ -1,24 +1,23 @@
 #!/usr/bin/env python
 
 import datetime
-import sys
-import select
-import json
 import io
-
+import json
+import select
+import sys
+from configparser import ConfigParser
 from errno import EPIPE
 from getpass import getpass
-from os.path import exists, isdir, basename, join, expanduser
 from os import walk
-from signal import signal, SIGINT, SIG_DFL
-from threading import Thread, Lock
+from os.path import basename, exists, expanduser, isdir, join
+from signal import SIG_DFL, SIGINT, signal
+from threading import Lock, Thread
 from time import sleep
 
-from configparser import ConfigParser
-
+from assemblyline_client import __version__ as client_version
+from assemblyline_client import get_client
 from assemblyline_client.v4_client.client import Client as Client4
-from assemblyline_client import get_client, __version__ as client_version
-from assemblyline_client.v4_client.common.utils import ClientError, get_random_id, get_id_from_path
+from assemblyline_client.v4_client.common.utils import ClientError, get_id_from_path, get_random_id
 
 ASYNC_LOCK = Lock()
 
@@ -215,7 +214,7 @@ def _main(arguments):
                         help='Client cert used to connect to server. DEFAULT: cert in auth section of ~/.al/submit.cfg')
     parser.add_argument('-k', '--apikey', default=apikey, metavar='"MY_RANDOM_API_KEY"',
                         help='apikey to use for the user to login. DEFAULT: apikey in auth section of ~/.al/submit.cfg')
-    parser.add_argument('-j', '--json-params', metavar='"{ ... }"', help='A JSON dictionary of submission parameters.')
+    parser.add_argument('-j', '--json-params', metavar='"{ ... }"', help='A JSON dictionary of submission parameters. For the full list of submission parameters, see https://cybercentrecanada.github.io/assemblyline4_docs/odm/models/submission/#submissionparams.')
     parser.add_argument('-m', '--metadata', metavar='"{ ... }"', help='A JSON dictionary of submission metadata.')
     parser.add_argument('--srv-spec', metavar='"{ ... }"', help='A JSON dictionary of service specific parameters.')
     parser.add_argument('--server-crt', metavar='"/path/to/server.crt"',
