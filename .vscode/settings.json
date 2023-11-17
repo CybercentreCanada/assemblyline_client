@@ -1,4 +1,5 @@
 {
+    "git.enableCommitSigning": true,
     "editor.formatOnSave": true,
     "editor.rulers": [
         120
@@ -7,38 +8,34 @@
     "files.insertFinalNewline": true,
     "files.trimFinalNewlines": true,
     "files.trimTrailingWhitespace": true,
-    "python.formatting.autopep8Args": [
+    "python.terminal.activateEnvironment": false,
+    "python.testing.pytestEnabled": true,
+    "python.testing.pytestPath": ".",
+    "taskExplorer.enableAnsiconForAnt": false,
+    "taskExplorer.enableExplorerView": true,
+    "taskExplorer.enableSideBar": true,
+    "autopep8.args": [
         "--max-line-length",
         "120",
         "--experimental"
     ],
-    "python.formatting.provider": "autopep8",
-    "python.linting.enabled": true,
-    "python.linting.flake8Enabled": true,
-    "python.linting.flake8Args": [
+    "flake8.args": [
         "--max-line-length=120"
     ],
-    "python.linting.pylintEnabled": false,
-    "python.pythonPath": "venv/bin/python",
-    "python.terminal.activateEnvironment": false,
-    "python.testing.pytestEnabled": true,
-    "python.testing.pytestPath": "venv/bin/pytest",
-    "taskExplorer.enableAnsiconForAnt": false,
-    "taskExplorer.enableAnt": false,
-    "taskExplorer.enableAppPublisher": false,
-    "taskExplorer.enableBash": false,
-    "taskExplorer.enableBatch": false,
-    "taskExplorer.enableExplorerView": true,
-    "taskExplorer.enableGradle": false,
-    "taskExplorer.enableGrunt": false,
-    "taskExplorer.enableGulp": false,
-    "taskExplorer.enableMake": false,
-    "taskExplorer.enableNpm": false,
-    "taskExplorer.enableNsis": false,
-    "taskExplorer.enablePerl": false,
-    "taskExplorer.enablePowershell": false,
-    "taskExplorer.enablePython": false,
-    "taskExplorer.enableRuby": false,
-    "taskExplorer.enableSideBar": true,
-    "taskExplorer.enableTsc": false
+    "taskExplorer.enabledTasks": {
+        "ant": false,
+        "bash": false,
+        "composer": false,
+        "gradle": false,
+        "grunt": false,
+        "gulp": false,
+        "make": false,
+        "maven": false,
+        "npm": false,
+        "perl": false,
+        "pipenv": false,
+        "powershell": false,
+        "ruby": false,
+        "tsc": false
+    }
 }
