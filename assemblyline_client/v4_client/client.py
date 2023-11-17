@@ -2,6 +2,7 @@
 
 from assemblyline_client.v4_client.common.utils import walk_api_path
 from assemblyline_client.v4_client.module.alert import Alert
+from assemblyline_client.v4_client.module.badlist import Badlist
 from assemblyline_client.v4_client.module.bundle import Bundle
 from assemblyline_client.v4_client.module.error import Error
 from assemblyline_client.v4_client.module.file import File
@@ -29,6 +30,7 @@ class Client(object):
         self._connection = connection
 
         self.alert = Alert(self._connection)
+        self.badlist = Badlist(self._connection)
         self.bundle = Bundle(self._connection)
         self.error = Error(self._connection)
         self.file = File(self._connection)
