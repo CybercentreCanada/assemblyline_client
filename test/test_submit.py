@@ -88,7 +88,7 @@ def test_submit_url(datastore, client):
     res = client.submit(url=url, params=params)
     assert res is not None
     assert res['sid'] is not None
-    assert res['files'][0]['name'] == os.path.basename(url)
+    assert res['files'][0]['name'] == url
     for k in params:
         assert res['params'][k] == params[k]
     assert res == datastore.submission.get(res['sid'], as_obj=False)
