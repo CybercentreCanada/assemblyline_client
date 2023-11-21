@@ -27,6 +27,17 @@ Throws a Client exception if the safelist object is invalid.
 """
         return self._connection.put(api_path('safelist'), data=dumps(safelist_object))
 
+    def add_update_many(self, list_of_safelist_object):
+        """\
+Add a list of hashes in the safelist if it does not exist or update its list of sources if it does
+
+Required:
+list_of_safelist_object     : A list of dictionary containing the safelist details
+
+Throws a Client exception if the safelist object is invalid.
+"""
+        return self._connection.put(api_path('safelist', 'add_update_many'), data=dumps(list_of_safelist_object))
+
     def delete(self, safelist_id):
         """\
 Delete the safelist object using it's ID.

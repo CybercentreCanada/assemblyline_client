@@ -56,6 +56,7 @@ try:
     def datastore(datastore_connection, filestore):
         ds = datastore_connection
         try:
+            random_data.create_badlists(ds)
             random_data.create_heuristics(ds)
             random_data.create_services(ds)
             random_data.create_signatures(ds)
@@ -70,6 +71,7 @@ try:
         finally:
             # Cleanup test data
             random_data.wipe_alerts(ds)
+            random_data.wipe_badlist(ds)
             random_data.wipe_heuristics(ds)
             random_data.wipe_safelist(ds)
             random_data.wipe_services(ds)

@@ -12,7 +12,8 @@ except ImportError:
 
 def test_list_datasources(datastore, client):
     res = client.hash_search.list_data_sources()
-    assert res == ['al', 'alert']
+    for src in ['al', 'alert']:
+        assert src in res
 
 
 def test_md5_search(datastore, client):
