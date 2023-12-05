@@ -35,9 +35,9 @@ Throws a Client exception if the alert or submission does not exist.
             kw['params_tuples'] = params_tuples
 
         if output:
-            return self._connection.download(api_path('ontology', 'alert',  alert_id, **kw), stream_output(output))
+            return self._connection.download(api_path('ontology', 'alert', alert_id, **kw), stream_output(output))
 
-        data = self._connection.download(api_path('ontology', 'alert',  alert_id, **kw), raw_output)
+        data = self._connection.download(api_path('ontology', 'alert', alert_id, **kw), raw_output)
         return [json.loads(line) for line in data.splitlines()]
 
     def file(self, sha256, services=[], all=False, output=None):
@@ -63,12 +63,16 @@ Throws a Client exception if the file does not exist.
         if all:
             kw['all'] = ''
         if services:
-            kw['params_tuples'] = [('service', x) for x in services]
+            if isinstance(services, str):
+                # Assume the user wanted a single service and did not use a list
+                kw['params_tuples'] = [('service', services)]
+            else:
+                kw['params_tuples'] = [('service', x) for x in services]
 
         if output:
-            return self._connection.download(api_path('ontology', 'file',  sha256, **kw), stream_output(output))
+            return self._connection.download(api_path('ontology', 'file', sha256, **kw), stream_output(output))
 
-        data = self._connection.download(api_path('ontology', 'file',  sha256, **kw), raw_output)
+        data = self._connection.download(api_path('ontology', 'file', sha256, **kw), raw_output)
         return [json.loads(line) for line in data.splitlines()]
 
     def submission(self, sid, sha256s=[], services=[], output=None):
@@ -99,7 +103,7 @@ Throws a Client exception if the submission does not exist.
             kw['params_tuples'] = params_tuples
 
         if output:
-            return self._connection.download(api_path('ontology', 'submission',  sid, **kw), stream_output(output))
+            return self._connection.download(api_path('ontology', 'submission', sid, **kw), stream_output(output))
 
-        data = self._connection.download(api_path('ontology', 'submission',  sid, **kw), raw_output)
+        data = self._connection.download(api_path('ontology', 'submission', sid, **kw), raw_output)
         return [json.loads(line) for line in data.splitlines()]
