@@ -85,6 +85,7 @@ jobs:
           wget https://localhost --no-check-certificate --timeout=2 --retry-on-http-error=502 --waitretry=10 --retry-connrefused
         displayName: Setup Environment
       - script: |
+          sudo env "PATH=$PATH" python -m pip install --pre assemblyline
           sudo env "PATH=$PATH" python -m pip install --no-cache-dir -e . -r test/requirements.txt
         displayName: Install assemblyline_client
       - script: |
