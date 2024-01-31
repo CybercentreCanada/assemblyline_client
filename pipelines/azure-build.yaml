@@ -38,7 +38,7 @@ stages:
         steps:
           - task: UsePythonVersion@0
             displayName: Set python version
-            inputs: { versionSpec: 3.9 }
+            inputs: { versionSpec: 3.11 }
           - script: |
               sudo env "PATH=$PATH" python -m pip install --no-cache-dir -U wheel pip
               python setup.py bdist_wheel
@@ -55,6 +55,12 @@ stages:
           matrix:
             Python3_9:
               python.version: "3.9"
+            Python3_10:
+              python.version: "3.10"
+            Python3_11:
+              python.version: "3.11"
+            Python3_12:
+              python.version: "3.12"
         timeoutInMinutes: 10
         services:
           elasticsearch: elasticsearch
@@ -130,7 +136,7 @@ stages:
         steps:
           - task: UsePythonVersion@0
             displayName: Set python version
-            inputs: { versionSpec: 3.9 }
+            inputs: { versionSpec: 3.11 }
           - download: current
             artifact: dist
           - script: |
