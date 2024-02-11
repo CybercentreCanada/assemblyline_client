@@ -61,7 +61,6 @@ setup(
             'pytest',
             'cart',
             'assemblyline',
-            'passlib',
         ]
     },
     keywords='development assemblyline client gc canada cse-cst cse cst',
