@@ -42,7 +42,12 @@ jobs:
       matrix:
         Python3_9:
           python.version: "3.9"
-
+        Python3_10:
+          python.version: "3.10"
+        Python3_11:
+          python.version: "3.11"
+        Python3_12:
+          python.version: "3.12"
     timeoutInMinutes: 10
     services:
       elasticsearch: elasticsearch
@@ -80,6 +85,7 @@ jobs:
           wget https://localhost --no-check-certificate --timeout=2 --retry-on-http-error=502 --waitretry=10 --retry-connrefused
         displayName: Setup Environment
       - script: |
+          sudo env "PATH=$PATH" python -m pip install --pre assemblyline
           sudo env "PATH=$PATH" python -m pip install --no-cache-dir -e . -r test/requirements.txt
         displayName: Install assemblyline_client
       - script: |
