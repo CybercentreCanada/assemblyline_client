@@ -25,15 +25,15 @@ if sys.version_info >= (3, 0):
     L2 = "\u2592"
     L3 = "\u2593"
     L4 = "\u2588"
-    LD = "\u02e7"
-    RD = "\ua714"
+    LD = "\u2524"
+    RD = "\u251C"
 else:
     L1 = u"\u2591".encode("utf-8")
     L2 = u"\u2592".encode("utf-8")
     L3 = u"\u2593".encode("utf-8")
     L4 = u"\u2588".encode("utf-8")
-    LD = u"\u02e7".encode("utf-8")
-    RD = u"\ua714".encode("utf-8")
+    LD = u"\u2524".encode("utf-8")
+    RD = u"\u251C".encode("utf-8")
 
 
 def get_file_handler(content: Union[str, bytes], fname=None) -> BytesIO:
@@ -46,56 +46,56 @@ def get_file_handler(content: Union[str, bytes], fname=None) -> BytesIO:
 
 def al_result_to_text(r, show_errors=True, verbose_error=False):
     lines = ["", ":: Submission Detail %s::" % {True: "", False: "[Errors hidden]"}[show_errors],
-             "\t%-36s %s" % ("state:", r["state"]), ""]
+             "  %-36s %s" % ("state:", r["state"]), ""]
     for key in sorted(r['params'].keys()):
         if key == 'service_spec':
             continue
 
         if key == 'services':
-            lines.append("\t%-36s %s" % (key + ":", " | ".join(r['params']['services']['selected'])))
+            lines.append("  %-36s %s" % (key + ":", " | ".join(r['params']['services']['selected'])))
         elif isinstance(r['params'][key], list):
-            lines.append("\t%-36s %s" % (key + ":", " | ".join(r['params'][key])))
+            lines.append("  %-36s %s" % (key + ":", " | ".join(r['params'][key])))
         else:
-            lines.append("\t%-36s %s" % (key + ":", r['params'][key]))
+            lines.append("  %-36s %s" % (key + ":", r['params'][key]))
     lines.append("")
-    lines.append("\t:: Timing info ::")
+    lines.append("  :: Timing info ::")
     for key in sorted(r['times'].keys()):
         if r['times'][key] is not None:
-            lines.append("\t\t%-12s %s (UTC)" % (key + ":", r['times'][key].replace("T", " ").replace("Z", "")))
+            lines.append("    %-12s %s (UTC)" % (key + ":", r['times'][key].replace("T", " ").replace("Z", "")))
     if r["expiry_ts"]:
-        lines.append("\t\t%-12s %s (UTC)" % ("expiry:", r["expiry_ts"].replace("T", " ").replace("Z", "")))
+        lines.append("    %-12s %s (UTC)" % ("expiry:", r["expiry_ts"].replace("T", " ").replace("Z", "")))
 
     if len(r['metadata']) > 0:
         lines.append("")
-        lines.append("\t:: Metadata ::")
+        lines.append("  :: Metadata ::")
         for key in sorted(r['metadata'].keys()):
-            lines.append("\t\t%-36s %s" % (key + ":", r['metadata'][key]))
+            lines.append("    %-36s %s" % (key + ":", r['metadata'][key]))
 
     lines.append("")
-    lines.append("\t:: Services specific info ::")
+    lines.append("  :: Services specific info ::")
     if len(r['params']['service_spec'].keys()) != 0:
         for key in sorted(r['params']['service_spec'].keys()):
             if isinstance(r['params']['service_spec'][key], list):
-                lines.append("\t\t%-12s %s" % (key + ":", " | ".join(r['params']['service_spec'][key])))
+                lines.append("    %-12s %s" % (key + ":", " | ".join(r['params']['service_spec'][key])))
             else:
-                lines.append("\t\t%-12s %s" % (key + ":", r['params']['service_spec'][key]))
+                lines.append("    %-12s %s" % (key + ":", r['params']['service_spec'][key]))
     else:
-        lines.append("\t\tNone")
+        lines.append("    None")
 
     lines.append("")
-    lines.append("\t:: Missing results/errors ::")
+    lines.append("  :: Missing results/errors ::")
     if len(r['missing_result_keys']) == 0 and len(r['missing_error_keys']) == 0:
-        lines.append("\t\tNone")
+        lines.append("    None")
     else:
         for i in r['missing_result_keys']:
-            lines.append("\t\t%s [RESULT]" % i)
+            lines.append("    %s [RESULT]" % i)
         for i in r['missing_error_keys']:
-            lines.append("\t\t%s [ERROR]" % i)
+            lines.append("    %s [ERROR]" % i)
 
     lines.append("")
     lines.append(":: Submitted files ::")
     for f in r['files']:
-        lines.append("\t%s [%s] -> %s bytes" % (f['name'], f['sha256'], f['size']))
+        lines.append("  %s [%s] -> %s bytes" % (f['name'], f['sha256'], f['size']))
 
     if show_errors and len(r['errors']) > 0:
         lines.append("")
@@ -105,14 +105,14 @@ def al_result_to_text(r, show_errors=True, verbose_error=False):
             service = key[65:].split(".", 1)[0]
             eid = key.rsplit(".e", 1)[1]
             if eid in KNOWN_ERRORS:
-                lines.append("\tService %s failed for file %s [%s]" % (service, sha256, KNOWN_ERRORS[eid]))
+                lines.append("  Service %s failed for file %s [%s]" % (service, sha256, KNOWN_ERRORS[eid]))
             else:
                 lines.append(
-                    "\tService %s failed for file %s [%s]" % (service, sha256, r['errors'][key]["response"]['status']))
+                    "  Service %s failed for file %s [%s]" % (service, sha256, r['errors'][key]["response"]['status']))
                 if verbose_error and r['errors'][key]["response"]["message"] != "":
                     err_lines = r['errors'][key]["response"]["message"].split("\n")
                     for line in err_lines:
-                        lines.append("\t\t%s" % line)
+                        lines.append("    %s" % line)
 
     lines.append("")
     lines.append(":: Service results ::")
@@ -137,16 +137,19 @@ def process_res(res, sha256):
 
     if res['response']['extracted']:
         out.append('')
-        out.append("\t\t:: Extracted files ::")
+        out.append("    :: Extracted files ::")
         for extracted_file in res['response']['extracted']:
-            out.append("\t\t\t{} [{}] :: {}".format(extracted_file['name'], extracted_file['sha256'],
+            out.append("      {} [{}] :: {}".format(extracted_file['name'], extracted_file['sha256'],
                                                     extracted_file['description']))
 
     if res['response']['supplementary']:
         out.append('')
-        out.append("\t\t:: Supplementary files ::")
+        out.append("    :: Supplementary files ::")
         for supplementary in res['response']['supplementary']:
-            out.append("\t\t\t{} [{}] :: {}".format(supplementary['name'], supplementary['sha256'],
+            if supplementary['is_section_image']:
+                continue
+
+            out.append("      {} [{}] :: {}".format(supplementary['name'], supplementary['sha256'],
                                                     supplementary['description']))
 
     return out
@@ -154,95 +157,176 @@ def process_res(res, sha256):
 
 def get_service_info(srv_res, fhash):
     classification = "{} :: ".format(srv_res['classification']) if srv_res['classification'] else ""
-    out = ["\t{}{} [{}] - {} ({})".format(classification, srv_res['response']['service_name'],
+    out = ["  {}{} [{}] - {} ({})".format(classification, srv_res['response']['service_name'],
                                           srv_res['result']['score'], srv_res['response']['service_version'], fhash)]
     return out
+
+
+def recurse_process(out, depth, data):
+    for process in data:
+        out.append(
+            "    {}[{}] {} ({}) {{F:{} N:{} R:{} S:[{}]}}".format(
+                depth, process['process_pid'],
+                process['process_name'],
+                process['command_line'],
+                process.get('file_count', 0),
+                process.get('network_count', 0),
+                process.get('registry_count', 0),
+                "|".join(process.get('signatures', {}).keys())))
+        recurse_process(out, depth + '  ', process.get('children', []))
+
+
+def process_section(out, depth, body_format, body):
+    if body_format in ["TEXT", "MEMORY_DUMP"]:
+        out.extend(["    {}{}".format(depth, x) for x in body.splitlines()])
+
+    elif body_format == 'GRAPH_DATA':
+        try:
+            body = json.loads(body)
+        except TypeError:
+            pass
+        dom_min, dom_max = body['data']['domain']
+        values = body['data']['values']
+        step = (dom_max - dom_min) / 5.0
+        cmap = []
+
+        for v in values:
+            if v < dom_min + step:
+                cmap.append(" ")
+            elif v < dom_min + (step * 2):
+                cmap.append(L1)
+            elif v < dom_min + (step * 3):
+                cmap.append(L2)
+            elif v < dom_min + (step * 4):
+                cmap.append(L3)
+            else:
+                cmap.append(L4)
+
+        out.append("    {} [ ]: {} .. {}        [{}]: {} .. {}".format(depth, dom_min*1.0, dom_min + step*1.0, L4,
+                                                                       dom_max-step*1.0, dom_max*1.0))
+        out.append("    {}{}{}{}".format(depth, LD, ''.join(cmap), RD))
+
+    elif body_format == 'URL':
+        try:
+            body = json.loads(body)
+        except TypeError:
+            pass
+        if not isinstance(body, list):
+            body = [body]
+        for url in body:
+            if 'name' in url:
+                out.append("    {}{}: {}".format(depth, url['name'], url['url']))
+            else:
+                out.append("    {}{}".format(depth, url['url']))
+
+    elif body_format == 'JSON':
+        try:
+            body = pprint.pformat(json.loads(body))
+        except TypeError:
+            body = pprint.pformat(body)
+        out.extend(["    {}{}".format(depth, x) for x in body.splitlines()])
+
+    elif body_format == 'KEY_VALUE':
+        try:
+            body = json.loads(body)
+        except TypeError:
+            pass
+        out.extend(["    {}{}: {}".format(depth, k, v) for k, v in body.items()])
+
+    elif body_format == 'ORDERED_KEY_VALUE':
+        try:
+            body = json.loads(body)
+        except TypeError:
+            pass
+        out.extend(["    {}{}: {}".format(depth, k, v) for (k, v) in body])
+
+    elif body_format == 'PROCESS_TREE':
+        try:
+            body = json.loads(body)
+        except TypeError:
+            pass
+        recurse_process(out, depth, body)
+
+    elif body_format == 'TABLE':
+        try:
+            body = json.loads(body)
+        except TypeError:
+            pass
+        cols = {k for line in body for k in line.keys()}
+        out.append("    {}{}".format(depth, " | ".join(["%-50s" % col for col in cols])))
+        out.extend(["    {}{}".format(depth, " | ".join(["%-50s" % line.get(col, "") for col in cols]))
+                    for line in body])
+
+    elif body_format == 'IMAGE':
+        try:
+            body = json.loads(body)
+        except TypeError:
+            pass
+        out.extend(
+            ["    {}{}: {} ({})".format(
+                depth, img['img']['name'],
+                img['img']['description'],
+                img['img']['sha256'],) for img in body])
+
+    elif body_format == 'TIMELINE':
+        try:
+            body = json.loads(body)
+        except TypeError:
+            pass
+        for item in body:
+            out.append("    {}{}   |".format(depth, "%50s" % " "))
+            out.append("    {}{}   o   {}".format(depth, "%50s" % item.get('opposite_content', ''),
+                                                  "%-50s" % "{} ({})".format(item.get('title', ''),
+                                                                             item.get('content', ''))))
+            out.append("    {}{}   |".format(depth, "%50s" % " "))
+
+    elif body_format == 'MULTI':
+        try:
+            body = json.loads(body)
+        except TypeError:
+            pass
+        for subsection_type, subsection, _ in body:
+            process_section(out, depth, subsection_type, subsection)
+
+    elif body_format == 'DIVIDER':
+        out.append("    {}{}".format(depth, "-" * 50))
+
+    else:
+        out.append("      ERR: Unknown section type: {}".format(body_format))
 
 
 def show_section(section):
     out = [""]
 
-    depth = '\t' * (section['depth'] + 1)
+    depth = '  ' * (section['depth'] + 1)
     classification = "{} :: ".format(section['classification']) if section['classification'] else ""
     title = section['title_text'].replace('\n', '')
 
     if section['heuristic'] is not None:
         score = section['heuristic']['score']
-        out.append("\t{}{}[{}] {}".format(depth, classification, score, title))
+        out.append("  {}{}[{}] {}".format(depth, classification, score, title))
 
     else:
-        out.append("\t{}{}{}".format(depth, classification, title))
+        out.append("  {}{}{}".format(depth, classification, title))
 
     if section['body']:
-        if section['body_format'] in ["TEXT", "MEMORY_DUMP"]:
-            out.extend(["\t\t{}{}".format(depth, x) for x in section['body'].splitlines()])
-        elif section['body_format'] == 'GRAPH_DATA':
-            try:
-                body = json.loads(section['body'])
-            except TypeError:
-                body = section['body']
-            dom_min, dom_max = body['data']['domain']
-            values = body['data']['values']
-            step = (dom_max - dom_min) / 5.0
-            cmap = []
-
-            for v in values:
-                if v < dom_min + step:
-                    cmap.append(" ")
-                elif v < dom_min + (step * 2):
-                    cmap.append(L1)
-                elif v < dom_min + (step * 3):
-                    cmap.append(L2)
-                elif v < dom_min + (step * 4):
-                    cmap.append(L3)
-                else:
-                    cmap.append(L4)
-
-            out.append("\t\t{} [ ]: {} .. {}        [{}]: {} .. {}".format(depth, dom_min*1.0, dom_min + step*1.0, L4,
-                                                                           dom_max-step*1.0, dom_max*1.0))
-            out.append("\t\t{}{}{}{}".format(depth, LD, ''.join(cmap), RD))
-        elif section['body_format'] == 'URL':
-            try:
-                body = json.loads(section['body'])
-            except TypeError:
-                body = section['body']
-            if not isinstance(body, list):
-                body = [body]
-            for url in body:
-                if 'name' in url:
-                    out.append("\t\t{}{}: {}".format(depth, url['name'], url['url']))
-                else:
-                    out.append("\t\t{}{}".format(depth, url['url']))
-        elif section['body_format'] == 'JSON':
-            try:
-                body = pprint.pformat(json.loads(section['body']))
-            except TypeError:
-                body = pprint.pformat(section['body'])
-            out.extend(["\t\t{}{}".format(depth, x) for x in body.splitlines()])
-        elif section['body_format'] == 'KEY_VALUE':
-            try:
-                body = json.loads(section['body'])
-            except TypeError:
-                body = section['body']
-            out.extend(["\t\t{}{}: {}".format(depth, k, v) for k, v in body.items()])
-        else:
-            out.append("Unknown section type: {}".format(section['body_format']))
+        process_section(out, depth, section['body_format'], section['body'])
 
     heuristic = section.get('heuristic')
     spacer = True
     if heuristic:
         spacer = False
         out.append('')
-        out.append("\t\t\t{}[HEURISTIC] {}".format(depth, heuristic['name']))
+        out.append("      {}[HEURISTIC] {}".format(depth, heuristic['name']))
         for signature in heuristic.get('signature', []):
-            out.append("\t\t\t{}[SIGNATURE] {} ({}x)".format(depth, signature['name'], signature['frequency']))
+            out.append("      {}[SIGNATURE] {} ({}x)".format(depth, signature['name'], signature['frequency']))
         for attack in heuristic.get('attack', []):
-            out.append("\t\t\t{}[ATTACK] {} ({})".format(depth, attack['pattern'], attack['attack_id']))
+            out.append("      {}[ATTACK] {} ({})".format(depth, attack['pattern'], attack['attack_id']))
 
     if section['tags']:
         if spacer:
             out.append('')
         for tag in section['tags']:
-            out.append("\t\t\t{}[{}] {}".format(depth, tag['short_type'].upper(), tag['value']))
+            out.append("      {}[{}] {}".format(depth, tag['short_type'].upper(), tag['value']))
 
     return out
