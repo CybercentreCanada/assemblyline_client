@@ -1,12 +1,11 @@
 import json
 from typing import List, Union
 from assemblyline_client.v4_client.common.utils import api_path, raw_output, stream_output
-from assemblyline_client import Connection
 
 
 class Ontology(object):
-    def __init__(self, connection: Connection):
-        self._connection: Connection = connection
+    def __init__(self, connection):
+        self._connection = connection
 
     def alert(
             self,
