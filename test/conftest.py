@@ -24,11 +24,10 @@ pytest.skip = skip_or_fail
 
 
 try:
-    from assemblyline.common.security import get_random_password
+    from assemblyline.common.security import get_random_password, get_password_hash
     from assemblyline.datastore.store import ESStore
     from assemblyline.datastore.helper import AssemblylineDatastore
     from assemblyline.common.uid import get_random_id
-    from passlib.hash import bcrypt
 
     from assemblyline_client import get_client
     from assemblyline.common import forge
@@ -85,7 +84,7 @@ try:
         user = datastore.user.get('admin')
         random_pass = get_random_password(length=48)
         key_name = "key_%s" % get_random_id().lower()
-        user.apikeys[key_name] = {"password": bcrypt.hash(random_pass), "acl": ["R", "W", "E"]}
+        user.apikeys[key_name] = {"password": get_password_hash(random_pass), "acl": ["R", "W", "E"]}
         datastore.user.save('admin', user)
         api_key = "%s:%s" % (key_name, random_pass)
 

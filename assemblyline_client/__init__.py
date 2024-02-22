@@ -1,7 +1,6 @@
 import json
 from base64 import b64encode
 
-import pkg_resources
 import requests
 import time
 import warnings
@@ -11,10 +10,10 @@ from assemblyline_client.v4_client.common.utils import ClientError
 from assemblyline_client.v3_client import Client as Client3
 from assemblyline_client.v4_client.client import Client as Client4
 
-
 try:
-    __version__ = pkg_resources.get_distribution('assemblyline_client').version
-except pkg_resources.DistributionNotFound:
+    from importlib import metadata
+    __version__ = metadata.distribution('assemblyline_client').version
+except metadata.PackageNotFoundError:
     __version__ = "4.0.0.dev0"
 
 RETRY_FOREVER = 0
