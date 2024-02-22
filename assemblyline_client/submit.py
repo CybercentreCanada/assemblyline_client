@@ -214,7 +214,11 @@ def _main(arguments):
                         help='Client cert used to connect to server. DEFAULT: cert in auth section of ~/.al/submit.cfg')
     parser.add_argument('-k', '--apikey', default=apikey, metavar='"MY_RANDOM_API_KEY"',
                         help='apikey to use for the user to login. DEFAULT: apikey in auth section of ~/.al/submit.cfg')
-    parser.add_argument('-j', '--json-params', metavar='"{ ... }"', help='A JSON dictionary of submission parameters. For the full list of submission parameters, see https://cybercentrecanada.github.io/assemblyline4_docs/odm/models/submission/#submissionparams.')
+    parser.add_argument(
+        '-j', '--json-params', metavar='"{ ... }"',
+        help='A JSON dictionary of submission parameters. '
+             'For the full list of submission parameters, '
+             'see https://cybercentrecanada.github.io/assemblyline4_docs/odm/models/submission/#submissionparams.')
     parser.add_argument('-m', '--metadata', metavar='"{ ... }"', help='A JSON dictionary of submission metadata.')
     parser.add_argument('--srv-spec', metavar='"{ ... }"', help='A JSON dictionary of service specific parameters.')
     parser.add_argument('--server-crt', metavar='"/path/to/server.crt"',

@@ -36,3 +36,4 @@ def test_result_to_text(datastore, client):
     assert ":: Submission Detail ::" in text
     assert ":: Submitted files ::" in text
     assert ":: Service results ::" in text
+    assert "ERR: Unknown section type" not in text
