@@ -121,7 +121,7 @@ class Connection(object):
                 }
             else:
                 auth = {}
-            return self.request(self.session.get, "api/v4/auth/login/", convert_api_output, data=json.dumps(auth))
+            return self.request(self.session.post, "api/v4/auth/login/", convert_api_output, data=json.dumps(auth))
         else:
             if self.apikey and len(self.apikey) == 2:
                 if public_key:
