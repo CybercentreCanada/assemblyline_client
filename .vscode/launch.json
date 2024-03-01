@@ -13,7 +13,29 @@
             "type": "python",
             "request": "launch",
             "program": "assemblyline_client/submit.py",
-            "args": ["-m", "{\"web_url\": \"https://github.com/CybercentreCanada/assemblyline_client/blob/master/setup_vscode.sh\", \"protocol\": \"HTTPS\"}", "-j", "{\"ignore_cache\": true}", "setup.cfg"],
+            "args": [
+                "-m",
+                "{\"web_url\": \"https://github.com/CybercentreCanada/assemblyline_client/blob/master/setup_vscode.sh\", \"protocol\": \"HTTPS\"}",
+                "-j",
+                "{\"ignore_cache\": true}",
+                "setup.cfg"
+            ],
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole"
+        },
+        {
+            "name": "Submit - Synced (TEXT OUTPUT)",
+            "type": "python",
+            "request": "launch",
+            "program": "assemblyline_client/submit.py",
+            "args": [
+                "-t",
+                "-m",
+                "{\"web_url\": \"https://github.com/CybercentreCanada/assemblyline_client/blob/master/setup_vscode.sh\", \"protocol\": \"HTTPS\"}",
+                "-j",
+                "{\"ignore_cache\": true}",
+                "setup.cfg"
+            ],
             "cwd": "${workspaceFolder}",
             "console": "internalConsole"
         },
@@ -22,7 +44,15 @@
             "type": "python",
             "request": "launch",
             "program": "assemblyline_client/submit.py",
-            "args": ["-a", "-n", "-m", "{\"web_url\": \"https://github.com/CybercentreCanada/assemblyline_client/blob/master/setup.py\", \"protocol\": \"HTTPS\"}", "-j", "{\"ignore_cache\": true, \"generate_alert\": true, \"type\": \"HTTP\"}", "setup.py"],
+            "args": [
+                "-a",
+                "-n",
+                "-m",
+                "{\"web_url\": \"https://github.com/CybercentreCanada/assemblyline_client/blob/master/setup.py\", \"protocol\": \"HTTPS\"}",
+                "-j",
+                "{\"ignore_cache\": true, \"generate_alert\": true, \"type\": \"HTTP\"}",
+                "setup.py"
+            ],
             "cwd": "${workspaceFolder}",
             "console": "internalConsole"
         },
@@ -31,7 +61,15 @@
             "type": "python",
             "request": "launch",
             "program": "assemblyline_client/submit.py",
-            "args": ["-a", "-n", "-m", "{\"dict\": {\"a\": 1, \"b\": true}, \"items\": [1,2,3,\"four\"],  \"subject\": \"Here's the setup_vscode.sh file ;)\", \"protocol\": \"SMTP\"}", "-j", "{\"ignore_cache\": true, \"generate_alert\": true, \"services\": {\"resubmit\": [\"ExtraFeature\"]}, \"type\": \"SMTP\"}", "setup_vscode.sh"],
+            "args": [
+                "-a",
+                "-n",
+                "-m",
+                "{\"dict\": {\"a\": 1, \"b\": true}, \"items\": [1,2,3,\"four\"],  \"subject\": \"Here's the setup_vscode.sh file ;)\", \"protocol\": \"SMTP\"}",
+                "-j",
+                "{\"ignore_cache\": true, \"generate_alert\": true, \"services\": {\"resubmit\": [\"ExtraFeature\"]}, \"type\": \"SMTP\"}",
+                "setup_vscode.sh"
+            ],
             "cwd": "${workspaceFolder}",
             "console": "internalConsole"
         }
