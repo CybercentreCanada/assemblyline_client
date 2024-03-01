@@ -1,7 +1,7 @@
 
 def _compare_values(a, b):
     assert len(a) == len(b)
-    for item_a, idx in enumerate(a):
+    for idx, item_a in enumerate(a):
         item_b = b[idx]
         for key, val in item_a.items():
             assert val == item_b.get(key, val)
