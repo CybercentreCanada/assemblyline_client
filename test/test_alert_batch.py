@@ -47,6 +47,21 @@ def test_priority(datastore, client):
     assert "HIGH" in alert_data.priority
 
 
+def test_remove_label(datastore, client):
+    import random
+    alert_id = random_id_from_collection(datastore, 'alert')
+    alert = datastore.alert.get(alert_id)
+    labels_to_remove = []
+    while not labels_to_remove:
+        labels_to_remove = [label for label in alert.label if random.randint(0, 1) == 1]
+
+    res = client.alert.batch.remove_label('alert_id:{}'.format(alert_id), labels_to_remove, fq_list=["id:*", "label:*"])
+    assert res['success'] == 1
+
+    alert_data = datastore.alert.get(alert_id)
+    assert all([label not in alert_data.label for label in labels_to_remove])
+
+
 def test_status(datastore, client):
     alert_id = random_id_from_collection(datastore, 'alert')
 

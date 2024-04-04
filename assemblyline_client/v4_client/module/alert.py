@@ -192,6 +192,18 @@ no_delay: Do not delay alerts
 
         return self._connection.get(api_path_by_module(self, **kw))
 
+    def remove_label(self, alert_id, *labels):
+        """\
+Remove label(s) from the alert with the given alert_id.
+
+Required:
+alert_id: Alert key (string)
+*labels : One or more labels (variable argument list of strings)
+
+Throws a Client exception if the alert does not exist.
+"""
+        return self._connection.delete(api_path(f'alert/label/{alert_id}'), json=labels)
+
     def statistics(self, fq=[], q=None, tc_start=None, tc=None, no_delay=False):
         """\
 Find the different statistics for the alerts matching the query.
@@ -329,6 +341,27 @@ fq_list    : List of filter queries (list of strings)
         path = api_path('alert/priority/batch', params_tuples=[('fq', fq) for fq in fq_list], **kw)
 
         return self._connection.post(path, json=priority)
+
+    def remove_label(self, q, labels, tc=None, tc_start=None, fq_list=None):
+        """\
+Remove labels from alerts matching the search criteria.
+
+Required:
+q       : Query used to limit the scope of the data (string)
+labels  : Labels to apply (list of strings)
+
+Optional:
+tc         : Time constraint applied to the query (string)
+tc_start   : Date which the time constraint will be applied to [Default: NOW] (string)
+fq_list    : List of filter queries (list of strings)
+"""
+        if not fq_list:
+            fq_list = []
+
+        kw = get_function_kwargs('self', 'fq_list', 'labels')
+        path = api_path('alert/label/batch', params_tuples=[('fq', fq) for fq in fq_list], **kw)
+
+        return self._connection.delete(path, json=labels)
 
     def status(self, q, status, tc=None, tc_start=None, fq_list=None):
         """\
