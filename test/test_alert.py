@@ -107,6 +107,19 @@ def test_related(datastore, client):
         assert isinstance(v, str)
 
 
+def test_remove_label(datastore, client):
+    import random
+    alert_id = random_id_from_collection(datastore, 'alert')
+    alert = datastore.alert.get(alert_id)
+    labels_to_remove = []
+    while not labels_to_remove:
+        labels_to_remove = [label for label in alert.label if random.randint(0, 1) == 1]
+    res = client.alert.remove_label(alert_id, *labels_to_remove)
+    assert res['success']
+    alert_data = datastore.alert.get(alert_id)
+    assert all([label not in alert_data.label for label in labels_to_remove])
+
+
 def test_statistics(datastore, client):
     res = client.alert.statistics(no_delay=True)
     assert isinstance(res, dict)
