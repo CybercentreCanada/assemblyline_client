@@ -114,13 +114,19 @@ Throws a Client exception if the watch queue does not exist.
 """
         return self._connection.get(api_path_by_module(self, nq))
 
-    def get_message_list(self, nq):
+    def get_message_list(self, nq, page_size=None):
         """\
 Return all messages from the given notification queue.
 
 Required:
-nq      : Notification queue name. (string)
+nq          : Notification queue name. (string)
+
+Optional:
+page_size   : Number of messages to get back from queue. (int)
 
 Throws a Client exception if the watch queue does not exist.
 """
-        return self._connection.get(api_path_by_module(self, nq))
+        kw = {}
+        if page_size:
+            kw['page_size'] = int(page_size)
+        return self._connection.get(api_path_by_module(self, nq, **kw))

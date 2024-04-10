@@ -54,6 +54,26 @@ def test_get_message_list(datastore, client):
     assert res[0] == msg_0
     assert res[1] == msg_1
 
+def test_get_message_list_with_paging(datastore, client):
+    notification_queue = get_random_id()
+    queue = NamedQueue("nq-%s" % notification_queue,
+                       host=config.core.redis.persistent.host,
+                       port=config.core.redis.persistent.port)
+    queue.delete()
+    msg_0 = random_model_obj(Submission).as_primitives()
+    queue.push(msg_0)
+    msg_1 = random_model_obj(Submission).as_primitives()
+    queue.push(msg_1)
+
+    res = True
+    messages = []
+    while res:
+        res = client.ingest.get_message_list(notification_queue, page_size=1)
+        messages += res
+
+    assert len(messages) == 2
+    assert messages[0] == msg_0
+    assert messages[1] == msg_1
 
 def test_ingest_content(datastore, client):
     content = get_random_phrase(wmin=15, wmax=50).encode()
