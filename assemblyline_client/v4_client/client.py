@@ -58,3 +58,6 @@ class Client(object):
 
         self.__doc__ = 'Client provides the following methods:\n\n' + \
             '\n'.join(['\n'.join(p + ['']) for p in paths])
+
+    def set_obo_token(self, token):
+        self._connection.session.headers.update({'authorization': f"Bearer {token}"})
