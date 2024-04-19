@@ -1,5 +1,5 @@
 
-
+from assemblyline_client.common.classification import Classification
 from assemblyline_client.v4_client.common.utils import walk_api_path
 from assemblyline_client.v4_client.module.alert import Alert
 from assemblyline_client.v4_client.module.badlist import Badlist
@@ -58,6 +58,10 @@ class Client(object):
 
         self.__doc__ = 'Client provides the following methods:\n\n' + \
             '\n'.join(['\n'.join(p + ['']) for p in paths])
+
+    def get_classification_engine(self):
+        definition = self.help.classification_definition(original=True)
+        return Classification(definition)
 
     def set_obo_token(self, token, provider=None):
         new_headers = {'authorization': f"Bearer {token}"}
