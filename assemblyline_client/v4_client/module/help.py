@@ -5,11 +5,15 @@ class Help(object):
     def __init__(self, connection):
         self._connection = connection
 
-    def classification_definition(self):
+    def classification_definition(self, original=False):
         """\
 Return the current system classification definition
 """
-        return self._connection.get(api_path_by_module(self))
+        kw = {}
+        if original:
+            kw['original'] = True
+
+        return self._connection.get(api_path_by_module(self, **kw))
 
     def configuration(self):
         """\
