@@ -30,7 +30,7 @@ Required:
 field   : field to extract the facets from
 
 Optional:
-qeury    : Initial query to filter the data (default: 'id:*')
+query    : Initial query to filter the data (default: 'id:*')
 filters  : Additional lucene queries used to filter the data (list of strings)
 mincount : Minimum amount of hits for the value to be returned
 timeout  : Maximum execution time (ms)
@@ -47,7 +47,7 @@ Required:
 field   : field to extract the facets from
 
 Optional:
-qeury    : Initial query to filter the data (default: 'id:*')
+query    : Initial query to filter the data (default: 'id:*')
 filters  : Additional lucene queries used to filter the data (list of strings)
 mincount : Minimum amount of hits for the value to be returned
 timeout  : Maximum execution time (ms)
@@ -64,7 +64,7 @@ Required:
 field   : field to extract the facets from
 
 Optional:
-qeury    : Initial query to filter the data (default: 'id:*')
+query    : Initial query to filter the data (default: 'id:*')
 filters  : Additional lucene queries used to filter the data (list of strings)
 mincount : Minimum amount of hits for the value to be returned
 timeout  : Maximum execution time (ms)
@@ -81,7 +81,7 @@ Required:
 field   : field to extract the facets from
 
 Optional:
-qeury    : Initial query to filter the data (default: 'id:*')
+query    : Initial query to filter the data (default: 'id:*')
 filters  : Additional lucene queries used to filter the data (list of strings)
 mincount : Minimum amount of hits for the value to be returned
 timeout  : Maximum execution time (ms)
@@ -98,7 +98,7 @@ Required:
 field   : field to extract the facets from
 
 Optional:
-qeury    : Initial query to filter the data (default: 'id:*')
+query    : Initial query to filter the data (default: 'id:*')
 filters  : Additional lucene queries used to filter the data (list of strings)
 mincount : Minimum amount of hits for the value to be returned
 timeout  : Maximum execution time (ms)
@@ -115,7 +115,7 @@ Required:
 field   : field to extract the facets from
 
 Optional:
-qeury    : Initial query to filter the data (default: 'id:*')
+query    : Initial query to filter the data (default: 'id:*')
 filters  : Additional lucene queries used to filter the data (list of strings)
 mincount : Minimum amount of hits for the value to be returned
 timeout  : Maximum execution time (ms)
@@ -132,7 +132,7 @@ Required:
 field   : field to extract the facets from
 
 Optional:
-qeury    : Initial query to filter the data (default: 'id:*')
+query    : Initial query to filter the data (default: 'id:*')
 filters  : Additional lucene queries used to filter the data (list of strings)
 mincount : Minimum amount of hits for the value to be returned
 timeout  : Maximum execution time (ms)
@@ -149,7 +149,7 @@ Required:
 field   : field to extract the facets from
 
 Optional:
-qeury    : Initial query to filter the data (default: 'id:*')
+query    : Initial query to filter the data (default: 'id:*')
 filters  : Additional lucene queries used to filter the data (list of strings)
 mincount : Minimum amount of hits for the value to be returned
 timeout  : Maximum execution time (ms)
