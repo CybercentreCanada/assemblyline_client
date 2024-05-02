@@ -32,7 +32,7 @@ field   : field to create the stats on (only work on number fields)
 Optional:
 query    : Initial query to filter the data (default: 'id:*')
 filters  : Additional lucene queries used to filter the data (list of strings)
-timeout  : Maximum execution time (ms)
+timeout  : Maximum execution time in milliseconds (integer)
 
 Returns statistics about the field.
 """
@@ -48,7 +48,7 @@ field   : field to create the stats on (only work on number fields)
 Optional:
 query    : Initial query to filter the data (default: 'id:*')
 filters  : Additional lucene queries used to filter the data (list of strings)
-timeout  : Maximum execution time (ms)
+timeout  : Maximum execution time in milliseconds (integer)
 
 Returns statistics about the field.
 """
@@ -64,7 +64,7 @@ field   : field to create the stats on (only work on number fields)
 Optional:
 query    : Initial query to filter the data (default: 'id:*')
 filters  : Additional lucene queries used to filter the data (list of strings)
-timeout  : Maximum execution time (ms)
+timeout  : Maximum execution time in milliseconds (integer)
 
 Returns statistics about the field.
 """
@@ -80,7 +80,7 @@ field   : field to create the stats on (only work on number fields)
 Optional:
 query    : Initial query to filter the data (default: 'id:*')
 filters  : Additional lucene queries used to filter the data (list of strings)
-timeout  : Maximum execution time (ms)
+timeout  : Maximum execution time in milliseconds (integer)
 
 Returns statistics about the field.
 """
@@ -96,7 +96,7 @@ field   : field to create the stats on (only work on number fields)
 Optional:
 query    : Initial query to filter the data (default: 'id:*')
 filters  : Additional lucene queries used to filter the data (list of strings)
-timeout  : Maximum execution time (ms)
+timeout  : Maximum execution time in milliseconds (integer)
 
 Returns statistics about the field.
 """
@@ -112,7 +112,7 @@ field   : field to create the stats on (only work on number fields)
 Optional:
 query    : Initial query to filter the data (default: 'id:*')
 filters  : Additional lucene queries used to filter the data (list of strings)
-timeout  : Maximum execution time (ms)
+timeout  : Maximum execution time in milliseconds (integer)
 
 Returns statistics about the field.
 """
@@ -128,7 +128,7 @@ field   : field to create the stats on (only work on number fields)
 Optional:
 query    : Initial query to filter the data (default: 'id:*')
 filters  : Additional lucene queries used to filter the data (list of strings)
-timeout  : Maximum execution time (ms)
+timeout  : Maximum execution time in milliseconds (integer)
 
 Returns statistics about the field.
 """
@@ -144,7 +144,7 @@ field   : field to create the stats on (only work on number fields)
 Optional:
 query    : Initial query to filter the data (default: 'id:*')
 filters  : Additional lucene queries used to filter the data (list of strings)
-timeout  : Maximum execution time (ms)
+timeout  : Maximum execution time in milliseconds (integer)
 
 Returns statistics about the field.
 """

@@ -37,7 +37,7 @@ mincount : Minimum amount of hits for the value to be returned
 start    : Beginning of the histogram range (Default: now-1d or 0)
 end      : End of the histogram range (Default: now or 1000)
 gap      : Interval in between each histogram points (Default: 1h or 100)
-timeout  : Maximum execution time (ms)
+timeout  : Maximum execution time in milliseconds (integer)
 
 Returns all results.
 """
@@ -59,7 +59,7 @@ mincount : Minimum amount of hits for the value to be returned
 start    : Beginning of the histogram range (Default: now-1d or 0)
 end      : End of the histogram range (Default: now or 1000)
 gap      : Interval in between each histogram points (Default: 1h or 100)
-timeout  : Maximum execution time (ms)
+timeout  : Maximum execution time in milliseconds (integer)
 
 Returns all results.
 """
@@ -81,7 +81,7 @@ mincount : Minimum amount of hits for the value to be returned
 start    : Beginning of the histogram range (Default: now-1d or 0)
 end      : End of the histogram range (Default: now or 1000)
 gap      : Interval in between each histogram points (Default: 1h or 100)
-timeout  : Maximum execution time (ms)
+timeout  : Maximum execution time in milliseconds (integer)
 
 Returns all results.
 """
@@ -103,7 +103,7 @@ mincount : Minimum amount of hits for the value to be returned
 start    : Beginning of the histogram range (Default: now-1d or 0)
 end      : End of the histogram range (Default: now or 1000)
 gap      : Interval in between each histogram points (Default: 1h or 100)
-timeout  : Maximum execution time (ms)
+timeout  : Maximum execution time in milliseconds (integer)
 
 Returns all results.
 """
@@ -125,7 +125,7 @@ mincount : Minimum amount of hits for the value to be returned
 start    : Beginning of the histogram range (Default: now-1d or 0)
 end      : End of the histogram range (Default: now or 1000)
 gap      : Interval in between each histogram points (Default: 1h or 100)
-timeout  : Maximum execution time (ms)
+timeout  : Maximum execution time in milliseconds (integer)
 
 Returns all results.
 """
@@ -147,7 +147,7 @@ mincount : Minimum amount of hits for the value to be returned
 start    : Beginning of the histogram range (Default: now-1d or 0)
 end      : End of the histogram range (Default: now or 1000)
 gap      : Interval in between each histogram points (Default: 1h or 100)
-timeout  : Maximum execution time (ms)
+timeout  : Maximum execution time in milliseconds (integer)
 
 Returns all results.
 """
@@ -169,7 +169,7 @@ mincount : Minimum amount of hits for the value to be returned
 start    : Beginning of the histogram range (Default: now-1d or 0)
 end      : End of the histogram range (Default: now or 1000)
 gap      : Interval in between each histogram points (Default: 1h or 100)
-timeout  : Maximum execution time (ms)
+timeout  : Maximum execution time in milliseconds (integer)
 
 Returns all results.
 """
@@ -191,7 +191,7 @@ mincount : Minimum amount of hits for the value to be returned
 start    : Beginning of the histogram range (Default: now-1d or 0)
 end      : End of the histogram range (Default: now or 1000)
 gap      : Interval in between each histogram points (Default: 1h or 100)
-timeout  : Maximum execution time (ms)
+timeout  : Maximum execution time in milliseconds (integer)
 
 Returns all results.
 """

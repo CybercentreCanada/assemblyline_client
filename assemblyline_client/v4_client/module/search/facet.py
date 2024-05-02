@@ -33,7 +33,7 @@ Optional:
 query    : Initial query to filter the data (default: 'id:*')
 filters  : Additional lucene queries used to filter the data (list of strings)
 mincount : Minimum amount of hits for the value to be returned
-timeout  : Maximum execution time (ms)
+timeout  : Maximum execution time in milliseconds (integer)
 
 Returns all results.
 """
@@ -50,7 +50,7 @@ Optional:
 query    : Initial query to filter the data (default: 'id:*')
 filters  : Additional lucene queries used to filter the data (list of strings)
 mincount : Minimum amount of hits for the value to be returned
-timeout  : Maximum execution time (ms)
+timeout  : Maximum execution time in milliseconds (integer)
 
 Returns all results.
 """
@@ -67,7 +67,7 @@ Optional:
 query    : Initial query to filter the data (default: 'id:*')
 filters  : Additional lucene queries used to filter the data (list of strings)
 mincount : Minimum amount of hits for the value to be returned
-timeout  : Maximum execution time (ms)
+timeout  : Maximum execution time in milliseconds (integer)
 
 Returns all results.
 """
@@ -84,7 +84,7 @@ Optional:
 query    : Initial query to filter the data (default: 'id:*')
 filters  : Additional lucene queries used to filter the data (list of strings)
 mincount : Minimum amount of hits for the value to be returned
-timeout  : Maximum execution time (ms)
+timeout  : Maximum execution time in milliseconds (integer)
 
 Returns all results.
 """
@@ -101,7 +101,7 @@ Optional:
 query    : Initial query to filter the data (default: 'id:*')
 filters  : Additional lucene queries used to filter the data (list of strings)
 mincount : Minimum amount of hits for the value to be returned
-timeout  : Maximum execution time (ms)
+timeout  : Maximum execution time in milliseconds (integer)
 
 Returns all results.
 """
@@ -118,7 +118,7 @@ Optional:
 query    : Initial query to filter the data (default: 'id:*')
 filters  : Additional lucene queries used to filter the data (list of strings)
 mincount : Minimum amount of hits for the value to be returned
-timeout  : Maximum execution time (ms)
+timeout  : Maximum execution time in milliseconds (integer)
 
 Returns all results.
 """
@@ -135,7 +135,7 @@ Optional:
 query    : Initial query to filter the data (default: 'id:*')
 filters  : Additional lucene queries used to filter the data (list of strings)
 mincount : Minimum amount of hits for the value to be returned
-timeout  : Maximum execution time (ms)
+timeout  : Maximum execution time in milliseconds (integer)
 
 Returns all results.
 """
@@ -152,7 +152,7 @@ Optional:
 query    : Initial query to filter the data (default: 'id:*')
 filters  : Additional lucene queries used to filter the data (list of strings)
 mincount : Minimum amount of hits for the value to be returned
-timeout  : Maximum execution time (ms)
+timeout  : Maximum execution time in milliseconds (integer)
 
 Returns all results.
 """
@@ -169,7 +169,7 @@ Optional:
 query    : Initial query to filter the data (default: 'id:*')
 filters  : Additional lucene queries used to filter the data (list of strings)
 mincount : Minimum amount of hits for the value to be returned
-timeout  : Maximum execution time (ms)
+timeout  : Maximum execution time in milliseconds (integer)
 
 Returns all results.
 """

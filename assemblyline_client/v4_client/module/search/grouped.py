@@ -40,7 +40,7 @@ offset     : Offset at which the query items should start (integer)
 rows       : Number of records to return (integer)
 sort       : Field used for sorting with direction (string: ex. 'id desc')
 fl         : List of fields to return (comma separated string of fields)
-timeout    : Maximum execution time (ms)
+timeout    : Maximum execution time in milliseconds (integer)
 
 Returns a generator that transparently and efficiently pages through results.
 """
@@ -64,7 +64,7 @@ offset     : Offset at which the query items should start (integer)
 rows       : Number of records to return (integer)
 sort       : Field used for sorting with direction (string: ex. 'id desc')
 fl         : List of fields to return (comma separated string of fields)
-timeout    : Maximum execution time (ms)
+timeout    : Maximum execution time in milliseconds (integer)
 
 Returns a generator that transparently and efficiently pages through results.
 """
@@ -88,7 +88,7 @@ offset     : Offset at which the query items should start (integer)
 rows       : Number of records to return (integer)
 sort       : Field used for sorting with direction (string: ex. 'id desc')
 fl         : List of fields to return (comma separated string of fields)
-timeout    : Maximum execution time (ms)
+timeout    : Maximum execution time in milliseconds (integer)
 
 Returns a generator that transparently and efficiently pages through results.
 """
@@ -112,7 +112,7 @@ offset     : Offset at which the query items should start (integer)
 rows       : Number of records to return (integer)
 sort       : Field used for sorting with direction (string: ex. 'id desc')
 fl         : List of fields to return (comma separated string of fields)
-timeout    : Maximum execution time (ms)
+timeout    : Maximum execution time in milliseconds (integer)
 
 Returns a generator that transparently and efficiently pages through results.
 """
@@ -136,7 +136,7 @@ offset     : Offset at which the query items should start (integer)
 rows       : Number of records to return (integer)
 sort       : Field used for sorting with direction (string: ex. 'id desc')
 fl         : List of fields to return (comma separated string of fields)
-timeout    : Maximum execution time (ms)
+timeout    : Maximum execution time in milliseconds (integer)
 
 Returns a generator that transparently and efficiently pages through results.
 """
@@ -160,7 +160,7 @@ offset     : Offset at which the query items should start (integer)
 rows       : Number of records to return (integer)
 sort       : Field used for sorting with direction (string: ex. 'id desc')
 fl         : List of fields to return (comma separated string of fields)
-timeout    : Maximum execution time (ms)
+timeout    : Maximum execution time in milliseconds (integer)
 
 Returns a generator that transparently and efficiently pages through results.
 """
@@ -184,7 +184,7 @@ offset     : Offset at which the query items should start (integer)
 rows       : Number of records to return (integer)
 sort       : Field used for sorting with direction (string: ex. 'id desc')
 fl         : List of fields to return (comma separated string of fields)
-timeout    : Maximum execution time (ms)
+timeout    : Maximum execution time in milliseconds (integer)
 
 Returns a generator that transparently and efficiently pages through results.
 """
@@ -208,7 +208,7 @@ offset     : Offset at which the query items should start (integer)
 rows       : Number of records to return (integer)
 sort       : Field used for sorting with direction (string: ex. 'id desc')
 fl         : List of fields to return (comma separated string of fields)
-timeout    : Maximum execution time (ms)
+timeout    : Maximum execution time in milliseconds (integer)
 
 Returns a generator that transparently and efficiently pages through results.
 """
@@ -232,7 +232,7 @@ offset     : Offset at which the query items should start (integer)
 rows       : Number of records to return (integer)
 sort       : Field used for sorting with direction (string: ex. 'id desc')
 fl         : List of fields to return (comma separated string of fields)
-timeout    : Maximum execution time (ms)
+timeout    : Maximum execution time in milliseconds (integer)
 
 Returns a generator that transparently and efficiently pages through results.
 """

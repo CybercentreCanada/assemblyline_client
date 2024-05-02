@@ -53,7 +53,7 @@ fl                : List of fields to return (comma separated string of fields)
 offset            : Offset at which the query items should start (integer)
 rows              : Number of records to return (integer)
 sort              : Field used for sorting with direction (string: ex. 'id desc')
-timeout           : Max amount of miliseconds the query will run (integer)
+timeout           : Maximum execution time in milliseconds (integer)
 use_archive       : Also query the archive
 track_total_hits  : Number of hits to track (default: 10k)
 
@@ -77,7 +77,7 @@ fl                : List of fields to return (comma separated string of fields)
 offset            : Offset at which the query items should start (integer)
 rows              : Number of records to return (integer)
 sort              : Field used for sorting with direction (string: ex. 'id desc')
-timeout           : Max amount of miliseconds the query will run (integer)
+timeout           : Maximum execution time in milliseconds (integer)
 use_archive       : Also query the archive
 track_total_hits  : Number of hits to track (default: 10k)
 
@@ -101,7 +101,7 @@ fl                : List of fields to return (comma separated string of fields)
 offset            : Offset at which the query items should start (integer)
 rows              : Number of records to return (integer)
 sort              : Field used for sorting with direction (string: ex. 'id desc')
-timeout           : Max amount of miliseconds the query will run (integer)
+timeout           : Maximum execution time in milliseconds (integer)
 use_archive       : Also query the archive
 track_total_hits  : Number of hits to track (default: 10k)
 
@@ -125,7 +125,7 @@ fl                : List of fields to return (comma separated string of fields)
 offset            : Offset at which the query items should start (integer)
 rows              : Number of records to return (integer)
 sort              : Field used for sorting with direction (string: ex. 'id desc')
-timeout           : Max amount of miliseconds the query will run (integer)
+timeout           : Maximum execution time in milliseconds (integer)
 use_archive       : Also query the archive
 track_total_hits  : Number of hits to track (default: 10k)
 
@@ -149,7 +149,7 @@ fl                : List of fields to return (comma separated string of fields)
 offset            : Offset at which the query items should start (integer)
 rows              : Number of records to return (integer)
 sort              : Field used for sorting with direction (string: ex. 'id desc')
-timeout           : Max amount of miliseconds the query will run (integer)
+timeout           : Maximum execution time in milliseconds (integer)
 use_archive       : Also query the archive
 track_total_hits  : Number of hits to track (default: 10k)
 
@@ -173,7 +173,7 @@ fl                : List of fields to return (comma separated string of fields)
 offset            : Offset at which the query items should start (integer)
 rows              : Number of records to return (integer)
 sort              : Field used for sorting with direction (string: ex. 'id desc')
-timeout           : Max amount of miliseconds the query will run (integer)
+timeout           : Maximum execution time in milliseconds (integer)
 use_archive       : Also query the archive
 track_total_hits  : Number of hits to track (default: 10k)
 
@@ -197,7 +197,7 @@ fl                : List of fields to return (comma separated string of fields)
 offset            : Offset at which the query items should start (integer)
 rows              : Number of records to return (integer)
 sort              : Field used for sorting with direction (string: ex. 'id desc')
-timeout           : Max amount of miliseconds the query will run (integer)
+timeout           : Maximum execution time in milliseconds (integer)
 use_archive       : Also query the archive
 track_total_hits  : Number of hits to track (default: 10k)
 
@@ -221,7 +221,7 @@ fl                : List of fields to return (comma separated string of fields)
 offset            : Offset at which the query items should start (integer)
 rows              : Number of records to return (integer)
 sort              : Field used for sorting with direction (string: ex. 'id desc')
-timeout           : Max amount of miliseconds the query will run (integer)
+timeout           : Maximum execution time in milliseconds (integer)
 use_archive       : Also query the archive
 track_total_hits  : Number of hits to track (default: 10k)
 
@@ -245,7 +245,7 @@ fl                : List of fields to return (comma separated string of fields)
 offset            : Offset at which the query items should start (integer)
 rows              : Number of records to return (integer)
 sort              : Field used for sorting with direction (string: ex. 'id desc')
-timeout           : Max amount of miliseconds the query will run (integer)
+timeout           : Maximum execution time in milliseconds (integer)
 use_archive       : Also query the archive
 track_total_hits  : Number of hits to track (default: 10k)
 
