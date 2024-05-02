@@ -18,6 +18,12 @@ List all fields details for the alert collection.
 """
         return self._do_fields('alert')
 
+    def badlist(self):
+        """\
+List all fields details for the badlist collection.
+"""
+        return self._do_fields('badlist')
+
     def file(self):
         """\
 List all fields details for the file collection.

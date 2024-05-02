@@ -39,6 +39,23 @@ Returns all results.
 """
         return self._do_facet('alert', field, query=query, mincount=mincount, filters=filters, timeout=timeout)
 
+    def badlist(self, field, query=None, mincount=None, filters=None, timeout=None):
+        """\
+List most frequent value for a field in the badlist collection.
+
+Required:
+field   : field to extract the facets from
+
+Optional:
+query    : Initial query to filter the data (default: 'id:*')
+filters  : Additional lucene queries used to filter the data (list of strings)
+mincount : Minimum amount of hits for the value to be returned
+timeout  : Maximum execution time (ms)
+
+Returns all results.
+"""
+        return self._do_facet('badlist', field, query=query, mincount=mincount, filters=filters, timeout=timeout)
+
     def file(self, field, query=None, mincount=None, filters=None, timeout=None):
         """\
 List most frequent value for a field in the file collection.

@@ -38,6 +38,22 @@ Returns statistics about the field.
 """
         return self._do_stats('alert', field, query=query, filters=filters, timeout=timeout)
 
+    def badlist(self, field, query=None, filters=None, timeout=None):
+        """\
+Generates statistics about the distribution of an integer field of the badlist collection.
+
+Required:
+field   : field to create the stats on (only work on number fields)
+
+Optional:
+query    : Initial query to filter the data (default: 'id:*')
+filters  : Additional lucene queries used to filter the data (list of strings)
+timeout  : Maximum execution time (ms)
+
+Returns statistics about the field.
+"""
+        return self._do_stats('badlist', field, query=query, filters=filters, timeout=timeout)
+
     def file(self, field, query=None, filters=None, timeout=None):
         """\
 Generates statistics about the distribution of an integer field of the file collection.
