@@ -22,7 +22,7 @@ class Facet(object):
         path = api_path('search', 'facet', index, field, **kwargs)
         return self._connection.get(path)
 
-    def alert(self, field, query=None, mincount=None, filters=None):
+    def alert(self, field, query=None, mincount=None, filters=None, timeout=None):
         """\
 List most frequent value for a field in the alert collection.
 
@@ -33,12 +33,13 @@ Optional:
 qeury    : Initial query to filter the data (default: 'id:*')
 filters  : Additional lucene queries used to filter the data (list of strings)
 mincount : Minimum amount of hits for the value to be returned
+timeout  : Maximum execution time (ms)
 
 Returns all results.
 """
-        return self._do_facet('alert', field, query=query, mincount=mincount, filters=filters)
+        return self._do_facet('alert', field, query=query, mincount=mincount, filters=filters, timeout=timeout)
 
-    def file(self, field, query=None, mincount=None, filters=None):
+    def file(self, field, query=None, mincount=None, filters=None, timeout=None):
         """\
 List most frequent value for a field in the file collection.
 
@@ -49,12 +50,13 @@ Optional:
 qeury    : Initial query to filter the data (default: 'id:*')
 filters  : Additional lucene queries used to filter the data (list of strings)
 mincount : Minimum amount of hits for the value to be returned
+timeout  : Maximum execution time (ms)
 
 Returns all results.
 """
-        return self._do_facet('file', field, query=query, mincount=mincount, filters=filters)
+        return self._do_facet('file', field, query=query, mincount=mincount, filters=filters, timeout=timeout)
 
-    def heuristic(self, field, query=None, mincount=None, filters=None):
+    def heuristic(self, field, query=None, mincount=None, filters=None, timeout=None):
         """\
 List most frequent value for a field in the heuristic collection.
 
@@ -65,12 +67,13 @@ Optional:
 qeury    : Initial query to filter the data (default: 'id:*')
 filters  : Additional lucene queries used to filter the data (list of strings)
 mincount : Minimum amount of hits for the value to be returned
+timeout  : Maximum execution time (ms)
 
 Returns all results.
 """
-        return self._do_facet('heuristic', field, query=query, mincount=mincount, filters=filters)
+        return self._do_facet('heuristic', field, query=query, mincount=mincount, filters=filters, timeout=timeout)
 
-    def result(self, field, query=None, mincount=None, filters=None):
+    def result(self, field, query=None, mincount=None, filters=None, timeout=None):
         """\
 List most frequent value for a field in the result collection.
 
@@ -81,12 +84,13 @@ Optional:
 qeury    : Initial query to filter the data (default: 'id:*')
 filters  : Additional lucene queries used to filter the data (list of strings)
 mincount : Minimum amount of hits for the value to be returned
+timeout  : Maximum execution time (ms)
 
 Returns all results.
 """
-        return self._do_facet('result', field, query=query, mincount=mincount, filters=filters)
+        return self._do_facet('result', field, query=query, mincount=mincount, filters=filters, timeout=timeout)
 
-    def safelist(self, field, query=None, mincount=None, filters=None):
+    def safelist(self, field, query=None, mincount=None, filters=None, timeout=None):
         """\
 List most frequent value for a field in the safelist collection.
 
@@ -97,12 +101,13 @@ Optional:
 qeury    : Initial query to filter the data (default: 'id:*')
 filters  : Additional lucene queries used to filter the data (list of strings)
 mincount : Minimum amount of hits for the value to be returned
+timeout  : Maximum execution time (ms)
 
 Returns all results.
 """
-        return self._do_facet('safelist', field, query=query, mincount=mincount, filters=filters)
+        return self._do_facet('safelist', field, query=query, mincount=mincount, filters=filters, timeout=timeout)
 
-    def signature(self, field, query=None, mincount=None, filters=None):
+    def signature(self, field, query=None, mincount=None, filters=None, timeout=None):
         """\
 List most frequent value for a field in the signature collection.
 
@@ -113,12 +118,13 @@ Optional:
 qeury    : Initial query to filter the data (default: 'id:*')
 filters  : Additional lucene queries used to filter the data (list of strings)
 mincount : Minimum amount of hits for the value to be returned
+timeout  : Maximum execution time (ms)
 
 Returns all results.
 """
-        return self._do_facet('signature', field, query=query, mincount=mincount, filters=filters)
+        return self._do_facet('signature', field, query=query, mincount=mincount, filters=filters, timeout=timeout)
 
-    def submission(self, field, query=None, mincount=None, filters=None):
+    def submission(self, field, query=None, mincount=None, filters=None, timeout=None):
         """\
 List most frequent value for a field in the submission collection.
 
@@ -129,12 +135,13 @@ Optional:
 qeury    : Initial query to filter the data (default: 'id:*')
 filters  : Additional lucene queries used to filter the data (list of strings)
 mincount : Minimum amount of hits for the value to be returned
+timeout  : Maximum execution time (ms)
 
 Returns all results.
 """
-        return self._do_facet('submission', field, query=query, mincount=mincount, filters=filters)
+        return self._do_facet('submission', field, query=query, mincount=mincount, filters=filters, timeout=timeout)
 
-    def workflow(self, field, query=None, mincount=None, filters=None):
+    def workflow(self, field, query=None, mincount=None, filters=None, timeout=None):
         """\
 List most frequent value for a field in the workflow collection.
 
@@ -145,7 +152,8 @@ Optional:
 qeury    : Initial query to filter the data (default: 'id:*')
 filters  : Additional lucene queries used to filter the data (list of strings)
 mincount : Minimum amount of hits for the value to be returned
+timeout  : Maximum execution time (ms)
 
 Returns all results.
 """
-        return self._do_facet('workflow', field, query=query, mincount=mincount, filters=filters)
+        return self._do_facet('workflow', field, query=query, mincount=mincount, filters=filters, timeout=timeout)

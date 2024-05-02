@@ -24,7 +24,7 @@ class Grouped(object):
         return self._connection.get(path)
 
     def alert(self, field, group_sort=None, limit=None, query=None, filters=None,
-              offset=None, rows=None, sort=None, fl=None):
+              offset=None, rows=None, sort=None, fl=None, timeout=None):
         """\
 Search alert collection and group result to a given field
 
@@ -40,14 +40,15 @@ offset     : Offset at which the query items should start (integer)
 rows       : Number of records to return (integer)
 sort       : Field used for sorting with direction (string: ex. 'id desc')
 fl         : List of fields to return (comma separated string of fields)
+timeout    : Maximum execution time (ms)
 
 Returns a generator that transparently and efficiently pages through results.
 """
         return self._do_grouped('alert', field, group_sort=group_sort, limit=limit, query=query, filters=filters,
-                                offset=offset, rows=rows, sort=sort, fl=fl)
+                                offset=offset, rows=rows, sort=sort, fl=fl, timeout=timeout)
 
     def file(self, field, group_sort=None, limit=None, query=None, filters=None,
-             offset=None, rows=None, sort=None, fl=None):
+             offset=None, rows=None, sort=None, fl=None, timeout=None):
         """\
 Search file collection and group result to a given field
 
@@ -63,14 +64,15 @@ offset     : Offset at which the query items should start (integer)
 rows       : Number of records to return (integer)
 sort       : Field used for sorting with direction (string: ex. 'id desc')
 fl         : List of fields to return (comma separated string of fields)
+timeout    : Maximum execution time (ms)
 
 Returns a generator that transparently and efficiently pages through results.
 """
         return self._do_grouped('file', field, group_sort=group_sort, limit=limit, query=query, filters=filters,
-                                offset=offset, rows=rows, sort=sort, fl=fl)
+                                offset=offset, rows=rows, sort=sort, fl=fl, timeout=timeout)
 
     def heuristic(self, field, group_sort=None, limit=None, query=None, filters=None,
-                  offset=None, rows=None, sort=None, fl=None):
+                  offset=None, rows=None, sort=None, fl=None, timeout=None):
         """\
 Search heuristic collection and group result to a given field
 
@@ -86,14 +88,15 @@ offset     : Offset at which the query items should start (integer)
 rows       : Number of records to return (integer)
 sort       : Field used for sorting with direction (string: ex. 'id desc')
 fl         : List of fields to return (comma separated string of fields)
+timeout    : Maximum execution time (ms)
 
 Returns a generator that transparently and efficiently pages through results.
 """
         return self._do_grouped('heuristic', field, group_sort=group_sort, limit=limit, query=query, filters=filters,
-                                offset=offset, rows=rows, sort=sort, fl=fl)
+                                offset=offset, rows=rows, sort=sort, fl=fl, timeout=timeout)
 
     def result(self, field, group_sort=None, limit=None, query=None, filters=None,
-               offset=None, rows=None, sort=None, fl=None):
+               offset=None, rows=None, sort=None, fl=None, timeout=None):
         """\
 Search result collection and group result to a given field
 
@@ -109,14 +112,15 @@ offset     : Offset at which the query items should start (integer)
 rows       : Number of records to return (integer)
 sort       : Field used for sorting with direction (string: ex. 'id desc')
 fl         : List of fields to return (comma separated string of fields)
+timeout    : Maximum execution time (ms)
 
 Returns a generator that transparently and efficiently pages through results.
 """
         return self._do_grouped('result', field, group_sort=group_sort, limit=limit, query=query, filters=filters,
-                                offset=offset, rows=rows, sort=sort, fl=fl)
+                                offset=offset, rows=rows, sort=sort, fl=fl, timeout=timeout)
 
     def safelist(self, field, group_sort=None, limit=None, query=None, filters=None,
-                 offset=None, rows=None, sort=None, fl=None):
+                 offset=None, rows=None, sort=None, fl=None, timeout=None):
         """\
 Search safelist collection and group result to a given field
 
@@ -132,14 +136,15 @@ offset     : Offset at which the query items should start (integer)
 rows       : Number of records to return (integer)
 sort       : Field used for sorting with direction (string: ex. 'id desc')
 fl         : List of fields to return (comma separated string of fields)
+timeout    : Maximum execution time (ms)
 
 Returns a generator that transparently and efficiently pages through results.
 """
         return self._do_grouped('safelist', field, group_sort=group_sort, limit=limit, query=query, filters=filters,
-                                offset=offset, rows=rows, sort=sort, fl=fl)
+                                offset=offset, rows=rows, sort=sort, fl=fl, timeout=timeout)
 
     def signature(self, field, group_sort=None, limit=None, query=None, filters=None,
-                  offset=None, rows=None, sort=None, fl=None):
+                  offset=None, rows=None, sort=None, fl=None, timeout=None):
         """\
 Search signature collection and group result to a given field
 
@@ -155,14 +160,15 @@ offset     : Offset at which the query items should start (integer)
 rows       : Number of records to return (integer)
 sort       : Field used for sorting with direction (string: ex. 'id desc')
 fl         : List of fields to return (comma separated string of fields)
+timeout    : Maximum execution time (ms)
 
 Returns a generator that transparently and efficiently pages through results.
 """
         return self._do_grouped('signature', field, group_sort=group_sort, limit=limit, query=query, filters=filters,
-                                offset=offset, rows=rows, sort=sort, fl=fl)
+                                offset=offset, rows=rows, sort=sort, fl=fl, timeout=timeout)
 
     def submission(self, field, group_sort=None, limit=None, query=None, filters=None,
-                   offset=None, rows=None, sort=None, fl=None):
+                   offset=None, rows=None, sort=None, fl=None, timeout=None):
         """\
 Search submission collection and group result to a given field
 
@@ -178,14 +184,15 @@ offset     : Offset at which the query items should start (integer)
 rows       : Number of records to return (integer)
 sort       : Field used for sorting with direction (string: ex. 'id desc')
 fl         : List of fields to return (comma separated string of fields)
+timeout    : Maximum execution time (ms)
 
 Returns a generator that transparently and efficiently pages through results.
 """
         return self._do_grouped('submission', field, group_sort=group_sort, limit=limit, query=query, filters=filters,
-                                offset=offset, rows=rows, sort=sort, fl=fl)
+                                offset=offset, rows=rows, sort=sort, fl=fl, timeout=timeout)
 
     def workflow(self, field, group_sort=None, limit=None, query=None, filters=None,
-                 offset=None, rows=None, sort=None, fl=None):
+                 offset=None, rows=None, sort=None, fl=None, timeout=None):
         """\
 Search workflow collection and group result to a given field
 
@@ -201,8 +208,9 @@ offset     : Offset at which the query items should start (integer)
 rows       : Number of records to return (integer)
 sort       : Field used for sorting with direction (string: ex. 'id desc')
 fl         : List of fields to return (comma separated string of fields)
+timeout    : Maximum execution time (ms)
 
 Returns a generator that transparently and efficiently pages through results.
 """
         return self._do_grouped('workflow', field, group_sort=group_sort, limit=limit, query=query, filters=filters,
-                                offset=offset, rows=rows, sort=sort, fl=fl)
+                                offset=offset, rows=rows, sort=sort, fl=fl, timeout=timeout)

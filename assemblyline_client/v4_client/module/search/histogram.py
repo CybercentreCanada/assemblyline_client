@@ -22,7 +22,7 @@ class Histogram(object):
         path = api_path('search', 'histogram', index, field, **kwargs)
         return self._connection.get(path)
 
-    def alert(self, field, query=None, mincount=None, filters=None, start=None, end=None, gap=None):
+    def alert(self, field, query=None, mincount=None, filters=None, start=None, end=None, gap=None, timeout=None):
         """\
 Create an histogram of data from a given field in the alert index where the frequency
 of the data is split between a given gap size.
@@ -37,13 +37,14 @@ mincount : Minimum amount of hits for the value to be returned
 start    : Beginning of the histogram range (Default: now-1d or 0)
 end      : End of the histogram range (Default: now or 1000)
 gap      : Interval in between each histogram points (Default: 1h or 100)
+timeout  : Maximum execution time (ms)
 
 Returns all results.
 """
         return self._do_histogram('alert', field, query=query, mincount=mincount, filters=filters,
-                                  start=start, end=end, gap=gap)
+                                  start=start, end=end, gap=gap, timeout=timeout)
 
-    def file(self, field, query=None, mincount=None, filters=None, start=None, end=None, gap=None):
+    def file(self, field, query=None, mincount=None, filters=None, start=None, end=None, gap=None, timeout=None):
         """\
 Create an histogram of data from a given field in the file index where the frequency
 of the data is split between a given gap size.
@@ -58,13 +59,14 @@ mincount : Minimum amount of hits for the value to be returned
 start    : Beginning of the histogram range (Default: now-1d or 0)
 end      : End of the histogram range (Default: now or 1000)
 gap      : Interval in between each histogram points (Default: 1h or 100)
+timeout  : Maximum execution time (ms)
 
 Returns all results.
 """
         return self._do_histogram('file', field, query=query, mincount=mincount, filters=filters,
-                                  start=start, end=end, gap=gap)
+                                  start=start, end=end, gap=gap, timeout=timeout)
 
-    def result(self, field, query=None, mincount=None, filters=None, start=None, end=None, gap=None):
+    def result(self, field, query=None, mincount=None, filters=None, start=None, end=None, gap=None, timeout=None):
         """\
 Create an histogram of data from a given field in the result index where the frequency
 of the data is split between a given gap size.
@@ -79,13 +81,14 @@ mincount : Minimum amount of hits for the value to be returned
 start    : Beginning of the histogram range (Default: now-1d or 0)
 end      : End of the histogram range (Default: now or 1000)
 gap      : Interval in between each histogram points (Default: 1h or 100)
+timeout  : Maximum execution time (ms)
 
 Returns all results.
 """
         return self._do_histogram('result', field, query=query, mincount=mincount, filters=filters,
-                                  start=start, end=end, gap=gap)
+                                  start=start, end=end, gap=gap, timeout=timeout)
 
-    def safelist(self, field, query=None, mincount=None, filters=None, start=None, end=None, gap=None):
+    def safelist(self, field, query=None, mincount=None, filters=None, start=None, end=None, gap=None, timeout=None):
         """\
 Create an histogram of data from a given field in the safelist index where the frequency
 of the data is split between a given gap size.
@@ -100,13 +103,14 @@ mincount : Minimum amount of hits for the value to be returned
 start    : Beginning of the histogram range (Default: now-1d or 0)
 end      : End of the histogram range (Default: now or 1000)
 gap      : Interval in between each histogram points (Default: 1h or 100)
+timeout  : Maximum execution time (ms)
 
 Returns all results.
 """
         return self._do_histogram('safelist', field, query=query, mincount=mincount, filters=filters,
-                                  start=start, end=end, gap=gap)
+                                  start=start, end=end, gap=gap, timeout=timeout)
 
-    def signature(self, field, query=None, mincount=None, filters=None, start=None, end=None, gap=None):
+    def signature(self, field, query=None, mincount=None, filters=None, start=None, end=None, gap=None, timeout=None):
         """\
 Create an histogram of data from a given field in the signature index where the frequency
 of the data is split between a given gap size.
@@ -121,13 +125,14 @@ mincount : Minimum amount of hits for the value to be returned
 start    : Beginning of the histogram range (Default: now-1d or 0)
 end      : End of the histogram range (Default: now or 1000)
 gap      : Interval in between each histogram points (Default: 1h or 100)
+timeout  : Maximum execution time (ms)
 
 Returns all results.
 """
         return self._do_histogram('signature', field, query=query, mincount=mincount, filters=filters,
-                                  start=start, end=end, gap=gap)
+                                  start=start, end=end, gap=gap, timeout=timeout)
 
-    def submission(self, field, query=None, mincount=None, filters=None, start=None, end=None, gap=None):
+    def submission(self, field, query=None, mincount=None, filters=None, start=None, end=None, gap=None, timeout=None):
         """\
 Create an histogram of data from a given field in the submission index where the frequency
 of the data is split between a given gap size.
@@ -142,13 +147,14 @@ mincount : Minimum amount of hits for the value to be returned
 start    : Beginning of the histogram range (Default: now-1d or 0)
 end      : End of the histogram range (Default: now or 1000)
 gap      : Interval in between each histogram points (Default: 1h or 100)
+timeout  : Maximum execution time (ms)
 
 Returns all results.
 """
         return self._do_histogram('submission', field, query=query, mincount=mincount, filters=filters,
-                                  start=start, end=end, gap=gap)
+                                  start=start, end=end, gap=gap, timeout=timeout)
 
-    def workflow(self, field, query=None, mincount=None, filters=None, start=None, end=None, gap=None):
+    def workflow(self, field, query=None, mincount=None, filters=None, start=None, end=None, gap=None, timeout=None):
         """\
 Create an histogram of data from a given field in the workflow index where the frequency
 of the data is split between a given gap size.
@@ -163,8 +169,9 @@ mincount : Minimum amount of hits for the value to be returned
 start    : Beginning of the histogram range (Default: now-1d or 0)
 end      : End of the histogram range (Default: now or 1000)
 gap      : Interval in between each histogram points (Default: 1h or 100)
+timeout  : Maximum execution time (ms)
 
 Returns all results.
 """
         return self._do_histogram('workflow', field, query=query, mincount=mincount, filters=filters,
-                                  start=start, end=end, gap=gap)
+                                  start=start, end=end, gap=gap, timeout=timeout)
