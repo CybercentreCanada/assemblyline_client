@@ -156,8 +156,10 @@ def test_delete_from_safelist(datastore, client):
 
 
 def test_enable_disable_safelist(datastore, client):
-    safelist_id = random_id_from_collection(datastore, 'safelist')
-    old_safelist = datastore.safelist.get(safelist_id, as_obj=False)
+    old_safelist = None
+    while not old_safelist:
+        safelist_id = random_id_from_collection(datastore, 'safelist')
+        old_safelist = datastore.safelist.get(safelist_id, as_obj=False)
 
     res = client.safelist.set_enabled(safelist_id, not old_safelist["enabled"])
     assert res['success']

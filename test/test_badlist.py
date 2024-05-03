@@ -176,8 +176,10 @@ def test_delete_from_badlist(datastore, client):
 
 
 def test_enable_disable_badlist(datastore, client):
-    badlist_id = random_id_from_collection(datastore, 'badlist')
-    old_badlist = datastore.badlist.get(badlist_id, as_obj=False)
+    old_badlist = None
+    while not old_badlist:
+        badlist_id = random_id_from_collection(datastore, 'badlist')
+        old_badlist = datastore.badlist.get(badlist_id, as_obj=False)
 
     res = client.badlist.set_enabled(badlist_id, not old_badlist["enabled"])
     assert res['success']

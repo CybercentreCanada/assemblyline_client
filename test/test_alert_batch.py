@@ -63,7 +63,11 @@ def test_remove_label(datastore, client):
 
 
 def test_status(datastore, client):
-    alert_id = random_id_from_collection(datastore, 'alert')
+    has_labels = False
+    while not has_labels:
+        alert_id = random_id_from_collection(datastore, 'alert')
+        alert = datastore.alert.get(alert_id)
+        has_labels = len(alert.label) != 0
 
     res = client.alert.batch.status('alert_id:{}'.format(alert_id), "ASSESS", fq_list=["id:*", "label:*"])
     assert res['success'] == 1
