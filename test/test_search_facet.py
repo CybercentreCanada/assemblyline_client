@@ -18,6 +18,14 @@ def test_alert(datastore, client):
         assert v >= 1
 
 
+def test_badlist(datastore, client):
+    file_id = random_id_from_collection(datastore, 'badlist')
+    res = client.search.facet.badlist('type', "id:{}".format(file_id), mincount=1)
+    assert isinstance(res, dict)
+    for v in res.values():
+        assert v >= 1
+
+
 def test_file(datastore, client):
     file_id = random_id_from_collection(datastore, 'file')
     res = client.search.facet.file('type', "id:{}".format(file_id), mincount=1)

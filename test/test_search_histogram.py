@@ -7,6 +7,13 @@ def test_alert(datastore, client):
         assert v >= 1
 
 
+def test_badlist(datastore, client):
+    res = client.search.histogram.badlist('added', "id:*", mincount=1, start="now-6h", end="now+6h")
+    assert isinstance(res, dict)
+    for v in res.values():
+        assert v >= 1
+
+
 def test_file(datastore, client):
     res = client.search.histogram.file('seen.last', "id:*", mincount=1, start="now-6h", end="now+6h")
     assert isinstance(res, dict)

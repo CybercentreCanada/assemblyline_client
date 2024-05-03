@@ -20,6 +20,16 @@ def test_alert(datastore, client):
     assert res['total'] > 1
 
 
+def test_badlist(datastore, client):
+    badlist_id = random_id_from_collection(datastore, 'badlist')
+    res = client.search.badlist("id:{}".format(badlist_id), fl="id")
+    assert res['total'] == 1
+    assert res['items'][0]["id"] == badlist_id
+
+    res = client.search.badlist("id:*", rows=5)
+    assert res['total'] > 1
+
+
 def test_file(datastore, client):
     file_id = random_id_from_collection(datastore, 'file')
     res = client.search.file("id:{}".format(file_id), fl="id")

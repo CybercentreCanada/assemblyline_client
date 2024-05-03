@@ -11,6 +11,17 @@ def test_alert(datastore, client):
         assert 'type' in v
 
 
+def test_badlist(datastore, client):
+    res = client.search.fields.badlist()
+    assert isinstance(res, dict)
+    for v in res.values():
+        assert 'default' in v
+        assert 'indexed' in v
+        assert 'list' in v
+        assert 'stored' in v
+        assert 'type' in v
+
+
 def test_file(datastore, client):
     res = client.search.fields.file()
     assert isinstance(res, dict)
