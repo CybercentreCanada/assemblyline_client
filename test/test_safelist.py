@@ -149,17 +149,19 @@ def test_add_multiple_to_safelist(datastore, client):
 
 
 def test_delete_from_safelist(datastore, client):
-    safelist_id = random_id_from_collection(datastore, 'safelist')
-    res = client.safelist.delete(safelist_id)
-    assert res['success']
-    assert datastore.safelist.get(safelist_id, as_obj=False) is None
+    try:
+        safelist_id = random_id_from_collection(datastore, 'safelist')
+        res = client.safelist.delete(safelist_id)
+        assert res['success']
+        assert datastore.safelist.get(safelist_id, as_obj=False) is None
+    finally:
+        # Make sure searches are ready for next tests
+        datastore.safelist.commit()
 
 
 def test_enable_disable_safelist(datastore, client):
-    old_safelist = None
-    while not old_safelist:
-        safelist_id = random_id_from_collection(datastore, 'safelist')
-        old_safelist = datastore.safelist.get(safelist_id, as_obj=False)
+    safelist_id = random_id_from_collection(datastore, 'safelist')
+    old_safelist = datastore.safelist.get(safelist_id, as_obj=False)
 
     res = client.safelist.set_enabled(safelist_id, not old_safelist["enabled"])
     assert res['success']
