@@ -206,7 +206,20 @@ class Connection(object):
 
                             raise ClientError(response.content, response.status_code)
 
-                    elif response.status_code not in (502, 503, 504):
+                    elif response.status_code == 503:
+                        try:
+                            resp_data = response.json()
+                            if 'quota' in resp_data["api_error_message"] and 'daily' in resp_data["api_error_message"]:
+                                raise ClientError(resp_data["api_error_message"], response.status_code,
+                                                  api_version=resp_data["api_server_version"],
+                                                  api_response=resp_data["api_response"])
+                        except Exception as e:
+                            if isinstance(e, ClientError):
+                                raise
+
+                            raise ClientError(response.content, response.status_code)
+
+                    elif response.status_code not in (502, 504):
                         try:
                             resp_data = response.json()
                             raise ClientError(resp_data["api_error_message"], response.status_code,
