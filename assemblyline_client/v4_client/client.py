@@ -1,6 +1,6 @@
 
 from assemblyline_client.common.classification import Classification
-from assemblyline_client.v4_client.common.utils import walk_api_path
+from assemblyline_client.v4_client.common.utils import ClientError, walk_api_path
 from assemblyline_client.v4_client.module.alert import Alert
 from assemblyline_client.v4_client.module.badlist import Badlist
 from assemblyline_client.v4_client.module.bundle import Bundle
@@ -60,9 +60,12 @@ class Client(object):
             '\n'.join(['\n'.join(p + ['']) for p in paths])
 
     def _load_quotas(self):
-        resp = self.user.quotas(self._connection.current_user)
-        self._connection.remaining_api_quota = resp['daily_api']
-        self._connection.remaining_submission_quota = resp['daily_submission']
+        try:
+            resp = self.user.quotas(self._connection.current_user)
+            self._connection.remaining_api_quota = resp['daily_api']
+            self._connection.remaining_submission_quota = resp['daily_submission']
+        except ClientError:
+            pass
 
     @property
     def current_user(self):
