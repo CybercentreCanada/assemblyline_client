@@ -169,10 +169,14 @@ def test_add_multiple_to_badlist(datastore, client):
 
 
 def test_delete_from_badlist(datastore, client):
-    badlist_id = random_id_from_collection(datastore, 'badlist')
-    res = client.badlist.delete(badlist_id)
-    assert res['success']
-    assert datastore.badlist.get(badlist_id, as_obj=False) is None
+    try:
+        badlist_id = random_id_from_collection(datastore, 'badlist')
+        res = client.badlist.delete(badlist_id)
+        assert res['success']
+        assert datastore.badlist.get(badlist_id, as_obj=False) is None
+    finally:
+        # Make sure searches are ready for next tests
+        datastore.badlist.commit()
 
 
 def test_enable_disable_badlist(datastore, client):

@@ -7,6 +7,13 @@ def test_alert(datastore, client):
         assert isinstance(v, int) or isinstance(v, float)
 
 
+def test_badlist(datastore, client):
+    res = client.search.stats.badlist('file.size', query="id:*")
+    assert list(res.keys()) == ['avg', 'count', 'max', 'min', 'sum']
+    for v in res.values():
+        assert isinstance(v, int) or isinstance(v, float)
+
+
 def test_file(datastore, client):
     res = client.search.stats.file('seen.count', query="id:*")
     assert list(res.keys()) == ['avg', 'count', 'max', 'min', 'sum']

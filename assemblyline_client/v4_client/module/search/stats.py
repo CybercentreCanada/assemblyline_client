@@ -22,7 +22,7 @@ class Stats(object):
         path = api_path('search', 'stats', index, field, **kwargs)
         return self._connection.get(path)
 
-    def alert(self, field, query=None, filters=None):
+    def alert(self, field, query=None, filters=None, timeout=None):
         """\
 Generates statistics about the distribution of an integer field of the alert collection.
 
@@ -32,12 +32,29 @@ field   : field to create the stats on (only work on number fields)
 Optional:
 query    : Initial query to filter the data (default: 'id:*')
 filters  : Additional lucene queries used to filter the data (list of strings)
+timeout  : Maximum execution time in milliseconds (integer)
 
 Returns statistics about the field.
 """
-        return self._do_stats('alert', field, query=query, filters=filters)
+        return self._do_stats('alert', field, query=query, filters=filters, timeout=timeout)
 
-    def file(self, field, query=None, filters=None):
+    def badlist(self, field, query=None, filters=None, timeout=None):
+        """\
+Generates statistics about the distribution of an integer field of the badlist collection.
+
+Required:
+field   : field to create the stats on (only work on number fields)
+
+Optional:
+query    : Initial query to filter the data (default: 'id:*')
+filters  : Additional lucene queries used to filter the data (list of strings)
+timeout  : Maximum execution time in milliseconds (integer)
+
+Returns statistics about the field.
+"""
+        return self._do_stats('badlist', field, query=query, filters=filters, timeout=timeout)
+
+    def file(self, field, query=None, filters=None, timeout=None):
         """\
 Generates statistics about the distribution of an integer field of the file collection.
 
@@ -47,12 +64,13 @@ field   : field to create the stats on (only work on number fields)
 Optional:
 query    : Initial query to filter the data (default: 'id:*')
 filters  : Additional lucene queries used to filter the data (list of strings)
+timeout  : Maximum execution time in milliseconds (integer)
 
 Returns statistics about the field.
 """
-        return self._do_stats('file', field, query=query, filters=filters)
+        return self._do_stats('file', field, query=query, filters=filters, timeout=timeout)
 
-    def result(self, field, query=None, filters=None):
+    def result(self, field, query=None, filters=None, timeout=None):
         """\
 Generates statistics about the distribution of an integer field of the result collection.
 
@@ -62,12 +80,13 @@ field   : field to create the stats on (only work on number fields)
 Optional:
 query    : Initial query to filter the data (default: 'id:*')
 filters  : Additional lucene queries used to filter the data (list of strings)
+timeout  : Maximum execution time in milliseconds (integer)
 
 Returns statistics about the field.
 """
-        return self._do_stats('result', field, query=query, filters=filters)
+        return self._do_stats('result', field, query=query, filters=filters, timeout=timeout)
 
-    def safelist(self, field, query=None, filters=None):
+    def safelist(self, field, query=None, filters=None, timeout=None):
         """\
 Generates statistics about the distribution of an integer field of the safelist collection.
 
@@ -77,12 +96,13 @@ field   : field to create the stats on (only work on number fields)
 Optional:
 query    : Initial query to filter the data (default: 'id:*')
 filters  : Additional lucene queries used to filter the data (list of strings)
+timeout  : Maximum execution time in milliseconds (integer)
 
 Returns statistics about the field.
 """
-        return self._do_stats('safelist', field, query=query, filters=filters)
+        return self._do_stats('safelist', field, query=query, filters=filters, timeout=timeout)
 
-    def signature(self, field, query=None, filters=None):
+    def signature(self, field, query=None, filters=None, timeout=None):
         """\
 Generates statistics about the distribution of an integer field of the signature collection.
 
@@ -92,12 +112,13 @@ field   : field to create the stats on (only work on number fields)
 Optional:
 query    : Initial query to filter the data (default: 'id:*')
 filters  : Additional lucene queries used to filter the data (list of strings)
+timeout  : Maximum execution time in milliseconds (integer)
 
 Returns statistics about the field.
 """
-        return self._do_stats('signature', field, query=query, filters=filters)
+        return self._do_stats('signature', field, query=query, filters=filters, timeout=timeout)
 
-    def submission(self, field, query=None, filters=None):
+    def submission(self, field, query=None, filters=None, timeout=None):
         """\
 Generates statistics about the distribution of an integer field of the submission collection.
 
@@ -107,12 +128,13 @@ field   : field to create the stats on (only work on number fields)
 Optional:
 query    : Initial query to filter the data (default: 'id:*')
 filters  : Additional lucene queries used to filter the data (list of strings)
+timeout  : Maximum execution time in milliseconds (integer)
 
 Returns statistics about the field.
 """
-        return self._do_stats('submission', field, query=query, filters=filters)
+        return self._do_stats('submission', field, query=query, filters=filters, timeout=timeout)
 
-    def workflow(self, field, query=None, filters=None):
+    def workflow(self, field, query=None, filters=None, timeout=None):
         """\
 Generates statistics about the distribution of an integer field of the workflow collection.
 
@@ -122,7 +144,8 @@ field   : field to create the stats on (only work on number fields)
 Optional:
 query    : Initial query to filter the data (default: 'id:*')
 filters  : Additional lucene queries used to filter the data (list of strings)
+timeout  : Maximum execution time in milliseconds (integer)
 
 Returns statistics about the field.
 """
-        return self._do_stats('workflow', field, query=query, filters=filters)
+        return self._do_stats('workflow', field, query=query, filters=filters, timeout=timeout)

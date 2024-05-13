@@ -13,6 +13,12 @@ def test_alert(datastore, client):
     _compare_values(res, sorted(list(datastore.alert.stream_search("id:*", as_obj=False)), key=lambda k: k['id']))
 
 
+def test_badlist(datastore, client):
+    res = sorted([x for x in client.search.stream.badlist("id:*")], key=lambda k: k['id'])
+    assert len(res) > 0
+    _compare_values(res, sorted(list(datastore.badlist.stream_search("id:*", as_obj=False)), key=lambda k: k['id']))
+
+
 def test_file(datastore, client):
     res = sorted([x for x in client.search.stream.file("id:*")], key=lambda k: k['id'])
     assert len(res) > 0
