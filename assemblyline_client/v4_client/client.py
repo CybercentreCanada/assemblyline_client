@@ -68,16 +68,14 @@ class Client(object):
     def current_user(self):
         return self._connection.current_user
 
-    @property
-    def remaining_api_quota(self):
+    def get_remaining_api_quota(self):
         if self._connection.remaining_api_quota is not None:
             return self._connection.remaining_api_quota
 
         self._load_quotas()
         return self._connection.remaining_api_quota
 
-    @property
-    def remaining_submission_quota(self):
+    def get_remaining_submission_quota(self):
         if self._connection.remaining_submission_quota is not None:
             return self._connection.remaining_submission_quota
 
