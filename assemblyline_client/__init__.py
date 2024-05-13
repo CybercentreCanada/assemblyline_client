@@ -1,14 +1,13 @@
 import json
-from base64 import b64encode
-
 import requests
 import time
 import warnings
 
-from assemblyline_client.v4_client.common.utils import ClientError
+from base64 import b64encode
 
 from assemblyline_client.v3_client import Client as Client3
 from assemblyline_client.v4_client.client import Client as Client4
+from assemblyline_client.v4_client.common.utils import ClientError
 
 try:
     from importlib import metadata
@@ -55,6 +54,9 @@ class Connection(object):
         self.silence_warnings = silence_warnings
         self.verify = verify
         self.default_timeout = timeout
+        self.remaining_api_quota = None
+        self.remaining_submission_quota = None
+        self.current_user = None
 
         session = requests.Session()
 
@@ -105,16 +107,19 @@ class Connection(object):
 
         if self.is_v4:
             if self.apikey and len(self.apikey) == 2:
+                self.current_user = self.apikey[0]
                 auth = {
                     'user': self.apikey[0],
                     'apikey': self.apikey[1]
                 }
             elif self.auth and len(self.auth) == 2:
+                self.current_user = self.auth[0]
                 auth = {
                     'user': self.auth[0],
                     'password': self.auth[1]
                 }
             elif self.oauth and len(self.oauth) == 2:
+                self.current_user = self.oauth[0]
                 auth = {
                     "oauth_provider": self.oauth[0],
                     "oauth_token": self.oauth[1]
@@ -130,6 +135,7 @@ class Connection(object):
                         key = key.decode("UTF-8")
                 else:
                     key = self.apikey[1]
+                self.current_user = self.apikey[0]
                 auth = {
                     'user': self.apikey[0],
                     'apikey': key
@@ -141,6 +147,7 @@ class Connection(object):
                         pw = pw.decode("UTF-8")
                 else:
                     pw = self.auth[1]
+                self.current_user = self.auth[0]
                 auth = {
                     'user': self.auth[0],
                     'password': pw
@@ -185,6 +192,15 @@ class Connection(object):
                     response = func('/'.join((self.server, path)), **kw)
                     if 'XSRF-TOKEN' in response.cookies:
                         self.session.headers.update({'X-XSRF-TOKEN': response.cookies['XSRF-TOKEN']})
+
+                    # Load remaining quotas if present
+                    apiQuota = response.headers.get('X-Remaining-Quota-Api')
+                    if apiQuota is not None:
+                        self.remaining_api_quota = int(apiQuota)
+                    submissionQuota = response.headers.get('X-Remaining-Quota-Submission')
+                    if submissionQuota is not None:
+                        self.remaining_submission_quota = int(submissionQuota)
+
                     if response.ok:
                         return process(response)
                     elif response.status_code == 401:
@@ -206,7 +222,20 @@ class Connection(object):
 
                             raise ClientError(response.content, response.status_code)
 
-                    elif response.status_code not in (502, 503, 504):
+                    elif response.status_code == 503:
+                        try:
+                            resp_data = response.json()
+                            if 'quota' in resp_data["api_error_message"] and 'daily' in resp_data["api_error_message"]:
+                                raise ClientError(resp_data["api_error_message"], response.status_code,
+                                                  api_version=resp_data["api_server_version"],
+                                                  api_response=resp_data["api_response"])
+                        except Exception as e:
+                            if isinstance(e, ClientError):
+                                raise
+
+                            raise ClientError(response.content, response.status_code)
+
+                    elif response.status_code not in (502, 504):
                         try:
                             resp_data = response.json()
                             raise ClientError(resp_data["api_error_message"], response.status_code,

@@ -83,6 +83,20 @@ Throws a Client exception if the user does not exist.
         return self._connection.post(api_path('user', 'favorites', username), json=favorites)
 
 
+class Quotas(object):
+    def __init__(self, connection):
+        self._connection = connection
+
+    def __call__(self, username):
+        """\
+Get the current user's settings.
+
+Required:
+username    : User key (string)
+"""
+        return self._connection.get(api_path('user', 'quotas', username))
+
+
 class Settings(object):
     def __init__(self, connection):
         self._connection = connection
@@ -114,6 +128,7 @@ class User(object):
         self._connection = connection
         self.avatar = Avatar(connection)
         self.favorites = Favorites(connection)
+        self.quotas = Quotas(connection)
         self.settings = Settings(connection)
 
     def __call__(self, username):

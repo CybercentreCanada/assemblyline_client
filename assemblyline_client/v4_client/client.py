@@ -59,6 +59,31 @@ class Client(object):
         self.__doc__ = 'Client provides the following methods:\n\n' + \
             '\n'.join(['\n'.join(p + ['']) for p in paths])
 
+    def _load_quotas(self):
+        resp = self.user.quotas(self._connection.current_user)
+        self._connection.remaining_api_quota = resp['daily_api']
+        self._connection.remaining_submission_quota = resp['daily_submission']
+
+    @property
+    def current_user(self):
+        return self._connection.current_user
+
+    @property
+    def remaining_api_quota(self):
+        if self._connection.remaining_api_quota is not None:
+            return self._connection.remaining_api_quota
+
+        self._load_quotas()
+        return self._connection.remaining_api_quota
+
+    @property
+    def remaining_submission_quota(self):
+        if self._connection.remaining_submission_quota is not None:
+            return self._connection.remaining_submission_quota
+
+        self._load_quotas()
+        return self._connection.remaining_submission_quota
+
     def get_classification_engine(self):
         definition = self.help.classification_definition(original=True)
         return Classification(definition)
