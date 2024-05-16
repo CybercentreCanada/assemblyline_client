@@ -100,7 +100,7 @@ def test_filestore(datastore, filestore, client):
     # Shouldn't affect the related document in the datastore
     assert filestore.exists(file_id)
     assert client.file.filestore(file_id)['success']
-    assert not filestore.exists(file_id) and datastore.file.exist(file_id)
+    assert not filestore.exists(file_id) and datastore.file.exists(file_id)
 
 
 # noinspection PyUnusedLocal
