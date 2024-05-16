@@ -52,6 +52,17 @@ Throws a Client exception if the file does not exist.
             return self._connection.download(path, stream_output(output))
         return self._connection.download(path, raw_output)
 
+    def filestore(self, sha256):
+        """\
+Delete a file from the filestore without deleting the file record
+
+Required:
+sha256     : A resource locator for the file (sha256)
+
+Throws a Client exception if the file does not exist or if you don't have the rights to delete the file.
+"""
+        return self._connection.delete(api_path_by_module(self, sha256))
+
     def hex(self, sha256, bytes_only=False, length=None):
         """\
 Return an hexadecimal representation of the file.
