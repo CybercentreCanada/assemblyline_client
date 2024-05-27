@@ -93,13 +93,13 @@ def test_download_to_file_handle(datastore, client):
         os.unlink(download_output)
 
 # noinspection PyUnusedLocal
-def test_filestore(datastore, filestore, client):
+def test_delete_from_filestore(datastore, filestore, client):
     file_id = random_id_from_collection(datastore, 'file')
 
     # Delete file from filestore only
     # Shouldn't affect the related document in the datastore
     assert filestore.exists(file_id)
-    assert client.file.filestore(file_id)['success']
+    assert client.file.delete_from_filestore(file_id)['success']
     assert not filestore.exists(file_id) and datastore.file.exists(file_id)
 
 
