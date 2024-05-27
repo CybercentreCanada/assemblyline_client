@@ -1,5 +1,5 @@
 from assemblyline_client.v4_client.common.utils import api_path_by_module, get_function_kwargs, \
-    stream_output, raw_output
+    stream_output, raw_output, api_path
 
 
 class File(object):
@@ -51,6 +51,17 @@ Throws a Client exception if the file does not exist.
         if output:
             return self._connection.download(path, stream_output(output))
         return self._connection.download(path, raw_output)
+
+    def delete_from_filestore(self, sha256):
+        """\
+Delete a file from the filestore without deleting the file record
+
+Required:
+sha256     : A resource locator for the file (sha256)
+
+Throws a Client exception if the file does not exist or if you don't have the rights to delete the file.
+"""
+        return self._connection.delete(api_path('file/filestore', sha256))
 
     def hex(self, sha256, bytes_only=False, length=None):
         """\
