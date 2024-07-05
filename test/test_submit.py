@@ -104,9 +104,9 @@ def test_submit_dynamic(datastore, client):
     assert res['sid'] is not None
     assert res == datastore.submission.get(res['sid'], as_obj=False)
     assert 'Dynamic Analysis' in res['params']['services']['selected']
-    for k in res['params']:
+    for k, v in submission_data['params'].items():
         if k not in ['submitter', 'services', 'description', 'quota_item']:
-            assert res['params'][k] == submission_data['params'][k]
+            assert res['params'].get(k) == v
 
 
 def test_resubmit(datastore, client):
@@ -117,6 +117,6 @@ def test_resubmit(datastore, client):
     assert res is not None
     assert res['sid'] is not None
     assert res == datastore.submission.get(res['sid'], as_obj=False)
-    for k in res['params']:
+    for k, v in submission_data['params'].items():
         if k not in ['submitter', 'description', 'quota_item']:
-            assert res['params'][k] == submission_data['params'][k]
+            assert res['params'].get(k) == v
