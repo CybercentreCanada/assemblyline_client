@@ -46,7 +46,7 @@ If content is provided, the path is used as metadata only.
                     else:
                         raise ClientError('Could not guess the file name, please provide an fname parameter', 400)
                 fh.seek(0)
-                files = {'bin': (fname, fh)}
+                files = {'bin': fh}
                 request = {
                     'name': fname,
                 }
