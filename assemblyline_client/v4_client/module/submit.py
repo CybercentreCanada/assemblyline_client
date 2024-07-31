@@ -10,7 +10,7 @@ class Submit(object):
     def __init__(self, connection):
         self._connection = connection
 
-    def __call__(self, fh=None, path=None, content=None, url=None, sha256=None, fname=None, params=None, metadata=None, profile_name=None):
+    def __call__(self, fh=None, path=None, content=None, url=None, sha256=None, fname=None, params=None, metadata=None, submission_profile=None):
         """\
 Submit a file to be dispatched.
 
@@ -25,7 +25,7 @@ Optional
 fname       : Name of the file to scan
 metadata    : Metadata to include with submission. (dict)
 params      : Additional submission parameters. (dict)
-profile_name     : Submission profile name
+submission_profile     : Submission profile name
 
 If content is provided, the path is used as metadata only.
 """
@@ -74,8 +74,8 @@ If content is provided, the path is used as metadata only.
             if metadata:
                 request['metadata'] = metadata
 
-            if profile_name:
-                request['profile_name'] = profile_name
+            if submission_profile:
+                request['submission_profile'] = submission_profile
 
             if files:
                 data = {'json': dumps(request)}
