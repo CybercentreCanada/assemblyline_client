@@ -1,6 +1,6 @@
 from json import dumps
 
-from assemblyline_client.v4_client.common.utils import api_path, get_function_kwargs
+from assemblyline_client.v4_client.common.utils import api_path
 
 
 class System(object):
@@ -81,7 +81,9 @@ Get the current metadata suggestions
 Optional:
 key: Get only the suggestions values for the given key
 """
-        kw = get_function_kwargs('key')
+        kw = {}
+        if key:
+            kw['key'] = key
         return self._connection.get(api_path('system', 'metadata_suggestions', **kw))
 
     def set_metadata_suggestions(self, suggestions, key=None):
@@ -102,5 +104,7 @@ or
 
 ["a", "b", "c"]  # If use with a key
 """
-        kw = get_function_kwargs('key')
+        kw = {}
+        if key:
+            kw['key'] = key
         return self._connection.put(api_path('system', 'metadata_suggestions', **kw), data=dumps(suggestions))
