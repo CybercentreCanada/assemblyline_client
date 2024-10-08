@@ -88,6 +88,17 @@ Throws a Client exception if the signature does not exist or the status is inval
 """
         return self._connection.get(api_path_by_module(self, signature_id, status))
 
+    def clear_status(self, signature_id):
+        """\
+Clear the user's status change of a signature
+
+Required:
+signature_id     : ID of the signature to clear the status
+
+Throws a Client exception if the signature does not exist.
+"""
+        return self._connection.get(api_path_by_module(self, signature_id))
+
     def delete(self, signature_id):
         """\
 Delete a signature based off its ID
