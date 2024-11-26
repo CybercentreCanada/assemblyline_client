@@ -7,7 +7,7 @@ from assemblyline_client.v4_client.module.search.grouped import Grouped
 from assemblyline_client.v4_client.module.search.histogram import Histogram
 from assemblyline_client.v4_client.module.search.stats import Stats
 from assemblyline_client.v4_client.module.search.stream import Stream
-from assemblyline_client.v4_client.wrapper import FileWrapper, AlertWrapper, BadlistWrapper, HeuristicWrapper, ResultWrapper, SignatureWrapper, SubmissionWrapper, WorkflowWrapper
+from assemblyline_client.v4_client.wrapper import FileWrapper, AlertWrapper, BadlistWrapper, HeuristicWrapper, ResultWrapper, SafelistWrapper, SignatureWrapper, SubmissionWrapper, WorkflowWrapper
 
 class Search(object):
     def __init__(self, connection):
