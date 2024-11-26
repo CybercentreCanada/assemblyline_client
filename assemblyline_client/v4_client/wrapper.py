@@ -1,7 +1,7 @@
 from assemblyline_client.v4_client.module.alert import Alert
 from assemblyline_client.v4_client.module.badlist import Badlist
 from assemblyline_client.v4_client.module.file import File
-from assemblyline_client.v4_client.module.heuristics import Heuristic
+from assemblyline_client.v4_client.module.heuristics import Heuristics
 from assemblyline_client.v4_client.module.result import Result
 from assemblyline_client.v4_client.module.safelist import Safelist
 from assemblyline_client.v4_client.module.signature import Signature
@@ -136,7 +136,7 @@ class BadlistWrapper(BaseWrapper):
 class HeuristicWrapper(BaseWrapper):
 
     def __init__(self, connection, data):
-        self.heuristic = Heuristic(connection)
+        self.heuristic = Heuristics(connection)
         super().__init__(connection, data)
 
     def __call__(self):
