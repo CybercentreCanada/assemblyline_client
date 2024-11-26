@@ -15,6 +15,7 @@ class BaseWrapper(dict):
     def run(self):
         print("function ran")
 
+
 class FileWrapper(BaseWrapper):
 
     def __init__(self, connection, data):
@@ -47,6 +48,7 @@ class FileWrapper(BaseWrapper):
 
     def ascii(self):
         return self.file.ascii(self['sha256'])
+
 
 class AlertWrapper(BaseWrapper):
 
@@ -141,6 +143,7 @@ class HeuristicWrapper(BaseWrapper):
     def stats(self):
         return self.heuristic.stats()
 
+
 class ResultWrapper(BaseWrapper):
 
     def __init__(self, connection, data):
@@ -211,6 +214,7 @@ class SignatureWrapper(BaseWrapper):
 
     def update_available(self, since='', sig_type='*'):
         return self.signature.update_available(since=since, sig_type=sig_type)
+
 
 class SubmissionWrapper(BaseWrapper):
 
