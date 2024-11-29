@@ -7,7 +7,6 @@ from assemblyline_client.v4_client.module.safelist import Safelist
 from assemblyline_client.v4_client.module.signature import Signature
 from assemblyline_client.v4_client.module.submission import Submission
 from assemblyline_client.v4_client.module.workflow import Workflow
-# AL client wrapper to allow direct assemblyline_client actions from queries
 
 class BaseWrapper(dict):
     def __init__(self, connection, data):
