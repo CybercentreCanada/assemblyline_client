@@ -229,8 +229,8 @@ class SubmissionWrapper(BaseWrapper):
     def delete(self):
         return self.submission.delete(self['sid'])
 
-    def file(self, sha256, results=None, errors=None):
-        return self.submission.file(self['sid'], sha256, results=results, errors=errors)
+    def file(self, results=None, errors=None):
+        return self.submission.file(self['sid'], self.full()['files'][0]['sha256'], results=results, errors=errors)
 
     def full(self):
         return self.submission.full(self['sid'])
