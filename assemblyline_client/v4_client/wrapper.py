@@ -9,19 +9,14 @@ from assemblyline_client.v4_client.module.submission import Submission
 from assemblyline_client.v4_client.module.workflow import Workflow
 
 class BaseWrapper(dict):
-    def __init__(self, connection, data):
-        self.connection = connection
+    def __init__(self, data):
         super().__init__(data)
-
-    def run(self):
-        print("function ran")
-
 
 class FileWrapper(BaseWrapper):
 
     def __init__(self, connection, data):
         self.file = File(connection)
-        super().__init__(connection, data)
+        super().__init__(data)
 
     def download(self):
         return self.file.download(self['sha256'])
@@ -55,7 +50,7 @@ class AlertWrapper(BaseWrapper):
 
     def __init__(self, connection, data):
         self.alert = Alert(connection)
-        super().__init__(connection, data) 
+        super().__init__(data) 
 
     def __call__(self):
         return self.alert(self['id'])
@@ -108,7 +103,7 @@ class BadlistWrapper(BaseWrapper):
     
     def __init__(self, connection, data):
         self.badlist = Badlist(connection)
-        super().__init__(connection, data)
+        super().__init__(data)
 
     def __call__(self, qhash):
         return self.badlist(qhash)
@@ -136,7 +131,7 @@ class HeuristicWrapper(BaseWrapper):
 
     def __init__(self, connection, data):
         self.heuristic = Heuristics(connection)
-        super().__init__(connection, data)
+        super().__init__(data)
 
     def __call__(self):
         return self.heuristic(self['id'])
@@ -149,7 +144,7 @@ class ResultWrapper(BaseWrapper):
 
     def __init__(self, connection, data):
         self.result = Result(connection)
-        super().__init__(connection, data)
+        super().__init__(data)
 
     def __call__(self):
         return self.result(self['id'])
@@ -165,7 +160,7 @@ class SafelistWrapper(BaseWrapper):
 
     def __init__(self, connection, data):
         self.safelist = Safelist(connection)
-        super().__init__(connection, data)
+        super().__init__(data)
 
     def __call__(self):
         return self.safelist(self['id'])
@@ -187,7 +182,7 @@ class SignatureWrapper(BaseWrapper):
 
     def __init__(self, connection, data):
         self.signature = Signature(connection)
-        super().__init__(connection, data)
+        super().__init__(data)
 
     def __call__(self):
         return self.signature(self['id'])
@@ -221,7 +216,7 @@ class SubmissionWrapper(BaseWrapper):
 
     def __init__(self, connection, data):
         self.submission = Submission(connection)
-        super().__init__(connection, data)
+        super().__init__(data)
 
     def __call__(self):
         return self.submission(self['sid'])
@@ -258,7 +253,7 @@ class WorkflowWrapper(BaseWrapper):
  
     def __init__(self, connection, data):
         self.workflow = Workflow(connection)
-        super().__init__(connection, data)
+        super().__init__(data)
 
     def __call__(self):
         return self.workflow(self['workflow_id'])
