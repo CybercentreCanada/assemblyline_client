@@ -7,7 +7,7 @@ from assemblyline_client.v4_client.module.search.grouped import Grouped
 from assemblyline_client.v4_client.module.search.histogram import Histogram
 from assemblyline_client.v4_client.module.search.stats import Stats
 from assemblyline_client.v4_client.module.search.stream import Stream
-from assemblyline_client.v4_client.wrapper import FileWrapper, AlertWrapper, BadlistWrapper, HeuristicWrapper, ResultWrapper, SafelistWrapper, SignatureWrapper, SubmissionWrapper, WorkflowWrapper
+from assemblyline_client.v4_client.wrapper import wrapper_map
 
 class Search(object):
     def __init__(self, connection):
@@ -38,17 +38,9 @@ class Search(object):
             kwargs['track_total_hits'] = track_total_hits
         path = api_path('search', index)
         data = self._connection.post(path, data=json.dumps(kwargs))
-        # wrap item dict with ALDict for added functionality
-        for idx, item in enumerate(data['items']):
-            if index == 'alert': data['items'][idx] = AlertWrapper(self._connection, item)
-            if index == 'badlist': data['items'][idx] = BadlistWrapper(self._connection, item)
-            if index == 'file': data['items'][idx] = FileWrapper(self._connection, item)
-            if index == 'heuristic': data['items'][idx] = HeuristicWrapper(self._connection, item)
-            if index == 'result': data['items'][idx] = ResultWrapper(self._connection, item)
-            if index == 'safelist': data['items'][idx] = SafelistWrapper(self._connection, item)
-            if index == 'signature': data['items'][idx] = SignatureWrapper(self._connection, item)
-            if index == 'submission': data['items'][idx] = SubmissionWrapper(self._connection, item)
-            if index == 'workflow': data['items'][idx] = WorkflowWrapper(self._connection, item)
+
+        data['items'] = [wrapper_map[index](self._connection, item) for item in data['items']]
+
         return data
 
     def alert(self, query, filters=None, fl=None, offset=0, rows=25, sort=None, timeout=None,

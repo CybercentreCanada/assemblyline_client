@@ -272,3 +272,18 @@ class WorkflowWrapper(BaseWrapper):
 
     def update(self, workflow):
         return self.workflow.update(self['workflow_id'], workflow)
+
+
+
+wrapper_map = {
+    'file': FileWrapper,
+    'alert': AlertWrapper,
+    'badlist': BadlistWrapper,
+    'heuristic': HeuristicWrapper,
+    'result': ResultWrapper,
+    'safelist': SafelistWrapper,
+    'signature': SignatureWrapper,
+    'submission': SubmissionWrapper,
+    'workflow': WorkflowWrapper
+}
+
