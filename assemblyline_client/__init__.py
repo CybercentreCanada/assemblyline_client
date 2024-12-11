@@ -76,6 +76,7 @@ class Connection(object):
             raise ClientError("Client could not connect to the server "
                               "due to the following SSLError: %s" % ssle, 495)
 
+        self.current_user = auth_session_detail['username']
         session.timeout = auth_session_detail['session_duration']
 
         r = self.request(self.session.get, 'api/', convert_api_output)
@@ -107,19 +108,16 @@ class Connection(object):
 
         if self.is_v4:
             if self.apikey and len(self.apikey) == 2:
-                self.current_user = self.apikey[0]
                 auth = {
                     'user': self.apikey[0],
                     'apikey': self.apikey[1]
                 }
             elif self.auth and len(self.auth) == 2:
-                self.current_user = self.auth[0]
                 auth = {
                     'user': self.auth[0],
                     'password': self.auth[1]
                 }
             elif self.oauth and len(self.oauth) == 2:
-                self.current_user = self.oauth[0]
                 auth = {
                     "oauth_provider": self.oauth[0],
                     "oauth_token": self.oauth[1]
@@ -135,7 +133,6 @@ class Connection(object):
                         key = key.decode("UTF-8")
                 else:
                     key = self.apikey[1]
-                self.current_user = self.apikey[0]
                 auth = {
                     'user': self.apikey[0],
                     'apikey': key
@@ -147,7 +144,6 @@ class Connection(object):
                         pw = pw.decode("UTF-8")
                 else:
                     pw = self.auth[1]
-                self.current_user = self.auth[0]
                 auth = {
                     'user': self.auth[0],
                     'password': pw
