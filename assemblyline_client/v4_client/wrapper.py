@@ -8,270 +8,340 @@ from assemblyline_client.v4_client.module.signature import Signature
 from assemblyline_client.v4_client.module.submission import Submission
 from assemblyline_client.v4_client.module.workflow import Workflow
 
+import pandas
+
+wrapper_search = None
+
+def wrapper_function(inner_func,args=[]):
+    """
+Decorator for wrapper functions to provide docstrings for documentation.
+
+Required:  
+inner_func: Function that is being wrapped (.ie function called inside of a wrapper function)
+args: List of required arguments to not remove from an inner function's docstring
+
+Sets the __doc__ attribute of the decorated function to the modified __doc__ of the inner function.
+    """
+
+    def decorator(func):
+        hits = ['Required:', 'Optional:']
+        clear = False
+        docstring = []
+        for line in inner_func.__doc__.splitlines():
+            if line in hits:
+                if len(args) != 0: docstring.append(line)
+                clear = True
+            if line == '':
+                clear = False
+            if not clear or line.split(":")[0].strip() in args:
+                docstring.append(line)
+        func.__doc__ = "\n".join(docstring)
+        return func
+
+    return decorator
+
 class BaseWrapper(dict):
-    def __init__(self, data):
+    def __init__(self, search, data):
+        self.search = search
         super().__init__(data)
+
+    def to_dataframe(self):
+        return pandas.DataFrame(self['items'])
 
 class FileWrapper(BaseWrapper):
 
-    def __init__(self, connection, data):
-        self.file = File(connection)
-        super().__init__(data)
+    def __init__(self, search, data):
+        self.file = File(search._connection)
+        super().__init__(search, data)
+    
+    @wrapper_function(File.download)
+    def download(self, *args, **kwargs):
+        return self.file.download(self['sha256'], *args, **kwargs)
+    
+    @wrapper_function(File.delete_from_filestore)
+    def delete_from_filestore(self, *args, **kwargs):
+        return self.file.delete_from_filestore(self['sha256'], *args, **kwargs)
+    
+    @wrapper_function(File.hex)
+    def hex(self, *args, **kwargs):
+        return self.file.hex(self['sha256'], *args, **kwargs)
 
-    def download(self):
-        return self.file.download(self['sha256'])
+    @wrapper_function(File.info)
+    def info(self, *args, **kwargs):
+        return self.file.info(self['sha256'], *args, **kwargs)
+    
+    @wrapper_function(File.result)
+    def result(self, *args, **kwargs):
+        return self.file.result(self['sha256'], *args, **kwargs)
 
-    def delete_from_filestore(self):
-        return self.file.delete_from_filestore(self['sha256'])
+    @wrapper_function(File.score)
+    def score(self, *args, **kwargs):
+        return self.file.score(self['sha256'], *args, **kwargs)
+    
+    @wrapper_function(File.strings)
+    def strings(self, *args, **kwargs):
+        return self.file.strings(self['sha256'], *args, **kwargs)
+    
+    @wrapper_function(File.children)
+    def children(self, *args, **kawrgs):
+        return self.file.children(self['sha256'], *args, **kwargs)
+    
+    @wrapper_function(File.ascii)
+    def ascii(self, *args, **kwargs):
+        return self.file.ascii(self['sha256'], *args, **kwargs)
 
-    def hex(self, bytes_only=False, length=None):
-        return self.file.hex(self['sha256'], bytes_only, length)
+    def get_submissions(self):
+        """\
+Get the submissions from a file
 
-    def info(self):
-        return self.file.info(self['sha256'])
+Returns a list of SubmissionWrapper
+"""
+        return self.search.submission(self['sha256'])['items']
 
-    def result(self):
-        return self.file.result(self['sha256'])
+    def get_results(self):
+        """\
+Get the results of a file
 
-    def score(self):
-        return self.file.score(self['sha256'])
+Returns a list of ResultWrapper
+"""
+        return self.search.result(f"sha256:{self['sha256']}")['items']
 
-    def strings(self):
-        return self.file.strings(self['sha256'])
+    def get_extracted_files(self):
+        """\
+Get extracted files from a file. This searches for all results related to a sha256.
 
-    def children(self):
-        return self.file.children(self['sha256'])
+Returns a list of FileWrapper
+"""
+        results = self.get_results()
+        try:
+            extracted_files = [result()['response']['extracted'] for result in self.get_results()]           
 
-    def ascii(self):
-        return self.file.ascii(self['sha256'])
+            query = ""
+            for files in extracted_files:
+                if len(files) == 0: continue
+                for idx, file in enumerate(files):
+                    if idx+1 == len(files):
+                        query += f"{file['sha256']}"
+                        continue
+                    query += f"{file['sha256']} OR "
+            return self.search.file(query)['items']
 
+        except KeyError:
+            return []
 
 class AlertWrapper(BaseWrapper):
 
-    def __init__(self, connection, data):
-        self.alert = Alert(connection)
-        super().__init__(data) 
-
+    def __init__(self, search, data):
+        self.alert = Alert(search._connection)
+        super().__init__(search, data) 
+    
+    @wrapper_function(Alert.__call__)
     def __call__(self):
         return self.alert(self['id'])
 
-    def grouped(self, field, fq=[], q=None, tc_start=None, tc=None, no_delay=False, offset=0, rows=10,
-                use_archive=False, track_total_hits=None):
-        return self.alert.grouped(field, fq=fq, q=q, tc_start=tc_start, tc=tc, no_delay=no_delay, offset=offset, rows=rows, use_archive=use_archive, track_total_hits=track_total_hits)
+    @wrapper_function(Alert.label, ["*labels"])
+    def label(self, *args, **kwargs):
+        return self.alert.label(self['id'], *args, **kwargs)
 
-
-    def label(self, *labels):
-        return self.alert.label(self['id'], *labels)
-
-    def labels(self, fq=[], q=None, tc_start=None, tc=None, no_delay=False):
-        return self.alert.labels(fq=fq, q=q, tc_start=tc_start, tc=tc, no_delay=no_delay)
-
-
-    def list(self, fq=[], q=None, tc_start=None, tc=None, no_delay=False, offset=0, rows=10,
-             use_archive=False, track_total_hits=None):
-        return self.alert.list(fq=fq, q=q, tc_start=tc_start, tc=tc, no_delay=no_delay, offset=offset, rows=rows, use_archive=use_archive, track_total_hits=track_total_hits)
-
+    @wrapper_function(Alert.ownership)
     def ownership(self):
         return self.alert.ownership(self['id'])
 
-    def priority(self, priority):
-        return self.alert.priority(self['id'], priority)
+    @wrapper_function(Alert.priority, ["priority"])
+    def priority(self, *args, **kwargs):
+        return self.alert.priority(self['id'], *args, **kwargs)
 
-    def priorities(self, fq=[], q=None, tc_start=None, tc=None, no_delay=False):
-        return self.alert.priorities(fq=fq, q=q, tc_start=tc_start, tc=tc, no_delay=no_delay)
+    @wrapper_function(Alert.remove_label, ["*labels"])
+    def remove_label(self, *args, **kwargs):
+        return self.alert.remove_label(self['id'], *args, **kwargs)
+    
+    @wrapper_function(Alert.status, ["status"])
+    def status(self, *args, **kwargs):
+        return self.alert.status(self['id'], *args, **kwargs)
 
-    def related(self, fq=[], q=None, tc_start=None, tc=None, no_delay=False):
-        return self.alert.related(fq=fq, q=q, tc_start=tc_start, tc=tc, no_delay=no_delay)
-
-    def remove_label(self, *labels):
-        return self.alert.remove_label(self['id'], *labels)
-
-    def statistics(self, fq=[], q=None, tc_start=None, tc=None, no_delay=False):
-        return self.alert.statistics(fq=fq, q=q, tc_start=tc_start, tc=tc, no_delay=no_delay)
-
-    def status(self, status):
-        return self.alert.status(self['id'], status)
-
-    def statuses(self, fq=[], q=None, tc_start=None, tc=None, no_delay=False):
-        return self.alert.statuses(fq=fq, q=q, tc_start=tc_start, tc=tc, no_delay=no_delay)
-
-    def verdict(self, verdict):
-        return self.alert.verdict(self['id'], verdict)
+    @wrapper_function(Alert.verdict, ["verdict"])
+    def verdict(self, *args, **kwargs):
+        return self.alert.verdict(self['id'], *args, **kwargs)
 
 
 class BadlistWrapper(BaseWrapper):
     
-    def __init__(self, connection, data):
-        self.badlist = Badlist(connection)
-        super().__init__(data)
+    def __init__(self, search, data):
+        self.badlist = Badlist(search._connection)
+        super().__init__(search, data)
+    
+    @wrapper_function(Badlist.__call__)
+    def __call__(self, *args, **kwargs):
+        return self.badlist(*args, **kwargs)
 
-    def __call__(self, qhash):
-        return self.badlist(qhash)
+    @wrapper_function(Badlist.delete)
+    def delete(self, *args, **kwargs):
+        return self.badlist.delete(self['id'], *args, **kwargs)
+    
+    @wrapper_function(Badlist.set_enabled, ["enabled"])
+    def set_enabled(self, *args, **kwargs):
+        return self.badlist.set_enabled(self['id'], *args, **kwargs)
 
-    def add_update(self, badlist_object):
-        return self.badlist.add_update(badlist_object)
-
-    def add_update_many(self, list_of_badlist_object):
-        return self.badlist.add_update_many(list_of_badlist_object)
-
-    def delete(self):
-        return self.badlist.delete(self['id'])
-
-    def set_enabled(self, enabled):
-        return self.badlist.set_enabled(self['id'], enabled)
-
-    def ssdeep(self):
-        return self.badlist.ssdeep(self['hashes']['ssdeep'])
-
-    def tlsh(self):
-        return self.badlist.tlsh(self['hashes']['tlsh'])
+    @wrapper_function(Badlist.ssdeep)
+    def ssdeep(self, *args, **kwargs):
+        return self.badlist.ssdeep(self['hashes']['ssdeep'], *args, **kwargs)
+    
+    @wrapper_function(Badlist.tlsh)
+    def tlsh(self, *args, **kwargs):
+        return self.badlist.tlsh(self['hashes']['tlsh'], *args, **kwargs)
 
 
 class HeuristicWrapper(BaseWrapper):
 
-    def __init__(self, connection, data):
-        self.heuristic = Heuristics(connection)
-        super().__init__(data)
-
+    def __init__(self, search, data):
+        self.heuristic = Heuristics(search._connection)
+        super().__init__(search, data)
+    
+    @wrapper_function(Heuristics.__call__)
     def __call__(self):
         return self.heuristic(self['id'])
 
-    def stats(self):
-        return self.heuristic.stats()
+    @wrapper_function(Heuristics.stats)
+    def stats(self, *args, **kwargs):
+        return self.heuristic.stats(*args, **kwargs)
 
 
 class ResultWrapper(BaseWrapper):
 
-    def __init__(self, connection, data):
-        self.result = Result(connection)
-        super().__init__(data)
+    def __init__(self, search, data):
+        self.result = Result(search._connection)
+        super().__init__(search, data)
 
+    @wrapper_function(Result.__call__)
     def __call__(self):
         return self.result(self['id'])
 
-    def error(self):
-        return self.result.error(self['id'])
-
-    def multiple(self, error=None, result=None):
-        return self.result.multiple(error, result)
-
+    @wrapper_function(Result.error)
+    def error(self, *args, **kwargs):
+        return self.result.error(self['id'], *args, **kwargs)
+    
+    #def get_extracted_files(self):
+    #   return self['response']
 
 class SafelistWrapper(BaseWrapper):
 
-    def __init__(self, connection, data):
-        self.safelist = Safelist(connection)
-        super().__init__(data)
-
+    def __init__(self, search, data):
+        self.safelist = Safelist(search._connection)
+        super().__init__(search, data)
+    
+    @wrapper_function(Safelist.__call__)
     def __call__(self):
         return self.safelist(self['id'])
+    
+    @wrapper_function(Safelist.delete)
+    def delete(self, *args, **kwargs):
+        return self.safelist.delete(self['id'], *args, **kwargs)
 
-    def add_update(self, safelist_object):
-        return self.safelist.add_update(safelist_object)
-
-    def add_update_many(self, list_of_safelist_object):
-        return self.safelist.add_update_many(list_of_safelist_object)
-
-    def delete(self):
-        return self.safelist.delete(self['id'])
-
-    def set_enabled(self, enabled):
-        return self.safelist.set_enabled(self['id'],enabled)
+    @wrapper_function(Safelist.set_enabled, ["enabled"])
+    def set_enabled(self, *args, **kwargs):
+        return self.safelist.set_enabled(self['id'], *args, **kwargs)
 
 
 class SignatureWrapper(BaseWrapper):
 
-    def __init__(self, connection, data):
-        self.signature = Signature(connection)
-        super().__init__(data)
-
+    def __init__(self, search, data):
+        self.signature = Signature(search._connection)
+        super().__init__(search, data)
+    
+    @wrapper_function(Signature.__call__)
     def __call__(self):
         return self.signature(self['id'])
+    
+    @wrapper_function(Signature.change_status, ["status"])
+    def change_status(self, *args, **kwargs):
+        return self.signature.change_status(self['id'], *args, **kwargs)
 
-    def add_update(self, data, dedup_name=True):
-        return self.signature.add_update(data, dedup_name=dedup_name)
+    @wrapper_function(Signature.clear_status)
+    def clear_status(self, *args, **kwargs):
+        return self.signature.clear_status(self['id'], *args, **kwargs)
 
-    def add_update_many(self, source, sig_type, data, dedup_name=True):
-        return self.signature.add_update_many(source, sig_type, data, dedup_name=dedup_name)
-
-    def change_status(self, status):
-        return self.signature.change_status(self['id'], status)
-
-    def clear_status(self):
-        return self.signature.clear_status(self['id'])
-
-    def delete(self):
-        return self.signature.delete(self['id'])
-
-    def download(self, output=None, query=None):
-        return self.signature.download(output=output, query=query)
-
-    def stats(self):
-        return self.signature.stats()
-
-    def update_available(self, since='', sig_type='*'):
-        return self.signature.update_available(since=since, sig_type=sig_type)
+    @wrapper_function(Signature.delete)
+    def delete(self, *args, **kwargs):
+        return self.signature.delete(self['id'], *args, **kwargs)
 
 
 class SubmissionWrapper(BaseWrapper):
 
-    def __init__(self, connection, data):
-        self.submission = Submission(connection)
-        super().__init__(data)
-
+    def __init__(self, search, data):
+        self.submission = Submission(search._connection)
+        super().__init__(search, data)
+    
+    @wrapper_function(Submission.__call__)
     def __call__(self):
         return self.submission(self['sid'])
 
-    def delete(self):
-        return self.submission.delete(self['sid'])
+    @wrapper_function(Submission.delete)
+    def delete(self, *args, **kwargs):
+        return self.submission.delete(self['sid'], *args, **kwargs)
 
-    def file(self, results=None, errors=None):
-        return self.submission.file(self['sid'], self.full()['files'][0]['sha256'], results=results, errors=errors)
+    @wrapper_function(Submission.file, ["sha256"])
+    def file(self, *args, **kwargs):
+        return self.submission.file(self['sid'], *args, **kwargs)
+    
+    @wrapper_function(Submission.full)
+    def full(self, *args, **kwargs):
+        return self.submission.full(self['sid'], *args, **kwargs)
 
-    def full(self):
-        return self.submission.full(self['sid'])
+    @wrapper_function(Submission.is_completed)
+    def is_completed(self, *args, **kwargs):
+        return self.submission.is_completed(self['sid'], *args, **kwargs)
 
-    def is_completed(self):
-        return self.submission.is_completed(self['sid'])
+    @wrapper_function(Submission.report)
+    def report(self, *args, **kwargs):
+        return self.submission.report(self['sid'], *args, **kwargs)
 
-    def list(self, user=None, group=None, fq=None, rows=10, offset=0, use_archive=False, track_total_hits=None):
-        return self.submission.list(user=user, group=group, fq=fq, rows=rows, offset=offset, use_archive=use_archive, track_total_hits=track_total_hits)
+    @wrapper_function(Submission.set_verdict, ["verdict"])
+    def set_verdict(self, *args, **kwargs):
+        return self.submission.set_verdict(self['sid'], *args, **kwargs)
+    
+    @wrapper_function(Submission.summary)
+    def summary(self, *args, **kwargs):
+        return self.submission.summary(self['sid'], *args, **kwargs)
+    @wrapper_function(Submission.tree)
+    def tree(self, *args, **kwargs):
+        return self.submission.tree(self['sid'], *args, **kwargs)
 
-    def report(self):
-        return self.submission.report(self['sid'])
+    def get_files(self):
+        """\
+Get the list of files that were originally submitted
 
-    def set_verdict(self, verdict):
-        return self.submission.set_verdict(self['sid'], verdict)
+Returns a list of FileWrapper
+"""
+        try:
+            submission_files = self.full()['files']
+            query = ""
+            for idx, file in enumerate(submission_files):
+                if idx+1 == len(submission_files):
+                    query += f"{file['sha256']}"
+                    continue
+                query += f"{file['sha256']} OR "
 
-    def summary(self):
-        return self.submission.summary(self['sid'])
-
-    def tree(self):
-        return self.submission.tree(self['sid'])
-
+            return self.search.file(query)['items']
+        except KeyError:
+            return []
 
 class WorkflowWrapper(BaseWrapper):
  
-    def __init__(self, connection, data):
-        self.workflow = Workflow(connection)
-        super().__init__(data)
+    def __init__(self, search, data):
+        self.workflow = Workflow(search._connection)
+        super().__init__(search, data)
 
+    @wrapper_function(Workflow.__call__)
     def __call__(self):
         return self.workflow(self['workflow_id'])
-
-    def add(self, workflow):
-        return self.workflow.add(workflow)
-
+    
+    @wrapper_function(Workflow.delete)
     def delete(self):
         return self.workflow.delete(self['workflow_id'])
 
-    def labels(self):
-        return self.workflow.labels()
-
-    def list(self, query="*:*", rows=10, offset=0):
-        return self.workflow.list(query=query, rows=rows, offset=offset)
-
-    def update(self, workflow):
-        return self.workflow.update(self['workflow_id'], workflow)
+    @wrapper_function(Workflow.update, ["workflow"])
+    def update(self, *args, **kwargs):
+        return self.workflow.update(self['workflow_id'], *args, **kwargs)
 
 
 
