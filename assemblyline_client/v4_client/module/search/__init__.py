@@ -258,4 +258,3 @@ Returns all results.
         return self._do_search('workflow', query, filters=filters, fl=fl, offset=offset,
                                rows=rows, sort=sort, timeout=timeout,
                                use_archive=use_archive, track_total_hits=track_total_hits)
-
