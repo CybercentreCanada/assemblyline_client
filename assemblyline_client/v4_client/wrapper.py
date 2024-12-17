@@ -194,10 +194,6 @@ class HeuristicWrapper(BaseWrapper):
     def __call__(self):
         return self.heuristic(self['id'])
 
-    @wrapper_function(Heuristics.stats)
-    def stats(self, *args, **kwargs):
-        return self.heuristic.stats(*args, **kwargs)
-
 
 class ResultWrapper(BaseWrapper):
 
