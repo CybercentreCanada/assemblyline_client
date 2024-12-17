@@ -330,7 +330,7 @@ class WorkflowWrapper(BaseWrapper):
         return self.workflow.update(self['workflow_id'], *args, **kwargs)
 
 
-wrapper_map = {
+WRAPPER_MAP = {
     'file': FileWrapper,
     'alert': AlertWrapper,
     'badlist': BadlistWrapper,
