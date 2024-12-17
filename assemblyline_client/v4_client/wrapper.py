@@ -92,17 +92,17 @@ class FileWrapper(BaseWrapper):
 
     def get_submissions(self):
         """\
-Get the submissions from a file
+Get the submissions from a file.
 
-Returns a list of SubmissionWrapper
+Returns a list of SubmissionWrapper.
 """
         return self.search.submission(self['sha256'])['items']
 
     def get_results(self):
         """\
-Get the results of a file
+Get the results of a file.
 
-Returns a list of ResultWrapper
+Returns a list of ResultWrapper.
 """
         return self.search.result(f"sha256:{self['sha256']}")['items']
 
@@ -110,7 +110,7 @@ Returns a list of ResultWrapper
         """\
 Get extracted files from a file. This searches for all results related to a sha256.
 
-Returns a list of FileWrapper
+Returns a list of FileWrapper.
 """
         results = self.get_results()
         try:
