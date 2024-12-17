@@ -8,11 +8,8 @@ from assemblyline_client.v4_client.module.signature import Signature
 from assemblyline_client.v4_client.module.submission import Submission
 from assemblyline_client.v4_client.module.workflow import Workflow
 
-wrapper_search = None
-
-
 def wrapper_function(inner_func, args=[]):
-    """
+"""\
 Decorator for wrapper functions to provide docstrings for documentation.
 
 Required:
@@ -20,7 +17,7 @@ inner_func: Function that is being wrapped (.ie function called inside of a wrap
 args: List of required arguments to not remove from an inner function's docstring
 
 Sets the __doc__ attribute of the decorated function to the modified __doc__ of the inner function.
-    """
+"""
 
     def decorator(func):
         hits = ['Required:', 'Optional:']
@@ -82,7 +79,7 @@ class FileWrapper(BaseWrapper):
         return self.file.strings(self['sha256'], *args, **kwargs)
 
     @wrapper_function(File.children)
-    def children(self, *args, **kawrgs):
+    def children(self, *args, **kwargs):
         return self.file.children(self['sha256'], *args, **kwargs)
 
     @wrapper_function(File.ascii)
