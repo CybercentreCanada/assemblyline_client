@@ -8,6 +8,18 @@ from assemblyline_client.v4_client.module.signature import Signature
 from assemblyline_client.v4_client.module.submission import Submission
 from assemblyline_client.v4_client.module.workflow import Workflow
 
+WRAPPER_MAP = {
+    'file': FileWrapper,
+    'alert': AlertWrapper,
+    'badlist': BadlistWrapper,
+    'heuristic': HeuristicWrapper,
+    'result': ResultWrapper,
+    'safelist': SafelistWrapper,
+    'signature': SignatureWrapper,
+    'submission': SubmissionWrapper,
+    'workflow': WorkflowWrapper
+}
+
 def wrapper_function(inner_func, args=[]):
 """\
 Decorator for wrapper functions to provide docstrings for documentation.
@@ -328,16 +340,3 @@ class WorkflowWrapper(BaseWrapper):
     @wrapper_function(Workflow.update, ["workflow"])
     def update(self, *args, **kwargs):
         return self.workflow.update(self['workflow_id'], *args, **kwargs)
-
-
-WRAPPER_MAP = {
-    'file': FileWrapper,
-    'alert': AlertWrapper,
-    'badlist': BadlistWrapper,
-    'heuristic': HeuristicWrapper,
-    'result': ResultWrapper,
-    'safelist': SafelistWrapper,
-    'signature': SignatureWrapper,
-    'submission': SubmissionWrapper,
-    'workflow': WorkflowWrapper
-}
