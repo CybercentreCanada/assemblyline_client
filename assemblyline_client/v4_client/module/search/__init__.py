@@ -7,7 +7,7 @@ from assemblyline_client.v4_client.module.search.grouped import Grouped
 from assemblyline_client.v4_client.module.search.histogram import Histogram
 from assemblyline_client.v4_client.module.search.stats import Stats
 from assemblyline_client.v4_client.module.search.stream import Stream
-
+from assemblyline_client.v4_client.wrapper import wrapper_map, BaseWrapper
 
 class Search(object):
     def __init__(self, connection):
@@ -37,7 +37,11 @@ class Search(object):
         if track_total_hits:
             kwargs['track_total_hits'] = track_total_hits
         path = api_path('search', index)
-        return self._connection.post(path, data=json.dumps(kwargs))
+        data = self._connection.post(path, data=json.dumps(kwargs))
+        wrapper = wrapper_map.get(index, BaseWrapper)
+        data['items'] = [wrapper(self, item) for item in data['items']]
+
+        return data
 
     def alert(self, query, filters=None, fl=None, offset=0, rows=25, sort=None, timeout=None,
               use_archive=False, track_total_hits=None):
