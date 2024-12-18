@@ -11,7 +11,7 @@ class Ingest(object):
         self._connection = connection
 
     def __call__(self, fh=None, path=None, content=None, url=None, sha256=None, fname=None, params=None, metadata=None,
-                 alert=False, nq=None, nt=None, ingest_type='AL_CLIENT'):
+                 alert=False, nq=None, nt=None, ingest_type='AL_CLIENT', submission_profile=None):
         """\
 Submit a file to the ingestion queue.
 
@@ -30,6 +30,7 @@ nq         : Notification queue name. (string)
 nt         : Notification threshold. (int)
 params     : Additional submission parameters. (dict)
 ingest_type: Ingestion type, one word to describe how the data is ingested. Default: AL_CLIENT (string)
+submission_profile    : Submission profile name
 
 If content is provided, the path is used as metadata only.
 """
@@ -87,7 +88,8 @@ If content is provided, the path is used as metadata only.
                 request['notification_threshold'] = int(nt)
             if params:
                 request['params'] = params
-
+            if submission_profile:
+                request['submission_profile'] = submission_profile
             if files:
                 data = {'json': dumps(request)}
                 headers = {'content-type': None}
