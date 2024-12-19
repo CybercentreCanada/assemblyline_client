@@ -8,6 +8,7 @@ from assemblyline_client.v4_client.module.signature import Signature
 from assemblyline_client.v4_client.module.submission import Submission
 from assemblyline_client.v4_client.module.workflow import Workflow
 
+
 def wrapper_function(inner_func, args=[]):
     """\
 Decorator for wrapper functions to provide docstrings for documentation.
@@ -328,6 +329,7 @@ class WorkflowWrapper(BaseWrapper):
     @wrapper_function(Workflow.update, ["workflow"])
     def update(self, *args, **kwargs):
         return self.workflow.update(self['workflow_id'], *args, **kwargs)
+
 
 WRAPPER_MAP = {
     'file': FileWrapper,
