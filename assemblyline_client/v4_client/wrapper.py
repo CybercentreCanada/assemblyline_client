@@ -8,7 +8,6 @@ from assemblyline_client.v4_client.module.signature import Signature
 from assemblyline_client.v4_client.module.submission import Submission
 from assemblyline_client.v4_client.module.workflow import Workflow
 
-
 def wrapper_function(inner_func, args=[]):
     """\
 Decorator for wrapper functions to provide docstrings for documentation.
@@ -122,6 +121,7 @@ Returns a list of FileWrapper.
                         query += f"{file['sha256']}"
                         continue
                     query += f"{file['sha256']} OR "
+            if query == "": return []
             return self.search.file(query)['items']
 
         except KeyError:
@@ -292,7 +292,7 @@ class SubmissionWrapper(BaseWrapper):
     def tree(self, *args, **kwargs):
         return self.submission.tree(self['sid'], *args, **kwargs)
 
-    def get_files(self):
+    def get_submitted_files(self):
         """\
 Get the list of files that were originally submitted
 
@@ -329,7 +329,6 @@ class WorkflowWrapper(BaseWrapper):
     @wrapper_function(Workflow.update, ["workflow"])
     def update(self, *args, **kwargs):
         return self.workflow.update(self['workflow_id'], *args, **kwargs)
-
 
 WRAPPER_MAP = {
     'file': FileWrapper,
