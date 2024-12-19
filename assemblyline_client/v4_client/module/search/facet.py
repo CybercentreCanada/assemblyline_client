@@ -22,7 +22,7 @@ class Facet(object):
         path = api_path('search', 'facet', index, field, **kwargs)
         return self._connection.get(path)
 
-    def alert(self, field, query=None, mincount=None, filters=None, timeout=None):
+    def alert(self, field, query=None, mincount=None, filters=None, timeout=None, size=None):
         """\
 List most frequent value for a field in the alert collection.
 
@@ -34,12 +34,13 @@ query    : Initial query to filter the data (default: 'id:*')
 filters  : Additional lucene queries used to filter the data (list of strings)
 mincount : Minimum amount of hits for the value to be returned
 timeout  : Maximum execution time in milliseconds (integer)
+size     : Maxium number of facets to return (integer)
 
 Returns all results.
 """
-        return self._do_facet('alert', field, query=query, mincount=mincount, filters=filters, timeout=timeout)
+        return self._do_facet('alert', field, query=query, mincount=mincount, filters=filters, timeout=timeout, size=size)
 
-    def badlist(self, field, query=None, mincount=None, filters=None, timeout=None):
+    def badlist(self, field, query=None, mincount=None, filters=None, timeout=None, size=None):
         """\
 List most frequent value for a field in the badlist collection.
 
@@ -51,12 +52,13 @@ query    : Initial query to filter the data (default: 'id:*')
 filters  : Additional lucene queries used to filter the data (list of strings)
 mincount : Minimum amount of hits for the value to be returned
 timeout  : Maximum execution time in milliseconds (integer)
+size     : Maxium number of facets to return (integer)
 
 Returns all results.
 """
-        return self._do_facet('badlist', field, query=query, mincount=mincount, filters=filters, timeout=timeout)
+        return self._do_facet('badlist', field, query=query, mincount=mincount, filters=filters, timeout=timeout, size=size)
 
-    def file(self, field, query=None, mincount=None, filters=None, timeout=None):
+    def file(self, field, query=None, mincount=None, filters=None, timeout=None, size=None):
         """\
 List most frequent value for a field in the file collection.
 
@@ -68,12 +70,13 @@ query    : Initial query to filter the data (default: 'id:*')
 filters  : Additional lucene queries used to filter the data (list of strings)
 mincount : Minimum amount of hits for the value to be returned
 timeout  : Maximum execution time in milliseconds (integer)
+size     : Maxium number of facets to return (integer)
 
 Returns all results.
 """
-        return self._do_facet('file', field, query=query, mincount=mincount, filters=filters, timeout=timeout)
+        return self._do_facet('file', field, query=query, mincount=mincount, filters=filters, timeout=timeout, size=size)
 
-    def heuristic(self, field, query=None, mincount=None, filters=None, timeout=None):
+    def heuristic(self, field, query=None, mincount=None, filters=None, timeout=None, size=None):
         """\
 List most frequent value for a field in the heuristic collection.
 
@@ -85,12 +88,13 @@ query    : Initial query to filter the data (default: 'id:*')
 filters  : Additional lucene queries used to filter the data (list of strings)
 mincount : Minimum amount of hits for the value to be returned
 timeout  : Maximum execution time in milliseconds (integer)
+size     : Maxium number of facets to return (integer)
 
 Returns all results.
 """
-        return self._do_facet('heuristic', field, query=query, mincount=mincount, filters=filters, timeout=timeout)
+        return self._do_facet('heuristic', field, query=query, mincount=mincount, filters=filters, timeout=timeout, size=size)
 
-    def result(self, field, query=None, mincount=None, filters=None, timeout=None):
+    def result(self, field, query=None, mincount=None, filters=None, timeout=None, size=None):
         """\
 List most frequent value for a field in the result collection.
 
@@ -102,12 +106,13 @@ query    : Initial query to filter the data (default: 'id:*')
 filters  : Additional lucene queries used to filter the data (list of strings)
 mincount : Minimum amount of hits for the value to be returned
 timeout  : Maximum execution time in milliseconds (integer)
+size     : Maxium number of facets to return (integer)
 
 Returns all results.
 """
-        return self._do_facet('result', field, query=query, mincount=mincount, filters=filters, timeout=timeout)
+        return self._do_facet('result', field, query=query, mincount=mincount, filters=filters, timeout=timeout, size=size)
 
-    def safelist(self, field, query=None, mincount=None, filters=None, timeout=None):
+    def safelist(self, field, query=None, mincount=None, filters=None, timeout=None, size=None):
         """\
 List most frequent value for a field in the safelist collection.
 
@@ -119,12 +124,13 @@ query    : Initial query to filter the data (default: 'id:*')
 filters  : Additional lucene queries used to filter the data (list of strings)
 mincount : Minimum amount of hits for the value to be returned
 timeout  : Maximum execution time in milliseconds (integer)
+size     : Maxium number of facets to return (integer)
 
 Returns all results.
 """
-        return self._do_facet('safelist', field, query=query, mincount=mincount, filters=filters, timeout=timeout)
+        return self._do_facet('safelist', field, query=query, mincount=mincount, filters=filters, timeout=timeout, size=size)
 
-    def signature(self, field, query=None, mincount=None, filters=None, timeout=None):
+    def signature(self, field, query=None, mincount=None, filters=None, timeout=None, size=None):
         """\
 List most frequent value for a field in the signature collection.
 
@@ -136,12 +142,13 @@ query    : Initial query to filter the data (default: 'id:*')
 filters  : Additional lucene queries used to filter the data (list of strings)
 mincount : Minimum amount of hits for the value to be returned
 timeout  : Maximum execution time in milliseconds (integer)
+size     : Maxium number of facets to return (integer)
 
 Returns all results.
 """
-        return self._do_facet('signature', field, query=query, mincount=mincount, filters=filters, timeout=timeout)
+        return self._do_facet('signature', field, query=query, mincount=mincount, filters=filters, timeout=timeout, size=size)
 
-    def submission(self, field, query=None, mincount=None, filters=None, timeout=None):
+    def submission(self, field, query=None, mincount=None, filters=None, timeout=None, size=None):
         """\
 List most frequent value for a field in the submission collection.
 
@@ -153,12 +160,13 @@ query    : Initial query to filter the data (default: 'id:*')
 filters  : Additional lucene queries used to filter the data (list of strings)
 mincount : Minimum amount of hits for the value to be returned
 timeout  : Maximum execution time in milliseconds (integer)
+size     : Maxium number of facets to return (integer)
 
 Returns all results.
 """
-        return self._do_facet('submission', field, query=query, mincount=mincount, filters=filters, timeout=timeout)
+        return self._do_facet('submission', field, query=query, mincount=mincount, filters=filters, timeout=timeout, size=size)
 
-    def workflow(self, field, query=None, mincount=None, filters=None, timeout=None):
+    def workflow(self, field, query=None, mincount=None, filters=None, timeout=None, size=None):
         """\
 List most frequent value for a field in the workflow collection.
 
@@ -170,7 +178,8 @@ query    : Initial query to filter the data (default: 'id:*')
 filters  : Additional lucene queries used to filter the data (list of strings)
 mincount : Minimum amount of hits for the value to be returned
 timeout  : Maximum execution time in milliseconds (integer)
+size     : Maxium number of facets to return (integer)
 
 Returns all results.
 """
-        return self._do_facet('workflow', field, query=query, mincount=mincount, filters=filters, timeout=timeout)
+        return self._do_facet('workflow', field, query=query, mincount=mincount, filters=filters, timeout=timeout, size=size)

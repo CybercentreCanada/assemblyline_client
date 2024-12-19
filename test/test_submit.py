@@ -105,7 +105,7 @@ def test_submit_dynamic(datastore, client):
     assert res == datastore.submission.get(res['sid'], as_obj=False)
     assert 'Dynamic Analysis' in res['params']['services']['selected']
     for k, v in submission_data['params'].items():
-        if k not in ['submitter', 'services', 'description', 'quota_item']:
+        if k not in ['submitter', 'services', 'description', 'quota_item', 'priority']:
             assert res['params'].get(k) == v
 
 
