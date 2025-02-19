@@ -3,6 +3,14 @@ name: tests
 trigger: ["*"]
 pr: ["*"]
 
+variables:
+  - name: "TAG"
+    ${{ if eq(variables['System.PullRequest.TargetBranchName'], 'master') }}:
+      value: "stable"
+    ${{ else }}:
+      value: "latest"
+
+
 schedules:
   - cron: "0 6 * * 1" # Every monday morning
     displayName: Weekly build
@@ -21,11 +29,12 @@ resources:
       ports:
         - 6379:6379
     - container: elasticsearch
-      image: cccs/elasticsearch:8.10.2
+      image: docker.elastic.co/elasticsearch/elasticsearch:8.10.2
       env:
+        xpack.security.enabled: true
+        discovery.type: single-node
         ES_JAVA_OPTS: "-Xms256m -Xmx512m"
-        DISCOVERY_TYPE: "single-node"
-        ELASTIC_PASSWORD: "devpass"
+        ELASTIC_PASSWORD: devpass
       ports:
         - 9200:9200
     - container: minio
@@ -62,10 +71,11 @@ jobs:
       - script: |
           set -x  # Echo commands before they are run
           # Run the container pulls in parallel, wait for them all to finish before next step
+          echo $TAG
           sudo docker pull -q cccs/nginx-ssl-frontend &
-          sudo docker pull -q cccs/assemblyline-ui:latest &
-          sudo docker pull -q cccs/assemblyline-ui-frontend:latest &
-          sudo docker pull -q cccs/assemblyline-socketio:latest &
+          sudo docker pull -q cccs/assemblyline-ui:$TAG &
+          sudo docker pull -q cccs/assemblyline-ui-frontend:$TAG &
+          sudo docker pull -q cccs/assemblyline-socketio:$TAG &
           wait
         displayName: Pull Containers
       - script: |
@@ -75,9 +85,9 @@ jobs:
           sudo cp pipelines/config.yml /etc/assemblyline/
           # Start service containers that can't be started by azure properly
           sudo docker run -d --name nginx --network host --restart on-failure -e "FRONTEND_HOST=localhost" -e "UI_HOST=localhost" -e "SOCKET_HOST=localhost" -e "TEMPLATE=minimal" -e "FQDN=localhost" cccs/nginx-ssl-frontend
-          sudo docker run -d --name alui --network host -e "WORKERS=1" -e "THREADS=1"  -v "/etc/assemblyline/config.yml":"/etc/assemblyline/config.yml" cccs/assemblyline-ui:latest
-          sudo docker run -d --name frontend --network host cccs/assemblyline-ui-frontend:latest
-          sudo docker run -d --name alsocketio --network host  -v "/etc/assemblyline/config.yml":"/etc/assemblyline/config.yml" cccs/assemblyline-socketio:latest
+          sudo docker run -d --name alui --network host -e "WORKERS=1" -e "THREADS=1"  -v "/etc/assemblyline/config.yml":"/etc/assemblyline/config.yml" cccs/assemblyline-ui:$TAG
+          sudo docker run -d --name frontend --network host cccs/assemblyline-ui-frontend:$TAG
+          sudo docker run -d --name alsocketio --network host  -v "/etc/assemblyline/config.yml":"/etc/assemblyline/config.yml" cccs/assemblyline-socketio:$TAG
           # Install depedency packages
           sudo apt-get update
           sudo apt-get install -y build-essential libffi-dev libfuzzy-dev python3-dev wget
