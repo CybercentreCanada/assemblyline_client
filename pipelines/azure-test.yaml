@@ -64,9 +64,15 @@ jobs:
           set -x  # Echo commands before they are run
           # Run the container pulls in parallel, wait for them all to finish before next step
           sudo docker pull -q cccs/nginx-ssl-frontend &
-          sudo docker pull -q cccs/assemblyline-ui:latest &
-          sudo docker pull -q cccs/assemblyline-ui-frontend:latest &
-          sudo docker pull -q cccs/assemblyline-socketio:latest &
+          export TAG=latest
+          if [[ "$SYSTEM_PULLREQUEST_TARGETBRANCH" == *master* ]]
+          then
+            # Test against the latest stable release
+            export TAG=stable
+          fi
+          sudo docker pull -q cccs/assemblyline-ui:$TAG &
+          sudo docker pull -q cccs/assemblyline-ui-frontend:$TAG &
+          sudo docker pull -q cccs/assemblyline-socketio:$TAG &
           wait
         displayName: Pull Containers
       - script: |
@@ -76,9 +82,9 @@ jobs:
           sudo cp pipelines/config.yml /etc/assemblyline/
           # Start service containers that can't be started by azure properly
           sudo docker run -d --name nginx --network host --restart on-failure -e "FRONTEND_HOST=localhost" -e "UI_HOST=localhost" -e "SOCKET_HOST=localhost" -e "TEMPLATE=minimal" -e "FQDN=localhost" cccs/nginx-ssl-frontend
-          sudo docker run -d --name alui --network host -e "WORKERS=1" -e "THREADS=1"  -v "/etc/assemblyline/config.yml":"/etc/assemblyline/config.yml" cccs/assemblyline-ui:latest
-          sudo docker run -d --name frontend --network host cccs/assemblyline-ui-frontend:latest
-          sudo docker run -d --name alsocketio --network host  -v "/etc/assemblyline/config.yml":"/etc/assemblyline/config.yml" cccs/assemblyline-socketio:latest
+          sudo docker run -d --name alui --network host -e "WORKERS=1" -e "THREADS=1"  -v "/etc/assemblyline/config.yml":"/etc/assemblyline/config.yml" cccs/assemblyline-ui:$TAG
+          sudo docker run -d --name frontend --network host cccs/assemblyline-ui-frontend:$TAG
+          sudo docker run -d --name alsocketio --network host  -v "/etc/assemblyline/config.yml":"/etc/assemblyline/config.yml" cccs/assemblyline-socketio:$TAG
           # Install depedency packages
           sudo apt-get update
           sudo apt-get install -y build-essential libffi-dev libfuzzy-dev python3-dev wget
