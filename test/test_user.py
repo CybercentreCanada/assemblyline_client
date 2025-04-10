@@ -1,14 +1,14 @@
-import pytest
 import random
 
+import pytest
 from assemblyline_client.v4_client.common.utils import ClientError
 
 try:
-    from assemblyline.odm.models.user_favorites import Favorite
-    from assemblyline.odm.models.user import User
-    from assemblyline.odm.random_data import random_model_obj
-
     from utils import random_id_from_collection
+
+    from assemblyline.odm.models.user import User
+    from assemblyline.odm.models.user_favorites import Favorite
+    from assemblyline.odm.random_data import random_model_obj
 except ImportError:
     import sys
     if sys.version_info < (3, 0):
@@ -143,14 +143,14 @@ def test_settings(datastore, client):
     assert {'classification', 'download_encoding', 'priority', 'ttl'}.issubset(set(settings.keys()))
 
     # Test updating settings
-    new_desc = 'NEW_DEFAULT_DESCRIPTION'
-    settings['description'] = new_desc
+    new_password = "zippy"
+    settings['default_zip_password'] = new_password
 
     res = client.user.settings.update(user_id, settings)
     assert res['success']
 
     # Validate changes were applied
-    assert new_desc == datastore.user_settings.get(user_id, as_obj=False)['description']
+    assert new_password == datastore.user_settings.get(user_id, as_obj=False)['default_zip_password']
 
 
 def test_submission_params(datastore, client):
