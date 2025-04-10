@@ -96,6 +96,25 @@ def test_change_status(datastore, client):
     assert signature_data['status'] != new_signature_data['status']
 
 
+def test_clear_status(datastore, client):
+    signature_id = random_id_from_collection(datastore, 'signature')
+    signature_data = datastore.signature.get(signature_id, as_obj=False)
+
+    res = client.signature.change_status(signature_id, 'DISABLED')
+    assert res['success']
+
+    new_signature_data = datastore.signature.get(signature_id, as_obj=False)
+    assert new_signature_data['state_change_date'] is not None
+    assert new_signature_data['state_change_user'] is not None
+
+    res = client.signature.clear_status(signature_id)
+    assert res['success']
+
+    new_signature_data = datastore.signature.get(signature_id, as_obj=False)
+    assert new_signature_data['state_change_date'] is None
+    assert new_signature_data['state_change_user'] is None
+
+
 def test_delete(datastore, client):
     signature_id = random_id_from_collection(datastore, 'signature')
     res = client.signature.delete(signature_id)

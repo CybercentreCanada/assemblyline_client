@@ -32,7 +32,7 @@ def test_ascii(datastore, client):
 def test_hex(datastore, client):
     file_id = random_id_from_collection(datastore, 'file')
 
-    res = client.file.hex(file_id)
+    res = client.file.hex(file_id)['content']
     assert res.startswith('00000000:')
 
 
