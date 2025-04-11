@@ -150,6 +150,7 @@ def test_settings(datastore, client):
     assert res['success']
 
     # Validate changes were applied
+    datastore.user_settings.commit()
     assert new_password == datastore.user_settings.get(user_id, as_obj=False)['default_zip_password']
 
 
