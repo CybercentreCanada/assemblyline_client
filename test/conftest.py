@@ -1,6 +1,6 @@
 import os
-import pytest
 
+import pytest
 
 UI_HOST = os.getenv('UI_HOST', "https://localhost:443")
 
@@ -24,13 +24,13 @@ pytest.skip = skip_or_fail
 
 
 try:
-    from assemblyline.common.security import get_random_password, get_password_hash
-    from assemblyline.datastore.store import ESStore
-    from assemblyline.datastore.helper import AssemblylineDatastore
-    from assemblyline.common.uid import get_random_id
-
     from assemblyline_client import get_client
+
     from assemblyline.common import forge
+    from assemblyline.common.security import get_password_hash, get_random_password
+    from assemblyline.common.uid import get_random_id
+    from assemblyline.datastore.helper import AssemblylineDatastore
+    from assemblyline.datastore.store import ESStore
     from assemblyline.odm import random_data
 
     config = forge.get_config()
@@ -80,15 +80,8 @@ try:
             random_data.wipe_workflows(ds)
 
     @pytest.fixture(scope="module")
-    def client(datastore):
-        user = datastore.user.get('admin')
-        random_pass = get_random_password(length=48)
-        key_name = "key_%s" % get_random_id().lower()
-        user.apikeys[key_name] = {"password": get_password_hash(random_pass), "acl": ["R", "W", "E"]}
-        datastore.user.save('admin', user)
-        api_key = "%s:%s" % (key_name, random_pass)
-
-        c = get_client(UI_HOST, apikey=('admin', api_key), verify=False, retries=1)
+    def client():
+        c = get_client(UI_HOST, auth=('admin', 'admin'), verify=False, retries=1)
         return c
 
 except (ImportError, ModuleNotFoundError):
