@@ -223,6 +223,8 @@ def _main(arguments):
     parser.add_argument('--srv-spec', metavar='"{ ... }"', help='A JSON dictionary of service specific parameters.')
     parser.add_argument('--server-crt', metavar='"/path/to/server.crt"',
                         help='DEFAULT: cert in server section of ~/.al/submit.cfg')
+    parser.add_argument('-r', '--submission-profile', metavar='"static"',
+                        help='Predefined profile to apply to this submission.')
 
     params = parser.parse_args(arguments)
 
@@ -281,6 +283,9 @@ def _main(arguments):
     if params.srv_spec:
         kw.setdefault("params", {})
         kw["params"]["service_spec"] = json.loads(params.srv_spec)
+
+    if params.submission_profile:
+        kw['submission_profile'] = params.submission_profile
 
     auth = None
     api_auth = None
