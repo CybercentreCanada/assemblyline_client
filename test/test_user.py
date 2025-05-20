@@ -3,6 +3,11 @@ import random
 import pytest
 from assemblyline_client.v4_client.common.utils import ClientError
 
+from assemblyline.odm.models.user_settings import (
+    DEFAULT_SUBMISSION_PROFILE_SETTINGS,
+    DEFAULT_USER_PROFILE_SETTINGS,
+)
+
 try:
     from utils import random_id_from_collection
 
@@ -140,7 +145,13 @@ def test_settings(datastore, client):
 
     # Test getting settings
     settings = client.user.settings(user_id)
-    assert {'classification', 'download_encoding', 'priority', 'ttl'}.issubset(set(settings.keys()))
+
+    # Ensure general settings are present
+    assert set(DEFAULT_USER_PROFILE_SETTINGS.keys()).issubset(set(settings.keys()))
+
+    # Ensure submission settings are present under "submission_profiles"
+    for submission_profile in settings['submission_profiles'].values():
+        assert set(DEFAULT_SUBMISSION_PROFILE_SETTINGS.keys()).issubset(set(submission_profile.keys()))
 
     # Test updating settings
     new_password = "zippy"
