@@ -165,10 +165,17 @@ def test_settings(datastore, client):
     assert new_password == datastore.user_settings.get(user_id, as_obj=False)['default_zip_password']
 
 
-def test_submission_params(datastore, client):
-    user_id = random_id_from_collection(datastore, 'user')
+@pytest.mark.parametrize("user_id", ["user", "admin"])
+def test_submission_params(datastore, client, user_id):
+    if user_id == "user":
+        # Test getting submission params from the default profile (regular user doesn't have a custom profile)
+        with pytest.raises(ClientError, match=f"Submission profile 'default' does not exist for user: {user_id}."):
+            res = client.user.submission_params(user_id)
 
-    res = client.user.submission_params(user_id)
+        # Test getting submission params from the submission profile
+        res = client.user.submission_params(user_id, profile="static")
+    else:
+        res = client.user.submission_params(user_id)
 
     assert not {'download_encoding', 'hide_raw_results'}.issubset(set(res.keys()))
     assert {'deep_scan', 'groups', 'ignore_cache', 'submitter'}.issubset(set(res.keys()))
