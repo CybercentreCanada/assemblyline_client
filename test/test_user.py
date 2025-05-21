@@ -3,6 +3,11 @@ import random
 import pytest
 from assemblyline_client.v4_client.common.utils import ClientError
 
+from assemblyline.odm.models.user_settings import (
+    DEFAULT_SUBMISSION_PROFILE_SETTINGS,
+    DEFAULT_USER_PROFILE_SETTINGS,
+)
+
 try:
     from utils import random_id_from_collection
 
@@ -140,7 +145,13 @@ def test_settings(datastore, client):
 
     # Test getting settings
     settings = client.user.settings(user_id)
-    assert {'classification', 'download_encoding', 'priority', 'ttl'}.issubset(set(settings.keys()))
+
+    # Ensure general settings are present
+    assert set(DEFAULT_USER_PROFILE_SETTINGS.keys()).issubset(set(settings.keys()))
+
+    # Ensure submission settings are present under "submission_profiles"
+    for submission_profile in settings['submission_profiles'].values():
+        assert set(DEFAULT_SUBMISSION_PROFILE_SETTINGS.keys()).issubset(set(submission_profile.keys()))
 
     # Test updating settings
     new_password = "zippy"
@@ -154,10 +165,17 @@ def test_settings(datastore, client):
     assert new_password == datastore.user_settings.get(user_id, as_obj=False)['default_zip_password']
 
 
-def test_submission_params(datastore, client):
-    user_id = random_id_from_collection(datastore, 'user')
+@pytest.mark.parametrize("user_id", ["user", "admin"])
+def test_submission_params(datastore, client, user_id):
+    if user_id == "user":
+        # Test getting submission params from the default profile (regular user doesn't have a custom profile)
+        with pytest.raises(ClientError, match=f"Submission profile 'default' does not exist for user: {user_id}."):
+            res = client.user.submission_params(user_id)
 
-    res = client.user.submission_params(user_id)
+        # Test getting submission params from the submission profile
+        res = client.user.submission_params(user_id, profile="static")
+    else:
+        res = client.user.submission_params(user_id)
 
     assert not {'download_encoding', 'hide_raw_results'}.issubset(set(res.keys()))
     assert {'deep_scan', 'groups', 'ignore_cache', 'submitter'}.issubset(set(res.keys()))

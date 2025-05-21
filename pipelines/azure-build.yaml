@@ -41,7 +41,7 @@ stages:
             displayName: Set python version
             inputs: { versionSpec: 3.11 }
           - script: |
-              sudo env "PATH=$PATH" python -m pip install --no-cache-dir -U wheel pip
+              sudo env "PATH=$PATH" "PIP_USE_PEP517=true" python -m pip install --no-cache-dir -U wheel pip
               python setup.py bdist_wheel
           - publish: $(System.DefaultWorkingDirectory)/dist/
             artifact: dist
@@ -120,8 +120,8 @@ stages:
             displayName: Setup Environment
           - script: |
               export VERSION=${BUILD_SOURCEBRANCH#"refs/tags/v"}
-              sudo env "PATH=$PATH" python -m pip install -f dist/ "assemblyline-client[test]==${VERSION}"
-              sudo env "PATH=$PATH" python -m pip install -r test/requirements.txt
+              sudo env "PATH=$PATH" "PIP_USE_PEP517=true" python -m pip install -f dist/ "assemblyline-client[test]==${VERSION}"
+              sudo env "PATH=$PATH" "PIP_USE_PEP517=true" python -m pip install -r test/requirements.txt
             workingDirectory: $(Pipeline.Workspace)
             displayName: Install assemblyline_client
           - script: |
@@ -142,7 +142,7 @@ stages:
             artifact: dist
           - script: |
               set -xv  # Echo commands before they are run
-              sudo env "PATH=$PATH" python -m pip install --no-cache-dir twine
+              sudo env "PATH=$PATH" "PIP_USE_PEP517=true" python -m pip install --no-cache-dir twine
               ls dist
               twine upload --skip-existing --repository-url $TEST_REPOSITORY_URL dist/*
             displayName: Deploy to Test PyPI
@@ -152,7 +152,7 @@ stages:
               TWINE_PASSWORD: $(twinePasswordTest)
           - script: |
               set -xv  # Echo commands before they are run
-              sudo env "PATH=$PATH" python -m pip install --no-cache-dir twine
+              sudo env "PATH=$PATH" "PIP_USE_PEP517=true" python -m pip install --no-cache-dir twine
               ls dist
               twine upload --skip-existing dist/*
             displayName: Deploy to PyPI

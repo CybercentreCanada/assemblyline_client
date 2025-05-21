@@ -1,4 +1,8 @@
-from assemblyline_client.v4_client.common.utils import api_path, api_path_by_module, get_function_kwargs
+from assemblyline_client.v4_client.common.utils import (
+    api_path,
+    api_path_by_module,
+    get_function_kwargs,
+)
 
 
 class Avatar(object):
@@ -173,16 +177,19 @@ sort       : Sort order
 """
         return self._connection.get(api_path_by_module(self, **get_function_kwargs('self')))
 
-    def submission_params(self, username):
+    def submission_params(self, username, profile="default"):
         """\
 Return the submission parameters for the given username.
 
 Required:
 username    : User key (string)
 
+Optional:
+profile     : Name of the submission profile to use (string)
+
 Throws a Client exception if the user does not exist.
 """
-        return self._connection.get(api_path_by_module(self, username))
+        return self._connection.get(api_path_by_module(self, username, profile))
 
     def tos(self, username):
         """\
