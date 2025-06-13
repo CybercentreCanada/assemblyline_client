@@ -43,11 +43,20 @@ def test_get(datastore, client):
 
 
 def test_run(datastore, client):
-    # success should be true to run workflow
-    workflow_id = random_id_from_collection(datastore, "workflow")
-    res = client.workflow.run(workflow_id)
 
+    # setting up workflow to run on any alert
+    workflow_id = random_id_from_collection(datastore, "workflow")
+    workflow_data = datastore.workflow.get(workflow_id, as_obj=False)
+    workflow_data["query"] = "*"
+    datastore.workflow.save(workflow_id, workflow_data)
+    datastore.workflow.commit()
+
+    # success should be true to run workflow
+    res = client.workflow.run(workflow_id)
+    datastore.alert.commit()
     assert res["success"]
+
+    assert datastore.alert.search(f'events.entity_id:"{workflow_id}"', rows=1)["total"]
 
 
 def test_label_list(datastore, client):
