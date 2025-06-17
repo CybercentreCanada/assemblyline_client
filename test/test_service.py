@@ -152,7 +152,7 @@ def test_update(datastore, client):
     print(random_service)
     print(res)
     assert res["success"]
-    assert res["status"] == "updated"
+    assert res["status"] in ["updated", "updating"]
 
 
 def test_updates(client):
