@@ -19,8 +19,8 @@ Throws a Client exception if the service does not exist.
 """
         kw = {}
         if version:
-            kw['version'] = version
-        return self._connection.get(api_path('service', service_name, **kw))
+            kw["version"] = version
+        return self._connection.get(api_path("service", service_name, **kw))
 
     def add(self, data):
         """\
@@ -29,18 +29,25 @@ Add a service using its yaml manifest
 Required:
 data  : service_manifest.yml content
 """
-        return self._connection.put(api_path('service'), data=data)
+        return self._connection.put(api_path("service"), data=data)
 
-    def backup(self, output=None):
+    def backup(self, full=False, output=None):
         """\
 Create a backup of the current system configuration
 
 Optional:
+full     : If true backup all service versions, else backup only active service version
 output   : Path or file handle (string or file-like object)
 """
-        path = api_path_by_module(self)
+
+        kw = {}
+        if full:
+            kw["full"] = full
+        path = api_path_by_module(self, **kw)
+
         if output:
             return self._connection.download(path, stream_output(output))
+
         return self._connection.download(path, raw_output)
 
     def constants(self, output=None):
@@ -58,13 +65,13 @@ service_name:   Name of the service to delete
 
 Throws a Client exception if the service does not exist.
 """
-        return self._connection.delete(api_path('service', service_name))
+        return self._connection.delete(api_path("service", service_name))
 
     def list(self):
         """\
 List all service configurations of the system.
 """
-        return self._connection.get(api_path('service', 'all'))
+        return self._connection.get(api_path("service", "all"))
 
     def restore(self, data):
         """\
@@ -73,7 +80,7 @@ Restore an old backup of the system configuration
 Required:
 data   :  Backup yaml data
 """
-        return self._connection.put(api_path('service', 'restore'), data=data)
+        return self._connection.put(api_path("service", "restore"), data=data)
 
     def set(self, service_name, service_data):
         """\
@@ -85,7 +92,7 @@ Required:
 service_name     : Name of the service to change the configuration
 service_data     : New configuration for the service
 """
-        return self._connection.post(api_path('service', service_name), json=service_data)
+        return self._connection.post(api_path("service", service_name), json=service_data)
 
     def stats(self, service_name, version=None):
         """\
@@ -99,8 +106,8 @@ version          : Version of the service to get stats for
 """
         kw = {}
         if version:
-            kw['version'] = version
-        return self._connection.get(api_path('service', 'stats', service_name, **kw))
+            kw["version"] = version
+        return self._connection.get(api_path("service", "stats", service_name, **kw))
 
     def update(self, name, image, tag, username=None, password=None):
         """\
@@ -115,20 +122,12 @@ Optional:
 username  : Username to log into the docker registry
 password  : Password to log into the docker registry
 """
-        data = {
-            'name': name,
-            'update_data': {
-                'name': name,
-                'image': image,
-                'latest_tag': tag
-            }
-        }
+        data = {"name": name, "update_data": {"name": name, "image": image, "latest_tag": tag}}
 
         if username and password:
-            data['update_data']['auth'] = {
-                'username': username,
-                'password': password
-            }
+            data["update_data"]["auth"] = {"username": username, "password": password}
+
+        print(data)
 
         return self._connection.put(api_path_by_module(self), json=data)
 

@@ -14,7 +14,7 @@ workflow_id: Id of the workflow (string)
 
 Throws a Client exception if the workflow does not exist.
 """
-        return self._connection.get(api_path('workflow', workflow_id))
+        return self._connection.get(api_path("workflow", workflow_id))
 
     def add(self, workflow):
         """\
@@ -25,7 +25,7 @@ workflow  : data of the workflow
 
 Throws a Client exception if the workflow information is wrong.
 """
-        return self._connection.put(api_path('workflow'), json=workflow)
+        return self._connection.put(api_path("workflow"), json=workflow)
 
     def delete(self, workflow_id):
         """\
@@ -36,7 +36,7 @@ workflow_id : id of the workflow
 
 Throws a Client exception if the workflow does not exist.
 """
-        return self._connection.delete(api_path('workflow', workflow_id))
+        return self._connection.delete(api_path("workflow", workflow_id))
 
     def labels(self):
         """\
@@ -53,7 +53,7 @@ query     : query to filter the workflow
 rows      : number of items returned
 offset    : offset in the results to start returning data
 """
-        return self._connection.get(api_path('search', 'workflow', **get_function_kwargs('self')))
+        return self._connection.get(api_path("search", "workflow", **get_function_kwargs("self")))
 
     def update(self, workflow_id, workflow):
         """\
@@ -65,4 +65,15 @@ workflow    : data of the workflow
 
 Throws a Client exception if the workflow does not exist.
 """
-        return self._connection.post(api_path('workflow', workflow_id), json=workflow)
+        return self._connection.post(api_path("workflow", workflow_id), json=workflow)
+
+    def run(self, workflow_id):
+        """\
+ Run the specified workflow against all existing alerts that match the query.
+
+Required:
+workflow_id : id of the workflow
+
+Throws a Client exception if the workflow does not exist.
+"""
+        return self._connection.get(api_path("workflow", workflow_id, "run"))
