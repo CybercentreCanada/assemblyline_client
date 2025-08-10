@@ -26,8 +26,17 @@ If output is not specified the content is returned by the function
             return self._connection.download(path, stream_output(output))
         return self._connection.download(path, raw_output)
 
-    def import_bundle(self, bundle, min_classification=None, rescan_services=None, exist_ok=False,
-                      allow_incomplete=False, complete_queue=None):
+    def import_bundle(
+        self,
+        bundle,
+        min_classification=None,
+        rescan_services=None,
+        exist_ok=False,
+        allow_incomplete=False,
+        complete_queue=None,
+        reclassification=None,
+        to_ingest=False,
+    ):
         """\
 Import a submission bundle into the system
 
@@ -62,5 +71,9 @@ Returns {'success': True/False } depending if it was imported or not
             kw['rescan_services'] = ','.join(rescan_services)
         if allow_incomplete:
             kw['allow_incomplete'] = ''
+        if reclassification:
+            kw["reclassification"] = reclassification
+        if to_ingest:
+            kw["to_ingest"] = to_ingest
 
         return self._connection.post(api_path('bundle', **kw), data=contents)
