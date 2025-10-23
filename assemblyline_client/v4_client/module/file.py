@@ -1,10 +1,24 @@
-from assemblyline_client.v4_client.common.utils import api_path_by_module, get_function_kwargs, \
-    stream_output, raw_output, api_path
+from assemblyline_client.v4_client.common.utils import (
+    api_path,
+    api_path_by_module,
+    get_function_kwargs,
+    raw_output,
+    stream_output,
+)
 
 
 class File(object):
     def __init__(self, connection):
         self._connection = connection
+
+    def ai_summary(self, sha256) -> str:
+        """\
+Return an AI generated summary for the file with the given sha256.
+Required:
+sha256     : File key (string)
+Throws a Client exception if the file does not exist.
+"""
+        return self._connection.get(api_path('file/ai', sha256))['content']
 
     def ascii(self, sha256):
         """\
@@ -27,6 +41,15 @@ sha256     : File key (string)
 Throws a Client exception if the file does not exist.
 """
         return self._connection.get(api_path_by_module(self, sha256))
+
+    def code_summary(self, sha256) -> str:
+        """\
+Return a code summary for the file with the given sha256.
+Required:
+sha256     : File key (string)
+Throws a Client exception if the file does not exist.
+"""
+        return self._connection.get(api_path_by_module(self, sha256))['content']
 
     # noinspection PyUnusedLocal
     def download(self, sha256, encoding=None, sid=None, output=None, password=None):

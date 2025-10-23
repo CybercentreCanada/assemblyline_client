@@ -2,6 +2,7 @@
 from assemblyline_client.common.classification import Classification
 from assemblyline_client.v4_client.common.utils import ClientError, walk_api_path
 from assemblyline_client.v4_client.module.alert import Alert
+from assemblyline_client.v4_client.module.assistant import Assistant
 from assemblyline_client.v4_client.module.badlist import Badlist
 from assemblyline_client.v4_client.module.bundle import Bundle
 from assemblyline_client.v4_client.module.error import Error
@@ -30,6 +31,7 @@ class Client(object):
         self._connection = connection
 
         self.alert = Alert(self._connection)
+        self.assistant = Assistant(self._connection)
         self.badlist = Badlist(self._connection)
         self.bundle = Bundle(self._connection)
         self.error = Error(self._connection)
