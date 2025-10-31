@@ -247,6 +247,13 @@ def process_section(out, depth, body_format, body):
             pass
         recurse_process(out, depth, body)
 
+    elif body_format == 'SANDBOX':
+        try:
+            body = json.loads(body)
+        except TypeError:
+            pass
+        # recurse_process(out, depth, body)
+
     elif body_format == 'TABLE':
         try:
             body = json.loads(body)
