@@ -10,7 +10,6 @@ class Assistant(object):
     def __call__(
         self,
         user_prompt,
-        system_prompt="You are a helpful assistant.",
         language="english",
     ):
         """\
@@ -29,7 +28,6 @@ Throws a Client exception if the query does not exist.
         return self._connection.post(
             api_path("assistant", lang=language),
             json=[
-                {"role": "system", "content": dedent(system_prompt)},
                 {"role": "user", "content": dedent(user_prompt)},
             ],
         )["trace"][-1]["content"]
