@@ -7,6 +7,7 @@ from assemblyline_client.v4_client.module.search.grouped import Grouped
 from assemblyline_client.v4_client.module.search.histogram import Histogram
 from assemblyline_client.v4_client.module.search.stats import Stats
 from assemblyline_client.v4_client.module.search.stream import Stream
+from assemblyline_client.v4_client.wrapper import WRAPPER_MAP, BaseWrapper
 
 
 class Search(object):
@@ -19,7 +20,13 @@ class Search(object):
         self.stats = Stats(connection)
         self.stream = Stream(connection, self._do_search)
 
-    def _do_search(self, index, query, use_archive=False, track_total_hits=None, **kwargs):
+    def _do_search(
+            self,
+            index,
+            query,
+            use_archive=False,
+            track_total_hits=None,
+            **kwargs):
         if index not in SEARCHABLE:
             raise ClientError("Index %s is not searchable" % index, 400)
 
@@ -37,10 +44,23 @@ class Search(object):
         if track_total_hits:
             kwargs['track_total_hits'] = track_total_hits
         path = api_path('search', index)
-        return self._connection.post(path, data=json.dumps(kwargs))
+        data = self._connection.post(path, data=json.dumps(kwargs))
+        wrapper = WRAPPER_MAP.get(index, BaseWrapper)
+        data['items'] = [wrapper(self, item) for item in data['items']]
 
-    def alert(self, query, filters=None, fl=None, offset=0, rows=25, sort=None, timeout=None,
-              use_archive=False, track_total_hits=None):
+        return data
+
+    def alert(
+            self,
+            query,
+            filters=None,
+            fl=None,
+            offset=0,
+            rows=25,
+            sort=None,
+            timeout=None,
+            use_archive=False,
+            track_total_hits=None):
         """\
 Search alerts with a lucene query.
 
@@ -59,12 +79,29 @@ track_total_hits  : Number of hits to track (default: 10k)
 
 Returns all results.
 """
-        return self._do_search('alert', query, filters=filters, fl=fl, offset=offset,
-                               rows=rows, sort=sort, timeout=timeout,
-                               use_archive=use_archive, track_total_hits=track_total_hits)
+        return self._do_search(
+            'alert',
+            query,
+            filters=filters,
+            fl=fl,
+            offset=offset,
+            rows=rows,
+            sort=sort,
+            timeout=timeout,
+            use_archive=use_archive,
+            track_total_hits=track_total_hits)
 
-    def badlist(self, query, filters=None, fl=None, offset=0, rows=25, sort=None, timeout=None,
-                use_archive=False, track_total_hits=None):
+    def badlist(
+            self,
+            query,
+            filters=None,
+            fl=None,
+            offset=0,
+            rows=25,
+            sort=None,
+            timeout=None,
+            use_archive=False,
+            track_total_hits=None):
         """\
 Search badlists with a lucene query.
 
@@ -83,12 +120,29 @@ track_total_hits  : Number of hits to track (default: 10k)
 
 Returns all results.
 """
-        return self._do_search('badlist', query, filters=filters, fl=fl, offset=offset,
-                               rows=rows, sort=sort, timeout=timeout,
-                               use_archive=use_archive, track_total_hits=track_total_hits)
+        return self._do_search(
+            'badlist',
+            query,
+            filters=filters,
+            fl=fl,
+            offset=offset,
+            rows=rows,
+            sort=sort,
+            timeout=timeout,
+            use_archive=use_archive,
+            track_total_hits=track_total_hits)
 
-    def file(self, query, filters=None, fl=None, offset=0, rows=25, sort=None, timeout=None,
-             use_archive=False, track_total_hits=None):
+    def file(
+            self,
+            query,
+            filters=None,
+            fl=None,
+            offset=0,
+            rows=25,
+            sort=None,
+            timeout=None,
+            use_archive=False,
+            track_total_hits=None):
         """\
 Search files with a lucene query.
 
@@ -107,12 +161,29 @@ track_total_hits  : Number of hits to track (default: 10k)
 
 Returns all results.
 """
-        return self._do_search('file', query, filters=filters, fl=fl, offset=offset,
-                               rows=rows, sort=sort, timeout=timeout,
-                               use_archive=use_archive, track_total_hits=track_total_hits)
+        return self._do_search(
+            'file',
+            query,
+            filters=filters,
+            fl=fl,
+            offset=offset,
+            rows=rows,
+            sort=sort,
+            timeout=timeout,
+            use_archive=use_archive,
+            track_total_hits=track_total_hits)
 
-    def heuristic(self, query, filters=None, fl=None, offset=0, rows=25, sort=None, timeout=None,
-                  use_archive=False, track_total_hits=None):
+    def heuristic(
+            self,
+            query,
+            filters=None,
+            fl=None,
+            offset=0,
+            rows=25,
+            sort=None,
+            timeout=None,
+            use_archive=False,
+            track_total_hits=None):
         """\
 Search heuristics with a lucene query.
 
@@ -131,12 +202,29 @@ track_total_hits  : Number of hits to track (default: 10k)
 
 Returns all results.
 """
-        return self._do_search('heuristic', query, filters=filters, fl=fl, offset=offset,
-                               rows=rows, sort=sort, timeout=timeout,
-                               use_archive=use_archive, track_total_hits=track_total_hits)
+        return self._do_search(
+            'heuristic',
+            query,
+            filters=filters,
+            fl=fl,
+            offset=offset,
+            rows=rows,
+            sort=sort,
+            timeout=timeout,
+            use_archive=use_archive,
+            track_total_hits=track_total_hits)
 
-    def result(self, query, filters=None, fl=None, offset=0, rows=25, sort=None, timeout=None,
-               use_archive=False, track_total_hits=None):
+    def result(
+            self,
+            query,
+            filters=None,
+            fl=None,
+            offset=0,
+            rows=25,
+            sort=None,
+            timeout=None,
+            use_archive=False,
+            track_total_hits=None):
         """\
 Search results with a lucene query.
 
@@ -155,12 +243,29 @@ track_total_hits  : Number of hits to track (default: 10k)
 
 Returns all results.
 """
-        return self._do_search('result', query, filters=filters, fl=fl, offset=offset,
-                               rows=rows, sort=sort, timeout=timeout,
-                               use_archive=use_archive, track_total_hits=track_total_hits)
+        return self._do_search(
+            'result',
+            query,
+            filters=filters,
+            fl=fl,
+            offset=offset,
+            rows=rows,
+            sort=sort,
+            timeout=timeout,
+            use_archive=use_archive,
+            track_total_hits=track_total_hits)
 
-    def safelist(self, query, filters=None, fl=None, offset=0, rows=25, sort=None, timeout=None,
-                 use_archive=False, track_total_hits=None):
+    def safelist(
+            self,
+            query,
+            filters=None,
+            fl=None,
+            offset=0,
+            rows=25,
+            sort=None,
+            timeout=None,
+            use_archive=False,
+            track_total_hits=None):
         """\
 Search safelist with a lucene query.
 
@@ -179,12 +284,29 @@ track_total_hits  : Number of hits to track (default: 10k)
 
 Returns all results.
 """
-        return self._do_search('safelist', query, filters=filters, fl=fl, offset=offset,
-                               rows=rows, sort=sort, timeout=timeout,
-                               use_archive=use_archive, track_total_hits=track_total_hits)
+        return self._do_search(
+            'safelist',
+            query,
+            filters=filters,
+            fl=fl,
+            offset=offset,
+            rows=rows,
+            sort=sort,
+            timeout=timeout,
+            use_archive=use_archive,
+            track_total_hits=track_total_hits)
 
-    def signature(self, query, filters=None, fl=None, offset=0, rows=25, sort=None, timeout=None,
-                  use_archive=False, track_total_hits=None):
+    def signature(
+            self,
+            query,
+            filters=None,
+            fl=None,
+            offset=0,
+            rows=25,
+            sort=None,
+            timeout=None,
+            use_archive=False,
+            track_total_hits=None):
         """\
 Search signatures with a lucene query.
 
@@ -203,12 +325,29 @@ track_total_hits  : Number of hits to track (default: 10k)
 
 Returns all results.
 """
-        return self._do_search('signature', query, filters=filters, fl=fl, offset=offset,
-                               rows=rows, sort=sort, timeout=timeout,
-                               use_archive=use_archive, track_total_hits=track_total_hits)
+        return self._do_search(
+            'signature',
+            query,
+            filters=filters,
+            fl=fl,
+            offset=offset,
+            rows=rows,
+            sort=sort,
+            timeout=timeout,
+            use_archive=use_archive,
+            track_total_hits=track_total_hits)
 
-    def submission(self, query, filters=None, fl=None, offset=0, rows=25, sort=None, timeout=None,
-                   use_archive=False, track_total_hits=None):
+    def submission(
+            self,
+            query,
+            filters=None,
+            fl=None,
+            offset=0,
+            rows=25,
+            sort=None,
+            timeout=None,
+            use_archive=False,
+            track_total_hits=None):
         """\
 Search submissions with a lucene query.
 
@@ -227,12 +366,29 @@ track_total_hits  : Number of hits to track (default: 10k)
 
 Returns all results.
 """
-        return self._do_search('submission', query, filters=filters, fl=fl, offset=offset,
-                               rows=rows, sort=sort, timeout=timeout,
-                               use_archive=use_archive, track_total_hits=track_total_hits)
+        return self._do_search(
+            'submission',
+            query,
+            filters=filters,
+            fl=fl,
+            offset=offset,
+            rows=rows,
+            sort=sort,
+            timeout=timeout,
+            use_archive=use_archive,
+            track_total_hits=track_total_hits)
 
-    def workflow(self, query, filters=None, fl=None, offset=0, rows=25, sort=None, timeout=None,
-                 use_archive=False, track_total_hits=None):
+    def workflow(
+            self,
+            query,
+            filters=None,
+            fl=None,
+            offset=0,
+            rows=25,
+            sort=None,
+            timeout=None,
+            use_archive=False,
+            track_total_hits=None):
         """\
 Search workflow with a lucene query.
 
@@ -251,6 +407,14 @@ track_total_hits  : Number of hits to track (default: 10k)
 
 Returns all results.
 """
-        return self._do_search('workflow', query, filters=filters, fl=fl, offset=offset,
-                               rows=rows, sort=sort, timeout=timeout,
-                               use_archive=use_archive, track_total_hits=track_total_hits)
+        return self._do_search(
+            'workflow',
+            query,
+            filters=filters,
+            fl=fl,
+            offset=offset,
+            rows=rows,
+            sort=sort,
+            timeout=timeout,
+            use_archive=use_archive,
+            track_total_hits=track_total_hits)
