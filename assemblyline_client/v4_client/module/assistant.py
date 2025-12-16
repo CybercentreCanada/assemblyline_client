@@ -19,7 +19,6 @@ Required:
 user_prompt     : The prompt to send to the assistant (string)
 
 Optional:
-system_prompt   : The system prompt to set the behavior of the assistant (string)
 language        : The language to use for the response (string)
 
 Throws a Client exception if the query does not exist.
