@@ -1,16 +1,20 @@
 import os
-
 from json import dumps
 
-from assemblyline_client.v4_client.common.utils import api_path, api_path_by_module, get_function_kwargs, ClientError
 from assemblyline_client.v4_client.common.submit_utils import get_file_handler
+from assemblyline_client.v4_client.common.utils import (
+    ClientError,
+    api_path,
+    api_path_by_module,
+    get_function_kwargs,
+)
 
 
 class Submit(object):
     def __init__(self, connection):
         self._connection = connection
 
-    def __call__(self, fh=None, path=None, content=None, url=None, sha256=None, fname=None, params=None, metadata=None, submission_profile=None):
+    def __call__(self, fh=None, path=None, content=None, url=None, sha256=None, fetch_input=None, fname=None, params=None, metadata=None, submission_profile=None):
         """\
 Submit a file to be dispatched.
 
@@ -20,6 +24,7 @@ content : Content of the file to scan (byte array)
 path    : Path/name of file. (string)
 sha256  : Sha256 of the file to scan (string)
 url     : Url to scan (string)
+fetch_input : Input type to fetch and its value (tuple of (string, string)). This is used with the `params.default_external_sources` submission parameter to fetch a file from an external source based on the provided type and value.
 
 Optional
 fname       : Name of the file to scan
@@ -65,8 +70,14 @@ If content is provided, the path is used as metadata only.
                     'sha256': sha256,
                     'name': fname or sha256,
                 }
+            elif fetch_input:
+                input_type, input_value = fetch_input
+                request = {
+                    input_type: input_value,
+                    'name': fname or input_value,
+                }
             else:
-                raise ClientError('You need to provide at least content, a path, a url or a sha256', 400)
+                raise ClientError('You need to provide at least content, a path, a url, sha256, or fetch_input', 400)
 
             if params:
                 request['params'] = params
