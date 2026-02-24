@@ -125,6 +125,7 @@ stages:
             workingDirectory: $(Pipeline.Workspace)
             displayName: Install assemblyline_client
           - script: |
+              export ASSEMBLYLINE_VERSION=$(docker container run -it cccs/assemblyline-ui:$TAG bash -c 'echo "$ASSEMBLYLINE_VERSION"')
               pytest -rsx -vv
             workingDirectory: $(Pipeline.Workspace)/test
             displayName: Test

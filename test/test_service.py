@@ -81,9 +81,8 @@ def test_get_service(datastore, client):
 
 
 def test_get_service_versions(datastore, client):
-    service = client.service.list()[0]['name']
-    assert datastore.service.search(f'name:"{service}"', rows=0)['total'] >= 1
-    res = client.service.versions(service)
+    random_service = random_id_from_collection(datastore, "service_delta")
+    res = client.service.versions(random_service)
     assert len(res) >= 1
     for v in res:
         assert v.startswith(f"{FRAMEWORK_VERSION}.{SYSTEM_VERSION}.{BUILD_MINOR}.")

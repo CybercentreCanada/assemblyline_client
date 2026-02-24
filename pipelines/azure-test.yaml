@@ -99,5 +99,6 @@ jobs:
           sudo env "PATH=$PATH" "PIP_USE_PEP517=true" python -m pip install --no-cache-dir -e . -r test/requirements.txt
         displayName: Install assemblyline_client
       - script: |
+          export ASSEMBLYLINE_VERSION=$(docker container run -it cccs/assemblyline-ui:$TAG bash -c 'echo "$ASSEMBLYLINE_VERSION"')
           pytest -rsx -vv
         displayName: Test
