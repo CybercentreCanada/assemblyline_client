@@ -1,10 +1,10 @@
+from copy import deepcopy
+
 import pytest
 import requests
 import yaml
-
+from assemblyline.common.version import BUILD_MINOR, FRAMEWORK_VERSION, SYSTEM_VERSION
 from assemblyline_client import ClientError
-from assemblyline.common.version import FRAMEWORK_VERSION, SYSTEM_VERSION, BUILD_MINOR
-from copy import deepcopy
 
 try:
     from utils import random_id_from_collection
@@ -82,6 +82,7 @@ def test_get_service(datastore, client):
 
 def test_get_service_versions(datastore, client):
     random_service = random_id_from_collection(datastore, "service_delta")
+    assert datastore.service.search(f'name:"{random_service}"', rows=0)['total'] >= 1
     res = client.service.versions(random_service)
     assert len(res) >= 1
     for v in res:
