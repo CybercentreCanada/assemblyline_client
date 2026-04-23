@@ -55,16 +55,17 @@ Throws a Client exception if the submission and/or file does not exist.
         else:
             return self._connection.get(path)
 
-    def full(self, sid):
+    def full(self, sid, get_full_tree: bool = False):
         """\
 Return the full result for the given submission.
 
 Required:
 sid     : Submission ID. (string)
+get_full_tree : requesting to guarantee to get a full tree with no truncation (default is false) (bool)
 
 Throws a Client exception if the submission does not exist.
 """
-        return self._connection.get(api_path_by_module(self, sid))
+        return self._connection.get(api_path_by_module(self, sid, get_full_tree=get_full_tree))
 
     def is_completed(self, sid):
         """\
@@ -113,16 +114,17 @@ track_total_hits  : Number of hits to track (default: 10k)
             return self._connection.get(api_path_by_module(self, 'group', group, **kw))
         return self._connection.get(api_path_by_module(self, 'group', 'ALL', **kw))
 
-    def report(self, sid):
+    def report(self, sid, get_full_tree: bool = False):
         """\
 Create a report for a submission based on its ID.
 
 Required:
-sid     : Submission ID. (string)
+sid           : Submission ID. (string)
+get_full_tree : requesting to guarantee to get a full tree with no truncation (default is false) (bool)
 
 Throws a Client exception if the submission does not exist.
 """
-        return self._connection.get(api_path_by_module(self, sid))
+        return self._connection.get(api_path_by_module(self, sid, get_full_tree=get_full_tree))
 
     def set_verdict(self, sid, verdict):
         """\
@@ -147,16 +149,17 @@ Throws a Client exception if the submission does not exist.
 """
         return self._connection.get(api_path_by_module(self, sid))
 
-    def tree(self, sid):
+    def tree(self, sid, get_full_tree: bool = False):
         """\
 Return the file hierarchy for the submission with the given sid.
 
 Required:
-sid     : Submission ID. (string)
+sid           : Submission ID. (string)
+get_full_tree : requesting to guarantee to get a full tree with no truncation (default is false) (bool)
 
 Throws a Client exception if the submission does not exist.
 """
-        return self._connection.get(api_path_by_module(self, sid))
+        return self._connection.get(api_path_by_module(self, sid, get_full_tree=get_full_tree))
 
 
 class Live(object):

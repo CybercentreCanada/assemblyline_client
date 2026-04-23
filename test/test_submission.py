@@ -44,6 +44,22 @@ def test_full_submission(datastore, client):
     assert 'file_infos' in res
     assert 'errors' in res
 
+def test_full_submission_get_full_tree(datastore, client):
+    submission_id = random_id_from_collection(datastore, 'submission', q="file_count:[2 TO *]")
+    submissison_data = datastore.submission.get(submission_id, as_obj=False)
+
+    res = client.submission.full(submission_id, get_full_tree=True)
+    assert res['params'] == submissison_data['params']
+    assert res['sid'] == submission_id
+    assert 'file_tree' in res
+    assert 'results' in res
+    assert 'file_infos' in res
+    assert 'errors' in res
+
+    # Verify that the submission has truncated false for all entries to verify this is the full tree.
+    for k, v in res['file_tree'].items():
+        assert v.get("truncated", True) is False
+
 
 def test_is_completed(datastore, client):
     submission_id = random_id_from_collection(datastore, 'submission')
@@ -72,6 +88,19 @@ def test_report(datastore, client):
     assert 'report_filtered' in res
     assert 'attack_matrix' in res
     assert 'important_files' in res
+
+def test_report_get_full_tree(datastore, client):
+    submission_id = random_id_from_collection(datastore, 'submission')
+
+    res = client.submission.report(submission_id, get_full_tree=True)
+    assert res['sid'] == submission_id
+    assert 'report_filtered' in res
+    assert 'attack_matrix' in res
+    assert 'important_files' in res
+
+    # Verify that the submission has truncated false for all entries to verify this is the full tree.
+    for k, v in res.get("file_tree").items():
+        assert v.get("truncated", True) is False
 
 
 def test_set_verdict(datastore, client):
@@ -109,3 +138,17 @@ def test_tree(datastore, client):
     for k in ['classification', 'filtered', 'tree']:
         assert k in res
     assert submission_data.files[0].sha256 in res['tree']
+
+def test_tree_get_full_tree(datastore, client):
+    submission_id = random_id_from_collection(datastore, 'submission', q="file_count:[2 TO *]")
+    submission_data = datastore.submission.get(submission_id)
+
+    res = client.submission.tree(submission_id, get_full_tree=True)
+    assert len(res) >= 1
+    for k in ['classification', 'filtered', 'tree']:
+        assert k in res
+    assert submission_data.files[0].sha256 in res['tree']
+
+    # Verify that the submission has truncated false for all entries to verify this is the full tree.
+    for k, v in res['tree'].items():
+        assert v.get("truncated", True) is False
