@@ -26,5 +26,15 @@ logging:
   log_to_file: false
   log_to_syslog: false
 
+submission:
+  file_sources:
+    - name: "alpytest"
+      auto_select: true
+      hash_types: [test_hash]
+      hash_patterns:
+        test_hash: "^\/pytest\/stable\\.json$"
+      replace_pattern: "{HASH}"
+      url: https://alpytest.blob.core.windows.net/{HASH}
+
 ui:
   enforce_quota: false

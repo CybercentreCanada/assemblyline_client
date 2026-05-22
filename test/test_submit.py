@@ -1,20 +1,19 @@
 import os
 import tempfile
-
 from io import BytesIO
 
 try:
     from assemblyline.common import forge
     from assemblyline.common.uid import get_random_id
     from assemblyline.odm.randomizer import get_random_phrase
-
     from utils import random_id_from_collection
 
     config = forge.get_config()
 
 except (ImportError, SyntaxError):
-    import pytest
     import sys
+
+    import pytest
     if sys.version_info < (3, 0):
         pytestmark = pytest.mark.skip
     else:
@@ -120,3 +119,11 @@ def test_resubmit(datastore, client):
     for k, v in submission_data['params'].items():
         if k not in ['submitter', 'description', 'quota_item']:
             assert res['params'].get(k) == v
+
+def test_submit_fetch_input(datastore, client):
+    res = client.submit(fetch_input=('test_hash', "/pytest/stable.json"),
+                        params={'default_external_sources': ['alpytest']})
+    assert res is not None
+    assert res['sid'] is not None
+    assert res['files'][0]['sha256']
+    assert res == datastore.submission.get(res['sid'], as_obj=False)
