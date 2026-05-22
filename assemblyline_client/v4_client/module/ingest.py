@@ -85,7 +85,9 @@ If content is provided, the path is used as metadata only.
 
             request.update({
                 'metadata': {},
-                'type': ingest_type,
+                'params': {
+                    'type': ingest_type
+                }
             })
 
             if alert:
@@ -97,7 +99,7 @@ If content is provided, the path is used as metadata only.
             if nt:
                 request['notification_threshold'] = int(nt)
             if params:
-                request['params'] = params
+                request['params'].update(params)
             if submission_profile:
                 request['submission_profile'] = submission_profile
             if files:
