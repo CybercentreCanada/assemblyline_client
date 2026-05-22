@@ -1,21 +1,20 @@
 import tempfile
-
 from io import BytesIO
 
 try:
     from assemblyline.common import forge
     from assemblyline.common.uid import get_random_id
     from assemblyline.odm.models.submission import Submission
-    from assemblyline.odm.randomizer import random_model_obj, get_random_phrase
+    from assemblyline.odm.randomizer import get_random_phrase, random_model_obj
     from assemblyline.remote.datatypes.queues.named import NamedQueue
-
     from utils import random_id_from_collection
 
     config = forge.get_config()
 
 except (ImportError, SyntaxError):
-    import pytest
     import sys
+
+    import pytest
     if sys.version_info < (3, 0):
         pytestmark = pytest.mark.skip
     else:
@@ -119,3 +118,8 @@ def test_ingest_url(datastore, client):
     url = 'https://raw.githubusercontent.com/CybercentreCanada/assemblyline-ui/master/README.md'
     res = client.ingest(url=url, params={"deep_scan": True, "ignore_cache": True, "priority": 100})
     assert res.get('ingest_id', None) is not None
+
+def test_ingest_fetch_input(datastore, client):
+    res = client.ingest(fetch_input=('test_hash', "/pytest/stable.json"),
+                        params={'default_external_sources': ['alpytest']})
+    assert res is not None

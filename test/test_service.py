@@ -1,10 +1,10 @@
+from copy import deepcopy
+
 import pytest
 import requests
 import yaml
-
+from assemblyline.common.version import BUILD_MINOR, FRAMEWORK_VERSION, SYSTEM_VERSION
 from assemblyline_client import ClientError
-from assemblyline.common.version import FRAMEWORK_VERSION, SYSTEM_VERSION, BUILD_MINOR
-from copy import deepcopy
 
 try:
     from utils import random_id_from_collection

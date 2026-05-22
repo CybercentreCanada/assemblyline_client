@@ -1,16 +1,19 @@
 import os
-
 from json import dumps
 
-from assemblyline_client.v4_client.common.utils import api_path, api_path_by_module, ClientError
 from assemblyline_client.v4_client.common.submit_utils import get_file_handler
+from assemblyline_client.v4_client.common.utils import (
+    ClientError,
+    api_path,
+    api_path_by_module,
+)
 
 
 class Ingest(object):
     def __init__(self, connection):
         self._connection = connection
 
-    def __call__(self, fh=None, path=None, content=None, url=None, sha256=None, fname=None, params=None, metadata=None,
+    def __call__(self, fh=None, path=None, content=None, url=None, sha256=None, fetch_input=None, fname=None, params=None, metadata=None,
                  alert=False, nq=None, nt=None, ingest_type='AL_CLIENT', submission_profile=None):
         """\
 Submit a file to the ingestion queue.
@@ -21,6 +24,7 @@ content : Content of the file to scan (byte array)
 path    : Path/name of file (string)
 sha256  : Sha256 of the file to scan (string)
 url     : Url to scan (string)
+fetch_input : Input type to fetch and its value (tuple of (string, string)). This is used with the `params.default_external_sources` submission parameter to fetch a file from an external source based on the provided type and value.
 
 Optional
 alert      : Create an alert if score above alert threshold. (boolean)
@@ -70,12 +74,20 @@ If content is provided, the path is used as metadata only.
                     'sha256': sha256,
                     'name': fname or sha256,
                 }
+            elif fetch_input:
+                input_type, input_value = fetch_input
+                request = {
+                    input_type: input_value,
+                    'name': fname or input_value,
+                }
             else:
-                raise ClientError('You need to provide at least content, a path, a url or a sha256', 400)
+                raise ClientError('You need to provide at least content, a path, a url, a sha256, or fetch_input', 400)
 
             request.update({
                 'metadata': {},
-                'type': ingest_type,
+                'params': {
+                    'type': ingest_type
+                }
             })
 
             if alert:
@@ -87,7 +99,7 @@ If content is provided, the path is used as metadata only.
             if nt:
                 request['notification_threshold'] = int(nt)
             if params:
-                request['params'] = params
+                request['params'].update(params)
             if submission_profile:
                 request['submission_profile'] = submission_profile
             if files:

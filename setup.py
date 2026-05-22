@@ -2,7 +2,8 @@
 """Assemblyline Client Library PiP Installer"""
 
 import os
-from setuptools import setup, find_packages
+
+from setuptools import find_packages, setup
 
 # For development and local builds use this version number, but for real builds replace it
 # with the tag found in the environment
@@ -35,13 +36,10 @@ setup(
         'Intended Audience :: Developers',
         'Topic :: Software Development :: Libraries',
         'License :: OSI Approved :: MIT License',
-        'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.7',
-        'Programming Language :: Python :: 3.8',
-        'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
         'Programming Language :: Python :: 3.11',
         'Programming Language :: Python :: 3.12',
+        'Programming Language :: Python :: 3.13'
     ],
     entry_points={
         'console_scripts': [
