@@ -125,7 +125,15 @@ stages:
             workingDirectory: $(Pipeline.Workspace)
             displayName: Install assemblyline_client
           - script: |
-              export ASSEMBLYLINE_VERSION=$(docker container run --rm cccs/assemblyline-ui:$TAG bash -c 'echo -n "$ASSEMBLYLINE_VERSION"')
+              set -x  # Echo commands before they are run
+              # Check which version we are building
+              export VERSION=${BUILD_SOURCEBRANCH#"refs/tags/v"}
+              if [[ "$VERSION" == *dev* ]]; then
+                  export CONTAINER=latest
+              else
+                  export CONTAINER=stable
+              fi
+              export ASSEMBLYLINE_VERSION=$(docker container run --rm cccs/assemblyline-ui:$CONTAINER bash -c 'echo -n "$ASSEMBLYLINE_VERSION"')
               pytest -rsx -vv
             workingDirectory: $(Pipeline.Workspace)/test
             displayName: Test
