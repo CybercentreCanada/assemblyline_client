@@ -4,6 +4,7 @@ from io import BytesIO
 
 try:
     from assemblyline.common import forge
+    from assemblyline.common.constants import notification_queue_name
     from assemblyline.common.uid import get_random_id
     from assemblyline.odm.models.submission import Submission
     from assemblyline.odm.randomizer import random_model_obj, get_random_phrase
@@ -24,7 +25,7 @@ except (ImportError, SyntaxError):
 
 def test_get_message(datastore, client):
     notification_queue = get_random_id()
-    queue = NamedQueue("nq-%s" % notification_queue,
+    queue = NamedQueue(notification_queue_name('admin', notification_queue),
                        host=config.core.redis.persistent.host,
                        port=config.core.redis.persistent.port)
     queue.delete()
@@ -40,7 +41,7 @@ def test_get_message(datastore, client):
 
 def test_get_message_list(datastore, client):
     notification_queue = get_random_id()
-    queue = NamedQueue("nq-%s" % notification_queue,
+    queue = NamedQueue(notification_queue_name('admin', notification_queue),
                        host=config.core.redis.persistent.host,
                        port=config.core.redis.persistent.port)
     queue.delete()
@@ -56,7 +57,7 @@ def test_get_message_list(datastore, client):
 
 def test_get_message_list_with_paging(datastore, client):
     notification_queue = get_random_id()
-    queue = NamedQueue("nq-%s" % notification_queue,
+    queue = NamedQueue(notification_queue_name('admin', notification_queue),
                        host=config.core.redis.persistent.host,
                        port=config.core.redis.persistent.port)
     queue.delete()
