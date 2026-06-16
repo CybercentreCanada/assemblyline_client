@@ -52,15 +52,14 @@ rescan_services     : List of services to rescan after import. (Comma seperated 
 Returns {'success': True/False } depending if it was imported or not
 """
         if isinstance(bundle, str):
-            if len(bundle) <= 1024 and os.path.exists(bundle):
-                with open(bundle, 'rb') as f:
-                    contents = f.read()
-            else:
-                contents = bundle
-        elif "read" in dir(bundle):
+            with open(bundle, 'rb') as f:
+                contents = f.read()
+        elif isinstance(bundle, (bytes, bytearray)):
+            contents = bytes(bundle)
+        elif hasattr(bundle, "read"):
             contents = bundle.read()
         else:
-            raise TypeError("Invalid bundle")
+            raise TypeError("Bundle must be a path (str), bytes, or a file-like object")
 
         kw = {}
         if exist_ok:
