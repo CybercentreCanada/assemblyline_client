@@ -14,6 +14,7 @@ except ImportError:
 
 
 def test_children(datastore, client):
+    datastore.result.commit()  # This api endpoint's results are synced to search in result
     submission_id = random_id_from_collection(datastore, 'submission', q="file_count:[2 TO *]")
     submission_data = datastore.submission.get(submission_id)
     file_id = submission_data.files[0].sha256
