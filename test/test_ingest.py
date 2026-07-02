@@ -110,7 +110,7 @@ def test_ingest_path(datastore, client):
 
 def test_ingest_sha(datastore, client):
     file_id = None
-    while not file_id and not filestore.exists(file_id):
+    while not file_id or not filestore.exists(file_id):
         file_id = random_id_from_collection(datastore, 'file')
 
     res = client.ingest(alert=True, sha256=file_id, metadata={"file_id": get_random_id(), "comment": "test"},
