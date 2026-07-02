@@ -36,6 +36,9 @@ def test_add(datastore, client):
 
 
 def test_delete(datastore, client):
+    # Make sure view is consistent before searching (api is consistent on get/set not search)
+    datastore.service_delta.commit()
+    
     # Get the first service with a source
     sources = client.signature.sources()
     service = list(sources.keys())[0]
@@ -53,6 +56,9 @@ def test_delete(datastore, client):
 
 
 def test_list(datastore, client):
+    # Make sure view is consistent before searching (api is consistent on get/set not search)
+    datastore.service_delta.commit()
+    
     sources = client.signature.sources()
     assert isinstance(sources, dict)
 
@@ -66,6 +72,9 @@ def test_list(datastore, client):
 
 
 def test_update(datastore, client):
+    # Make sure view is consistent before searching (api is consistent on get/set not search)
+    datastore.service_delta.commit()
+    
     new_uri = "HTTP://LOCALHOST/TEST_UPDATE"
 
     # Get the first service with a source

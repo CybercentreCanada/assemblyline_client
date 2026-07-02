@@ -5,6 +5,7 @@ try:
     from utils import random_id_from_collection
 except ImportError:
     import sys
+
     if sys.version_info < (3, 0):
         pytestmark = pytest.mark.skip
     else:
@@ -16,9 +17,9 @@ def test_get_message(datastore, client):
     with pytest.raises(ClientError):
         client.live.setup_watch_queue(submission_id)["wq_id"]
 
-    res = client.live.get_message('DOES_NOT_EXIST')
-    assert res['msg'] is None
-    assert res['type'] == 'timeout'
+    # Assert that the user can't get a message from a non-existent watch queue
+    with pytest.raises(ClientError, match="invalid watch queue"):
+        client.live.get_message("DOES_NOT_EXIST")
 
 
 def test_get_message_list(datastore, client):
@@ -26,8 +27,9 @@ def test_get_message_list(datastore, client):
     with pytest.raises(ClientError):
         client.live.setup_watch_queue(submission_id)["wq_id"]
 
-    res = client.live.get_message_list('DOES_NOT_EXIST')
-    assert len(res) == 0
+    # Assert that the user can't get a message list from a non-existent watch queue
+    with pytest.raises(ClientError, match="invalid watch queue"):
+        client.live.get_message_list("DOES_NOT_EXIST")
 
 
 def test_outstanding_services(datastore, client):

@@ -21,6 +21,7 @@ try:
     from assemblyline_client.v4_client.common.utils import get_random_id
 except (ImportError, SyntaxError):
     import sys
+
     if sys.version_info < (3, 0):
         pytestmark = pytest.mark.skip
     else:
@@ -28,7 +29,7 @@ except (ImportError, SyntaxError):
 
 
 def test_alert_created(datastore, client):
-    alert_queue = CommsQueue('alerts', private=True)
+    alert_queue = CommsQueue("alerts", private=True)
 
     created = random_model_obj(AlertMessage)
     created.msg_type = "AlertCreated"
@@ -39,10 +40,10 @@ def test_alert_created(datastore, client):
     test_res_array = []
 
     def alerter_created_callback(data):
-        test_res_array.append(('created', created['msg'] == data))
+        test_res_array.append(("created", created["msg"] == data))
 
     def alerter_updated_callback(data):
-        test_res_array.append(('updated', updated['msg'] == data))
+        test_res_array.append(("updated", updated["msg"] == data))
 
     def publish_thread():
         time.sleep(1)
@@ -50,9 +51,11 @@ def test_alert_created(datastore, client):
         alert_queue.publish(updated.as_primitives())
 
     threading.Thread(target=publish_thread).start()
-    client.socketio.listen_on_alerts_messages(alert_created_callback=alerter_created_callback,
-                                              alert_updated_callback=alerter_updated_callback,
-                                              timeout=2)
+    client.socketio.listen_on_alerts_messages(
+        alert_created_callback=alerter_created_callback,
+        alert_updated_callback=alerter_updated_callback,
+        timeout=2,
+    )
     assert len(test_res_array) == 2
 
     for test, result in test_res_array:
@@ -61,7 +64,7 @@ def test_alert_created(datastore, client):
 
 
 def test_status_messages(datastore, client):
-    status_queue = CommsQueue('status', private=True)
+    status_queue = CommsQueue("status", private=True)
     test_res_array = []
 
     alerter_hb_msg = random_model_obj(AlerterMessage).as_primitives()
@@ -74,28 +77,28 @@ def test_status_messages(datastore, client):
     service_hb_msg = random_model_obj(ServiceMessage).as_primitives()
 
     def alerter_callback(data):
-        test_res_array.append(('alerter', alerter_hb_msg['msg'] == data))
+        test_res_array.append(("alerter", alerter_hb_msg["msg"] == data))
 
     def archive_callback(data):
-        test_res_array.append(('archive', archive_hb_msg['msg'] == data))
+        test_res_array.append(("archive", archive_hb_msg["msg"] == data))
 
     def dispatcher_callback(data):
-        test_res_array.append(('dispatcher', dispatcher_hb_msg['msg'] == data))
+        test_res_array.append(("dispatcher", dispatcher_hb_msg["msg"] == data))
 
     def expiry_callback(data):
-        test_res_array.append(('expiry', expiry_hb_msg['msg'] == data))
+        test_res_array.append(("expiry", expiry_hb_msg["msg"] == data))
 
     def ingest_callback(data):
-        test_res_array.append(('ingest', ingest_hb_msg['msg'] == data))
+        test_res_array.append(("ingest", ingest_hb_msg["msg"] == data))
 
     def scaler_callback(data):
-        test_res_array.append(('scaler', scaler_hb_msg['msg'] == data))
+        test_res_array.append(("scaler", scaler_hb_msg["msg"] == data))
 
     def scaler_status_callback(data):
-        test_res_array.append(('scaler_status', scaler_status_hb_msg['msg'] == data))
+        test_res_array.append(("scaler_status", scaler_status_hb_msg["msg"] == data))
 
     def service_callback(data):
-        test_res_array.append(('service', service_hb_msg['msg'] == data))
+        test_res_array.append(("service", service_hb_msg["msg"] == data))
 
     def publish_thread():
         time.sleep(1)
@@ -109,15 +112,17 @@ def test_status_messages(datastore, client):
         status_queue.publish(scaler_status_hb_msg)
 
     threading.Thread(target=publish_thread).start()
-    client.socketio.listen_on_status_messages(alerter_msg_callback=alerter_callback,
-                                              archive_msg_callback=archive_callback,
-                                              dispatcher_msg_callback=dispatcher_callback,
-                                              expiry_msg_callback=expiry_callback,
-                                              ingest_msg_callback=ingest_callback,
-                                              scaler_msg_callback=scaler_callback,
-                                              scaler_status_msg_callback=scaler_status_callback,
-                                              service_msg_callback=service_callback,
-                                              timeout=2)
+    client.socketio.listen_on_status_messages(
+        alerter_msg_callback=alerter_callback,
+        archive_msg_callback=archive_callback,
+        dispatcher_msg_callback=dispatcher_callback,
+        expiry_msg_callback=expiry_callback,
+        ingest_msg_callback=ingest_callback,
+        scaler_msg_callback=scaler_callback,
+        scaler_status_msg_callback=scaler_status_callback,
+        service_msg_callback=service_callback,
+        timeout=2,
+    )
     assert len(test_res_array) == 8
 
     for test, result in test_res_array:
@@ -126,29 +131,29 @@ def test_status_messages(datastore, client):
 
 
 def test_submission_ingested(datastore, client):
-    submission_queue = CommsQueue('submissions', private=True)
+    submission_queue = CommsQueue("submissions", private=True)
     test_res_array = []
 
     completed = random_model_obj(SubmissionMessage).as_primitives()
-    completed['msg_type'] = "SubmissionCompleted"
+    completed["msg_type"] = "SubmissionCompleted"
     ingested = random_model_obj(SubmissionMessage).as_primitives()
-    ingested['msg_type'] = "SubmissionIngested"
+    ingested["msg_type"] = "SubmissionIngested"
     received = random_model_obj(SubmissionMessage).as_primitives()
-    received['msg_type'] = "SubmissionReceived"
+    received["msg_type"] = "SubmissionReceived"
     started = random_model_obj(SubmissionMessage).as_primitives()
-    started['msg_type'] = "SubmissionStarted"
+    started["msg_type"] = "SubmissionStarted"
 
     def completed_callback(data):
-        test_res_array.append(('completed', completed['msg'] == data))
+        test_res_array.append(("completed", completed["msg"] == data))
 
     def ingested_callback(data):
-        test_res_array.append(('ingested', ingested['msg'] == data))
+        test_res_array.append(("ingested", ingested["msg"] == data))
 
     def received_callback(data):
-        test_res_array.append(('received', received['msg'] == data))
+        test_res_array.append(("received", received["msg"] == data))
 
     def started_callback(data):
-        test_res_array.append(('started', started['msg'] == data))
+        test_res_array.append(("started", started["msg"] == data))
 
     def publish_thread():
         time.sleep(1)
@@ -158,11 +163,13 @@ def test_submission_ingested(datastore, client):
         submission_queue.publish(started)
 
     threading.Thread(target=publish_thread).start()
-    client.socketio.listen_on_submissions(completed_callback=completed_callback,
-                                          ingested_callback=ingested_callback,
-                                          received_callback=received_callback,
-                                          started_callback=started_callback,
-                                          timeout=2)
+    client.socketio.listen_on_submissions(
+        completed_callback=completed_callback,
+        ingested_callback=ingested_callback,
+        received_callback=received_callback,
+        started_callback=started_callback,
+        timeout=2,
+    )
 
     assert len(test_res_array) == 4
 
@@ -172,21 +179,22 @@ def test_submission_ingested(datastore, client):
 
 
 def test_watch_queue_messages(datastore, client):
-    wq_data = {'wq_id': get_random_id()}
-    wq = NamedQueue(wq_data['wq_id'], private=True)
+    wq_id = f"D-{get_random_id()}-WQ"
+    wq_data = {"wq_id": wq_id}
+    wq = NamedQueue(wq_data["wq_id"], private=True)
 
-    start_msg = {'status': 'START'}
-    stop_msg = {'status': 'STOP'}
-    cachekey_msg = {'status': 'OK', 'cache_key': get_random_id()}
-    cachekeyerr_msg = {'status': 'FAIL', 'cache_key': get_random_id()}
+    start_msg = {"status": "START"}
+    stop_msg = {"status": "STOP"}
+    cachekey_msg = {"status": "OK", "cache_key": get_random_id()}
+    cachekeyerr_msg = {"status": "FAIL", "cache_key": get_random_id()}
 
     test_res_array = []
 
     def result_callback(data):
-        test_res_array.append(('result', data['msg'] == cachekey_msg['cache_key']))
+        test_res_array.append(("result", data["msg"] == cachekey_msg["cache_key"]))
 
     def error_callback(data):
-        test_res_array.append(('error', data['msg'] == cachekeyerr_msg['cache_key']))
+        test_res_array.append(("error", data["msg"] == cachekeyerr_msg["cache_key"]))
 
     def publish_thread():
         time.sleep(1)
@@ -196,10 +204,12 @@ def test_watch_queue_messages(datastore, client):
         wq.push(stop_msg)
 
     threading.Thread(target=publish_thread).start()
-    client.socketio.listen_on_watch_queue(wq_data['wq_id'],
-                                          result_callback=result_callback,
-                                          error_callback=error_callback,
-                                          timeout=2)
+    client.socketio.listen_on_watch_queue(
+        wq_data["wq_id"],
+        result_callback=result_callback,
+        error_callback=error_callback,
+        timeout=2,
+    )
 
     assert len(test_res_array) == 2
 
