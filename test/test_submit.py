@@ -71,7 +71,9 @@ def test_submit_path(datastore, client):
 
 
 def test_submit_sha(datastore, client):
-    file_id = random_id_from_collection(datastore, 'file')
+    file_id = None
+    while not file_id or not filestore.exists(file_id):
+        file_id = random_id_from_collection(datastore, 'file')
     metadata = {"file_id": get_random_id(), "comment": "test"}
     res = client.submit(sha256=file_id, metadata=metadata)
     assert res is not None

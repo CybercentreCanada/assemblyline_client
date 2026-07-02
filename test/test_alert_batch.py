@@ -13,7 +13,7 @@ except ImportError:
 def test_label(datastore, client):
     alert_id = random_id_from_collection(datastore, 'alert')
 
-    res = client.alert.batch.label('alert_id:{}'.format(alert_id), ["B1", "B2"], fq_list=["id:*", "label:*"])
+    res = client.alert.batch.label('alert_id:{}'.format(alert_id), ["B1", "B2"], fq_list=["id:*"])
     assert res['success'] == 1
 
     alert_data = datastore.alert.get(alert_id)
@@ -30,7 +30,7 @@ def test_owner(datastore, client):
     datastore.alert.save(alert_id, alert_data)
     datastore.alert.commit()
 
-    res = client.alert.batch.ownership('alert_id:{}'.format(alert_id), fq_list=["id:*", "label:*"])
+    res = client.alert.batch.ownership('alert_id:{}'.format(alert_id), fq_list=["id:*"])
     assert res['success'] == 1
 
     alert_data = datastore.alert.get(alert_id)
@@ -40,7 +40,7 @@ def test_owner(datastore, client):
 def test_priority(datastore, client):
     alert_id = random_id_from_collection(datastore, 'alert')
 
-    res = client.alert.batch.priority('alert_id:{}'.format(alert_id), "HIGH", fq_list=["id:*", "label:*"])
+    res = client.alert.batch.priority('alert_id:{}'.format(alert_id), "HIGH", fq_list=["id:*"])
     assert res['success'] == 1
 
     alert_data = datastore.alert.get(alert_id)
@@ -56,9 +56,7 @@ def test_remove_label(datastore, client):
         while not labels_to_remove:
             labels_to_remove = [label for label in alert.label if random.randint(0, 1) == 1]
 
-        res = client.alert.batch.remove_label(
-            'alert_id:{}'.format(alert_id),
-            labels_to_remove, fq_list=["id:*", "label:*"])
+        res = client.alert.batch.remove_label(f'alert_id:{alert_id}', labels_to_remove, fq_list=["id:*"])
         assert res['success'] == 1
 
         alert_data = datastore.alert.get(alert_id)
@@ -71,7 +69,7 @@ def test_remove_label(datastore, client):
 def test_status(datastore, client):
     alert_id = random_id_from_collection(datastore, 'alert')
 
-    res = client.alert.batch.status('alert_id:{}'.format(alert_id), "ASSESS", fq_list=["id:*", "label:*"])
+    res = client.alert.batch.status('alert_id:{}'.format(alert_id), "ASSESS", fq_list=["id:*"])
     assert res['success'] == 1
 
     alert_data = datastore.alert.get(alert_id)
