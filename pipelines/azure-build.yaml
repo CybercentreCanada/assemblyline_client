@@ -69,7 +69,7 @@ stages:
 
               # Install depedency packages
               sudo apt-get update
-              sudo apt-get install -y build-essential libffi-dev libfuzzy-dev python3-dev wget
+              sudo apt-get install -y wget
 
               # Wait for the service containers to come online
               wget https://localhost --no-check-certificate --timeout=2 --retry-on-http-error=502 --waitretry=10 --retry-connrefused
