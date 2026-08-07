@@ -1,29 +1,69 @@
+auth:
+  oauth:
+    enabled: true
+    gravatar_enabled: false
+    providers:
+      keycloak:
+        auto_create: true
+        allow_external_tokens: true
+        external_token_alternate_audiences:
+          - "account"
+        auto_properties:
+          - field: email
+            pattern: .*
+            type: access
+            value: true
+          - field: scope
+            pattern: assemblyline_submission_view
+            type: role
+            value: submission_view
+          - field: scope
+            pattern: assemblyline_badlist_view
+            type: role
+            value: badlist_view
+          - field: scope
+            pattern: assemblyline_safelist_view
+            type: role
+            value: safelist_view
+          - field: scope
+            pattern: assemblyline_alert_view
+            type: role
+            value: alert_view
+          - field: scope
+            pattern: assemblyline_submission_create
+            type: role
+            value: submission_create
+        client_id: assemblyline
+        client_secret: assemblyline
+        client_kwargs:
+          scope: openid email profile
+        openid_connect_discovery_url: http://localhost:8080/realms/master/.well-known/openid-configuration
 core:
   alerter:
     delay: 0
   metrics:
     elasticsearch:
-      hosts: [http://elastic:devpass@elasticsearch:9200]
+      hosts: [http://elastic:devpass@localhost:9200]
     redis:
-      host: redis
+      host: localhost
   redis:
     nonpersistent:
-      host: redis
+      host: localhost
     persistent:
-      host: redis
+      host: localhost
       port: 6379
 
 datastore:
-  hosts: [http://elastic:devpass@elasticsearch:9200]
+  hosts: [http://elastic:devpass@localhost:9200]
 
 filestore:
   cache:
     [
-      "s3://al_storage_key:Ch@ngeTh!sPa33w0rd@minio:9000?s3_bucket=al-cache&use_ssl=False",
+      "s3://al_storage_key:Ch@ngeTh!sPa33w0rd@localhost:9000?s3_bucket=al-cache&use_ssl=False",
     ]
   storage:
     [
-      "s3://al_storage_key:Ch@ngeTh!sPa33w0rd@minio:9000?s3_bucket=al-storage&use_ssl=False",
+      "s3://al_storage_key:Ch@ngeTh!sPa33w0rd@localhost:9000?s3_bucket=al-storage&use_ssl=False",
     ]
 
 logging:
