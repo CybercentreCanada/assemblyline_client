@@ -73,6 +73,7 @@ stages:
 
               # Wait for the service containers to come online
               wget https://localhost --no-check-certificate --timeout=2 --retry-on-http-error=502 --waitretry=10 --retry-connrefused
+            workingDirectory: $(Pipeline.Workspace)
             displayName: Setup Environment
           - script: |
               export VERSION=${BUILD_SOURCEBRANCH#"refs/tags/v"}
