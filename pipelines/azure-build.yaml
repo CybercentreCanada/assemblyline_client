@@ -8,29 +8,6 @@ pr: none
 pool:
   vmImage: "ubuntu-22.04"
 
-resources:
-  containers:
-    - container: redis
-      image: redis
-      ports:
-        - 6379:6379
-    - container: elasticsearch
-      image: docker.elastic.co/elasticsearch/elasticsearch:8.19.3
-      env:
-        xpack.security.enabled: true
-        discovery.type: single-node
-        ES_JAVA_OPTS: "-Xms256m -Xmx512m"
-        ELASTIC_PASSWORD: devpass
-      ports:
-        - 9200:9200
-    - container: minio
-      image: cccs/minio
-      env:
-        MINIO_ACCESS_KEY: al_storage_key
-        MINIO_SECRET_KEY: Ch@ngeTh!sPa33w0rd
-      ports:
-        - 9000:9000
-
 stages:
   - stage: build
     jobs:
@@ -61,10 +38,6 @@ stages:
             Python3_13:
               python.version: "3.13"
         timeoutInMinutes: 10
-        services:
-          elasticsearch: elasticsearch
-          redis: redis
-          minio: minio
         steps:
           - checkout: none
           - task: UsePythonVersion@0
@@ -82,37 +55,22 @@ stages:
               # Check which version we are building
               export VERSION=${BUILD_SOURCEBRANCH#"refs/tags/v"}
               if [[ "$VERSION" == *dev* ]]; then
-                  export CONTAINER=latest
+                  export TAG=latest
               else
-                  export CONTAINER=stable
+                  export TAG=stable
               fi
-              # Run the container pulls in parallel, wait for them all to finish before next step
-              sudo docker pull -q cccs/nginx-ssl-frontend &
-              sudo docker pull -q cccs/assemblyline-ui:$CONTAINER &
-              sudo docker pull -q cccs/assemblyline-ui-frontend:$CONTAINER &
-              sudo docker pull -q cccs/assemblyline-socketio:$CONTAINER &
-              wait
-            displayName: Pull Containers
-          - script: |
-              set -x  # Echo commands before they are run
-              # Check which version we are building
-              export VERSION=${BUILD_SOURCEBRANCH#"refs/tags/v"}
-              if [[ "$VERSION" == *dev* ]]; then
-                  export CONTAINER=latest
-              else
-                  export CONTAINER=stable
-              fi
-              # Install configuration file
+              # Start up dependencies ($TAG should pull the respective version of the AL containers)
+              sudo docker compose -f test/docker-compose.yml up -d
+
+              # Install configuration & classification file
               sudo mkdir -p /etc/assemblyline/
-              sudo cp $(Pipeline.Workspace)/pipelines/config.yml /etc/assemblyline/
-              # Start service containers that can't be started by azure properly
-              sudo docker run -d --name nginx --network host --restart on-failure -e "FRONTEND_HOST=localhost" -e "UI_HOST=localhost" -e "SOCKET_HOST=localhost" -e "TEMPLATE=minimal" -e "FQDN=localhost" cccs/nginx-ssl-frontend
-              sudo docker run -d --name alui --network host -e "WORKERS=1" -e "THREADS=1"  -v "/etc/assemblyline/config.yml":"/etc/assemblyline/config.yml" cccs/assemblyline-ui:$CONTAINER
-              sudo docker run -d --name frontend --network host cccs/assemblyline-ui-frontend:$CONTAINER
-              sudo docker run -d --name alsocketio --network host  -v "/etc/assemblyline/config.yml":"/etc/assemblyline/config.yml" cccs/assemblyline-socketio:$CONTAINER
+              sudo cp $(Pipeline.Workspace)/test/config/config.yml /etc/assemblyline/config.yml
+              sudo cp $(Pipeline.Workspace)/test/config/classification.yml /etc/assemblyline/classification.yml
+
               # Install depedency packages
               sudo apt-get update
-              sudo apt-get install -y build-essential libffi-dev libfuzzy-dev python3-dev wget
+              sudo apt-get install -y wget
+
               # Wait for the service containers to come online
               wget https://localhost --no-check-certificate --timeout=2 --retry-on-http-error=502 --waitretry=10 --retry-connrefused
             displayName: Setup Environment
@@ -127,11 +85,11 @@ stages:
               # Check which version we are building
               export VERSION=${BUILD_SOURCEBRANCH#"refs/tags/v"}
               if [[ "$VERSION" == *dev* ]]; then
-                  export CONTAINER=latest
+                  export TAG=latest
               else
-                  export CONTAINER=stable
+                  export TAG=stable
               fi
-              export ASSEMBLYLINE_VERSION=$(docker container run --rm cccs/assemblyline-ui:$CONTAINER bash -c 'echo -n "$ASSEMBLYLINE_VERSION"')
+              export ASSEMBLYLINE_VERSION=$(docker container run --rm cccs/assemblyline-ui:$TAG bash -c 'echo -n "$ASSEMBLYLINE_VERSION"')
               pytest -rsx -vv
             workingDirectory: $(Pipeline.Workspace)/test
             displayName: Test

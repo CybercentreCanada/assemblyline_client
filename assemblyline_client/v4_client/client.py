@@ -90,15 +90,3 @@ class Client(object):
     def get_classification_engine(self):
         definition = self.help.classification_definition(original=True)
         return Classification(definition)
-
-    def set_obo_token(self, token, provider=None):
-        new_headers = {'authorization': f"Bearer {token}"}
-        if provider:
-            new_headers['x-token-provider'] = provider
-        else:
-            self._connection.session.headers.pop('x-token-provider', None)
-        self._connection.session.headers.update(new_headers)
-
-    def clear_obo_token(self):
-        self._connection.session.headers.pop('authorization', None)
-        self._connection.session.headers.pop('x-token-provider', None)

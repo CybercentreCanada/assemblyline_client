@@ -1,9 +1,9 @@
 import json
-import requests
 import time
 import warnings
-
 from base64 import b64encode
+
+import requests
 
 from assemblyline_client.v3_client import Client as Client3
 from assemblyline_client.v4_client.client import Client as Client4
@@ -93,8 +93,8 @@ class Connection(object):
         if not public_key:
             return None
 
-        from Crypto.PublicKey import RSA
         from Crypto.Cipher import PKCS1_v1_5
+        from Crypto.PublicKey import RSA
 
         key = RSA.importKey(public_key)
         return PKCS1_v1_5.new(key)
@@ -121,10 +121,9 @@ class Connection(object):
                     'user': self.auth[0],
                     'password': self.auth[1]
                 }
-            elif self.oauth and len(self.oauth) == 2:
+            elif self.oauth:
                 auth = {
-                    "oauth_provider": self.oauth[0],
-                    "oauth_token": self.oauth[1]
+                    "oauth_token": self.oauth
                 }
             else:
                 auth = {}

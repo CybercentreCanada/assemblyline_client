@@ -2,12 +2,12 @@ version: "2.4"
 
 services:
   al_frontend:
-    image: cccs/assemblyline-ui-frontend:latest
+    image: cccs/assemblyline-ui-frontend:${TAG:-latest}
     ports:
       - "3000:3000"
 
   al_ui:
-    image: cccs/assemblyline-ui:latest
+    image: cccs/assemblyline-ui:${TAG:-latest}
     environment:
       WORKERS: 1
       THREADS: 1
@@ -20,9 +20,11 @@ services:
         condition: service_healthy
       minio:
         condition: service_started
+    extra_hosts:
+      - "localhost:host-gateway"
 
   al_socketio:
-    image: cccs/assemblyline-socketio:latest
+    image: cccs/assemblyline-socketio:${TAG:-latest}
     volumes:
       - ${PATH_REWRITE:-.}/config/:/etc/assemblyline/
     depends_on:
@@ -32,6 +34,8 @@ services:
         condition: service_healthy
       minio:
         condition: service_started
+    extra_hosts:
+      - "localhost:host-gateway"
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.19.3
@@ -84,3 +88,19 @@ services:
     ports:
       - "9000:9000"
     command: server /data
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.7
+    environment:
+      - KC_HEALTH_ENABLED=true
+    volumes:
+      - ${PATH_REWRITE:-.}/config/keycloak-realm.json:/opt/keycloak/data/import/realm.json
+    command: start-dev --import-realm
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: ["CMD-SHELL", "{ printf 'HEAD /health/ready HTTP/1.0\r\n\r\n' >&0; grep 'HTTP/1.0 200'; } 0<>/dev/tcp/localhost/9000"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
